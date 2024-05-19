@@ -104,17 +104,16 @@ export const handleCaseObject = function (caseObj) {
   } else {
     // if index === -1 which means it doesn't exist, client will be added
     const client = state.clients.find((c) => c.id === caseObj.clientId);
-    console.log(client)
     client && handleClientObject({ ...client, isLead: false });
     state.cases.push(caseObj);
   }
 };
 
-export const getNews = async function () {
-  const res = await fetch(
-    `https://newsapi.org/v2/top-headlines?country=ca&apiKey=${NEWS_API_KEY}`
-  );
+// export const getNews = async function () {
+//   const res = await fetch(
+//     `https://newsapi.org/v2/top-headlines?country=ca&apiKey=${NEWS_API_KEY}`
+//   );
 
-  const data = await res.json();
-  return data;
-};
+//   const data = await res.json();
+//   return data;
+// };

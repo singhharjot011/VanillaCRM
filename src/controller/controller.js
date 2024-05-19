@@ -17,7 +17,8 @@ const renderData = async function () {
     renderCalendar.renderSpinner();
 
     const data = await model.loadData();
-    const newsData = await model.getNews();
+    const newsData = {};
+    // const newsData = await model.getNews();
     const currentUser = data.employees.filter((e) => e.isLoggedIn)[0];
 
     renderHeader.render(data);

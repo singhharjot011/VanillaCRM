@@ -14,16 +14,7 @@ class RenderDashboard extends Views {
     // Listen for the custom event to trigger re-render
     this._parentElement.addEventListener("custom:daysFilterClicked", (e) => {
       this._days = e.detail.days;
-      // console.log(this._days);
-      console.log(
-        this._data.cases.filter(
-          (cs) =>
-            cs.caseStatus !== "Completed" &&
-            cs.caseStatus !== "Closed" &&
-            getDayDifference(cs.createdAt, null) > 7 &&
-            getDayDifference(cs.createdAt, null) < 30
-        ).length
-      );
+
       this.render(this._data, this._parentElement, this._newsData);
     });
   }
@@ -155,7 +146,7 @@ class RenderDashboard extends Views {
       );
     }, 5);
 
-    console.log(this._data);
+    // console.log(this._data);
 
     return `
     <div id="dashboard">
@@ -302,19 +293,9 @@ class RenderDashboard extends Views {
       <div id="dashboard-news-tile">
           <div class="dashboard-news-sub-tile">
             <h4>Latest News Highlights</h4>
-
+            <p>Apologies for the inconvenience, but we're currently experiencing issues with our News API integration on our Netlify production site. As a result, this section will temporarily display a curated selection of the latest news highlights manually updated by our team. We appreciate your patience as we work to resolve this issue. </p>
             
-              ${this._newsData.articles
-                .map((n, i) =>
-                  i < 5
-                    ? `<div class="table-row">
-                    <p><strong>${n.author ? n.author : ""}: </strong>
-                    <a href="${n.url}" target="_blank" >${n.title}</a>
-                    </p>
-                    </div>`
-                    : ""
-                )
-                .join("")}
+ 
             
 
             
@@ -336,3 +317,15 @@ class RenderDashboard extends Views {
 }
 
 export default new RenderDashboard();
+
+// ${this._newsData.articles
+//   .map((n, i) =>
+//     i < 5
+//       ? `<div class="table-row">
+//       <p><strong>${n.author ? n.author : ""}: </strong>
+//       <a href="${n.url}" target="_blank" >${n.title}</a>
+//       </p>
+//       </div>`
+//       : ""
+//   )
+//   .join("")}
