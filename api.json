@@ -1,0 +1,192 @@
+[
+  {
+    "clients": [
+      {
+        "id": "I101",
+        "name": "John Doe",
+        "email": "John.Doe@gmail.com",
+        "phone": "9052225555",
+        "consultant": "E202",
+        "clientNote": "Client Completed Post-Grad Diploma, want to apply for Work Permit",
+        "visaType": "Work Permit",
+        "city": "Toronto",
+        "province": "ON",
+        "postalCode": "M3M3V2",
+        "createdAt": "2024-05-17T22:52:52.742Z",
+        "isLead": true
+      },
+      {
+        "id": "I102",
+        "name": "Janice Stuart",
+        "email": "jstuart@yahoo.com",
+        "phone": "2059991234",
+        "consultant": "E203",
+        "clientNote": "Client want to apply Super Visa for her Grandparents",
+        "visaType": "Super Visa",
+        "city": "Edmonto",
+        "province": "AB",
+        "postalCode": "T3L4V5",
+        "createdAt": "2024-05-17T22:57:22.765Z",
+        "isLead": false
+      },
+      {
+        "id": "I103",
+        "name": "Rajiv Patel",
+        "email": "rajp@apple.com",
+        "phone": "7809899797",
+        "consultant": "E204",
+        "clientNote": "Client wants to apply for Permanent Residency",
+        "visaType": "Express Entry / PR",
+        "city": "Surrey",
+        "province": "BC",
+        "postalCode": "V3R6Y5",
+        "createdAt": "2024-05-17T23:00:23.921Z",
+        "isLead": false
+      }
+    ]
+  },
+  {
+    "employees": [
+      {
+        "employeeId": "E201",
+        "name": "John Naisan",
+        "position": "Manager",
+        "username": "jw",
+        "password": "passwordjw",
+        "img": "./img/avatars/avatar-anisha.png",
+        "isLoggedIn": false
+      },
+      {
+        "employeeId": "E202",
+        "name": "Anisha Lee",
+        "position": "Assistant Manager",
+        "username": "al",
+        "password": "passwordal",
+        "img": "./img/avatars/avatar-anisha.png",
+        "isLoggedIn": true
+      },
+      {
+        "employeeId": "E203",
+        "name": "Bob Larkin",
+        "position": "Consultant",
+        "username": "bl",
+        "password": "passwordbl",
+        "img": "./img/avatars/avatar-bob.png",
+        "isLoggedIn": false
+      },
+      {
+        "employeeId": "E204",
+        "name": "Emma Cooper",
+        "position": "Consultant",
+        "username": "ec",
+        "password": "passwordec",
+        "img": "./img/avatars/avatar-emma.png",
+        "isLoggedIn": false
+      }
+    ]
+  },
+  {
+    "cases": [
+      {
+        "caseId": "C10000",
+        "caseType": "Ongoing Visa Process",
+        "caseStatus": "In Progress",
+        "caseDescription": "Express Entry Visa filed for Rajiv",
+        "assignedTo": "E202",
+        "clientId": "I103",
+        "notes": [
+          {
+            "note": "-Gathered Documents\n-Visa filed\n-Half payment pending",
+            "writtenBy": "E202",
+            "writtenAt": "2024-05-17T23:24:43.771Z"
+          },
+          {
+            "note": "Client Called to check status",
+            "writtenBy": "E202",
+            "writtenAt": "2024-05-18T00:53:55.073Z"
+          }
+        ],
+        "createdAt": "2024-05-17T23:24:43.771Z"
+      },
+      {
+        "caseId": "C10001",
+        "caseType": "Ongoing Visa Process",
+        "caseStatus": "In Progress",
+        "caseDescription": "Case Filed for Mrs. Ann Stuart (Super Visa)",
+        "assignedTo": "E203",
+        "clientId": "I102",
+        "notes": [
+          {
+            "note": "-Received Documents on May 16\n-Filed visa today\n-Awaiting on confirmation",
+            "writtenBy": "E202",
+            "writtenAt": "2024-05-18T01:00:19.371Z"
+          }
+        ],
+        "createdAt": "2024-05-18T01:00:19.371Z"
+      }
+    ]
+  },
+  {
+    "tasks": [
+      {
+        "id": "T100",
+        "assignedTo": "E202",
+        "requestedBy": "E202",
+        "description": " Call John Doe to touch base on our services",
+        "due": "2024-05-17",
+        "createdAt": "2024-05-18T03:00:58.181Z",
+        "completed": false,
+        "deleted": false,
+        "hidden": false,
+        "isAppointment": true,
+        "clientId": "I101",
+        "appointmentDate": "2024-05-20",
+        "appointmentStartTime": "11:00",
+        "appointmentEndTime": "12:00",
+        "appointmentAgenda": "Providing details and cost about services and timeline."
+      },
+      {
+        "id": "T101",
+        "assignedTo": "E202",
+        "requestedBy": "E201",
+        "description": " Complete Latest Policy Training",
+        "due": "2024-05-31",
+        "createdAt": "2024-05-18T03:03:16.475Z",
+        "completed": false,
+        "deleted": false,
+        "hidden": false,
+        "isAppointment": false,
+        "clientId": ""
+      }
+    ]
+  },
+  {
+    "users": []
+  },
+  {
+    "events": [
+      {
+        "id": "A100",
+        "title": " Call John Doe to touch base on our services",
+        "start": "2024-05-20 11:00",
+        "end": "2024-05-20 12:00",
+        "completed": false,
+        "completedAt": "",
+        "assignedTo": "E202",
+        "taskId": "T100",
+        "classNames": ["appointment"],
+        "clientId": "I101"
+      },
+      {
+        "id": "A101",
+        "title": " Complete Latest Policy Training",
+        "start": "2024-05-31",
+        "taskId": "T101",
+        "completed": false,
+        "assignedTo": "E202",
+        "completedAt": "",
+        "classNames": ["alerts"]
+      }
+    ]
+  }
+]
