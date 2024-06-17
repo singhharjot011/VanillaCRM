@@ -8,6 +8,7 @@ import renderKnowledgeBase from "../view/renderKnowledgeBase.js";
 import renderMenu from "../view/renderMenu.js";
 import renderModal from "../view/renderModal.js";
 import renderMyClients from "../view/renderMyClients.js";
+import renderPageNotFound from "../view/renderPageNotFound.js";
 import renderTasks from "../view/renderTasks.js";
 
 const renderData = async function () {
@@ -50,27 +51,29 @@ const renderData = async function () {
       case "knowledge-base":
         renderKnowledgeBase.render(data);
         break;
-      case id.match(/^client.*$/)?.input:
+      case id.match(/^client.*\d$/)?.input:
         renderModal.addHandlerModal(data, id, controlHandleClient);
         break;
       case "new-client":
         renderModal.addHandlerModal(data, id, controlHandleClient);
         break;
-      case id.match(/^my-client.*$/)?.input:
+      case id.match(/^my-client.*\d$/)?.input:
         renderModal.addHandlerModal(data, id, controlHandleClient);
         break;
       case "new-case":
         renderModal.addHandlerModal(data, id, controlHandleCase);
         break;
-      case id.match(/^case.*$/)?.input:
+      case id.match(/^case.*\d$/)?.input:
         renderModal.addHandlerModal(data, id, controlHandleCase);
         break;
-      case id.match(/^task.*$/)?.input:
+      case id.match(/^task.*\d$/)?.input:
         renderModal.addHandlerModal(data, id, controlHandleTask, currentUser);
         break;
       case "new-task":
         renderModal.addHandlerModal(data, id, controlHandleTask, currentUser);
         break;
+      default:
+        renderPageNotFound.render(null, null, null);
     }
   } catch (err) {
     console.error(err.message);

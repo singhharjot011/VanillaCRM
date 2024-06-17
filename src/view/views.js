@@ -8,7 +8,7 @@ export default class Views {
   render(data, el, newsData) {
     this._data = data;
     this._newsData = newsData;
-    this._currentUser = this._data.employees.filter((e) => e.isLoggedIn)[0];
+    this._currentUser = this._data?.employees?.filter((e) => e.isLoggedIn)[0];
 
     const markup = this._generateMarkup(el);
 
