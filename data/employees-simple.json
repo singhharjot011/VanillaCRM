@@ -1,0 +1,38 @@
+[
+  {
+    "employeeId": "E201",
+    "name": "John Naisan",
+    "position": "Manager",
+    "username": "jw",
+    "password": "passwordjw",
+    "img": "./img/avatars/avatar-anisha.png",
+    "isLoggedIn": false
+  },
+  {
+    "employeeId": "E202",
+    "name": "Anisha Lee",
+    "position": "Assistant Manager",
+    "username": "al",
+    "password": "passwordal",
+    "img": "./img/avatars/avatar-anisha.png",
+    "isLoggedIn": true
+  },
+  {
+    "employeeId": "E203",
+    "name": "Bob Larkin",
+    "position": "Consultant",
+    "username": "bl",
+    "password": "passwordbl",
+    "img": "./img/avatars/avatar-bob.png",
+    "isLoggedIn": false
+  },
+  {
+    "employeeId": "E204",
+    "name": "Emma Cooper",
+    "position": "Consultant",
+    "username": "ec",
+    "password": "passwordec",
+    "img": "./img/avatars/avatar-emma.png",
+    "isLoggedIn": false
+  }
+]

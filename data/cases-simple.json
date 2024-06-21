@@ -1,0 +1,39 @@
+[
+  {
+    "caseId": "C10000",
+    "caseType": "Ongoing Visa Process",
+    "caseStatus": "In Progress",
+    "caseDescription": "Express Entry Visa filed for Rajiv",
+    "assignedTo": "E202",
+    "clientId": "I103",
+    "notes": [
+      {
+        "note": "-Gathered Documents\n-Visa filed\n-Half payment pending",
+        "writtenBy": "E202",
+        "writtenAt": "2024-05-17T23:24:43.771Z"
+      },
+      {
+        "note": "Client Called to check status",
+        "writtenBy": "E202",
+        "writtenAt": "2024-05-18T00:53:55.073Z"
+      }
+    ],
+    "createdAt": "2024-05-17T23:24:43.771Z"
+  },
+  {
+    "caseId": "C10001",
+    "caseType": "Ongoing Visa Process",
+    "caseStatus": "In Progress",
+    "caseDescription": "Case Filed for Mrs. Ann Stuart (Super Visa)",
+    "assignedTo": "E203",
+    "clientId": "I102",
+    "notes": [
+      {
+        "note": "-Received Documents on May 16\n-Filed visa today\n-Awaiting on confirmation",
+        "writtenBy": "E202",
+        "writtenAt": "2024-05-18T01:00:19.371Z"
+      }
+    ],
+    "createdAt": "2024-05-18T01:00:19.371Z"
+  }
+]

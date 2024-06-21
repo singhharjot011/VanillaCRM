@@ -42,7 +42,7 @@ function getDayDifference(date1, date2) {
   if (date1 === null) date1 = new Date();
   if (date2 === null) date2 = new Date();
 
-  // Normalize the dates to midnight 
+  // Normalize the dates to midnight
   const normalizeToMidnight = (date) => {
     const normalizedDate = new Date(date);
     normalizedDate.setHours(0, 0, 0, 0);
@@ -62,7 +62,14 @@ function getDayDifference(date1, date2) {
 }
 
 function formatPhoneNumber(phone) {
-  return phone.slice(0, 3) + "-" + phone.slice(2, 5) + "-" + phone.slice(5, -1);
+  // if (typeof phone === "number") return phone;
+  return (
+    phone.toString().slice(0, 3) +
+    "-" +
+    phone.toString().slice(2, 5) +
+    "-" +
+    phone.toString().slice(5, -1)
+  );
 }
 
 function validateEmail(email) {

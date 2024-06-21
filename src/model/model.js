@@ -21,21 +21,37 @@ export const loadData = async function (typeOfData) {
     if (state.clients.length >= 1)
       return (typeOfData && state.typeOfData) || state;
 
-    const res = await fetch(`${API_URL}`);
-    const data = await res.json();
+    // const { clients } = data[0];
 
-    const { clients } = data[0];
-    const { employees } = data[1];
-    const { cases } = data[2];
-    const { tasks } = data[3];
-    const { users } = data[4];
-    const { events } = data[5];
+    const clientRes = await fetch(`${API_URL}/clients`);
+    const clientsArr = await clientRes.json();
+    const { clients } = clientsArr.data;
+
+    const employeesRes = await fetch(`${API_URL}/employees`);
+    const employeesArr = await employeesRes.json();
+    const { employees } = employeesArr.data;
+
+    const casesRes = await fetch(`${API_URL}/cases`);
+    const casesArr = await casesRes.json();
+    const { cases } = casesArr.data;
+
+    const tasksRes = await fetch(`${API_URL}/tasks`);
+    const tasksArr = await tasksRes.json();
+    const { tasks } = tasksArr.data;
+
+    // const usersRes = await fetch(`${API_URL}/users`);
+    // const usersArr = await usersRes.json();
+    // const { users } = usersArr.data;
+
+    const eventsRes = await fetch(`${API_URL}/events`);
+    const eventsArr = await eventsRes.json();
+    const { events } = eventsArr.data;
 
     state.clients = clients;
     state.employees = employees;
     state.cases = cases;
     state.tasks = tasks;
-    state.users = users;
+    // state.users = users;
     state.events = events;
     return (typeOfData && state.typeOfData) || state;
   } catch (err) {
@@ -44,14 +60,19 @@ export const loadData = async function (typeOfData) {
   }
 };
 
-export const handleClientObject = function (clientObj) {
-  const index = state.clients.findIndex((c) => c.id === clientObj.id);
-  // if index !== -1 which means it exists, client will be updated
-  if (index !== -1) {
-    state.clients[index] = clientObj;
-  } else {
-    // if index === -1 which means it doesn't exist, client will be added
-    state.clients.push(clientObj);
+export const handleClientObject = async function (clientObj) {
+  try {
+    // Client exists, so update it
+    const result = await fetch(`${API_URL}/clients`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(clientObj),
+    });
+    return result;
+  } catch (err) {
+    console.error("Error handling client object:", err.message);
   }
 };
 
@@ -96,16 +117,19 @@ export const handleTaskObject = function (taskObj) {
   }
 };
 
-export const handleCaseObject = function (caseObj) {
-  const index = state.cases.findIndex((c) => c.caseId === caseObj.caseId);
-  // if index !== -1 which means it exists, client will be updated
-  if (index !== -1) {
-    state.cases[index] = caseObj;
-  } else {
-    // if index === -1 which means it doesn't exist, client will be added
-    const client = state.clients.find((c) => c.id === caseObj.clientId);
-    client && handleClientObject({ ...client, isLead: false });
-    state.cases.push(caseObj);
+export const handleCaseObject = async function (caseObj) {
+  try {
+    // case exists, so update it
+    const result = await fetch(`${API_URL}/cases`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(caseObj),
+    });
+    return result;
+  } catch (err) {
+    console.error("Error handling case object:", err.message);
   }
 };
 

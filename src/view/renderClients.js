@@ -78,7 +78,7 @@ class RenderClients extends Views {
                   ? `style="color:var(--color-green-600); font-weight: bolder;"`
                   : ``
               }  >${c.name}</td>
-              <td>${formatPhoneNumber(c.phone)}</td>
+              <td style="text-wrap:nowrap;">${formatPhoneNumber(c.phone)}</td>
               <td>${c.email}</td>
               <td>${c.visaType}</td>
               <td >${getDateTimeString(c.createdAt)}</td>
