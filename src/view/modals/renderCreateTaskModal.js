@@ -1,31 +1,23 @@
+import { API_URL } from "../../utils/config.js";
 import { getDateTimeString } from "../../utils/helpers.js";
 
-export default function renderCreateTaskModal(
-  id,
-  modalData,
-  parentElm,
-  curHashId,
-  currentUser
-) {
-  let curTask = {};
+export default async function renderCreateTaskModal(modalData, parentElm) {
+  const curTask = modalData;
+  console.log(curTask);
 
-  if (id) {
-    curTask = modalData.tasks.filter((t) => t.id === id)[0];
-  }
+  // function empIdtoName(assignedToId, modalData) {
+  //   return modalData.employees
+  //     .filter((i) => i.employeeId === assignedToId)
+  //     .map((i) => i.name)
+  //     .join("");
+  // }
 
-  function empIdtoName(assignedToId, modalData) {
-    return modalData.employees
-      .filter((i) => i.employeeId === assignedToId)
-      .map((i) => i.name)
-      .join("");
-  }
-
-  function clientIdToName(clientId, modalData) {
-    return modalData.clients
-      .filter((c) => c.id === clientId)
-      .map((c) => c.name)
-      .join("");
-  }
+  // function clientIdToName(clientId, modalData) {
+  //   return modalData.clients
+  //     .filter((c) => c.id === clientId)
+  //     .map((c) => c.name)
+  //     .join("");
+  // }
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
@@ -60,13 +52,10 @@ export default function renderCreateTaskModal(
                   disabled
                    >
            
-                        <option selected >${currentUser.name}</option>
+                        <option selected >ZZZZ</option>
                     
                 </select>`
-                  : `<label  class="form-label"> ${empIdtoName(
-                      curTask.requestedBy,
-                      modalData
-                    )} </label>`
+                  : `<label  class="form-label"> ${curTask.requestedBy} </label>`
               }
           </div>
           <div class="form-row">
@@ -77,14 +66,7 @@ export default function renderCreateTaskModal(
                 name="assign-to"
               ${curTask.assignedTo ? "disabled" : ""}
                 >
-                  ${modalData.employees.map(
-                    (e) =>
-                      `<option ${
-                        e.name === empIdtoName(curTask.assignedTo, modalData)
-                          ? "selected"
-                          : ""
-                      }>${e.name}</option>`
-                  )}
+                  zzzzzzzzzzzz
               </select>
           </div>
           
@@ -95,16 +77,12 @@ export default function renderCreateTaskModal(
               } >${curTask.description ? curTask.description : ""} </textarea>
           </div>
           
-          ${
-            curTask?.isAppointment && curHashId !== "new-task"
-              ? ``
-              : `          <div class="form-row-flex">
+          ${`<div class="form-row-flex">
               <label for="due-date" class="form-label">Due Date  </label>
               <input type="date" id="due-date" class="form-input" name="due-date"  min="2020-01-01" max="2030-12-31" value="${
                 curTask.due ? curTask.due : ""
               }"  ${curTask.due ? "disabled" : ""}/>
-              </div>`
-          }
+              </div>`}
 
           ${
             curTask.description
@@ -119,19 +97,7 @@ export default function renderCreateTaskModal(
               : ``
           }
 
-          ${
-            curHashId === "new-task"
-              ? `<div class="form-row-flex">
-                  <label for="appointment-check-new">Appointment ?</label>
-                  <input type="checkbox" id="appointment-check-new" name="appointment-check"/>
-                </div>`
-              : curHashId?.startsWith("task") && curTask?.isAppointment
-              ? `<div class="form-row-flex">
-                  <label for="appointment-check-${curTask.id}">Appointment ?</label>
-                  <input type="checkbox" id="appointment-check-${curTask.id}" name="appointment-check" checked disabled/>
-                </div>`
-              : ""
-          }
+         
           
 
 

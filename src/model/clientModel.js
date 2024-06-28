@@ -9,12 +9,10 @@ const clientSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "Client Email is required"],
-    unique: true,
   },
   phone: {
     type: Number,
     required: [true, "Client Number is required"],
-    unique: true,
   },
   consultant: {
     type: String,

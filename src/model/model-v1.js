@@ -17,33 +17,6 @@ export const state = {
 
 export const loadData = async function (typeOfData) {
   try {
-    const endpoints = ["clients", "employees", "cases", "tasks", "events"];
-    const fetchPromises = endpoints.map((endpoint) =>
-      fetch(`${API_URL}/${endpoint}`)
-    );
-
-    const responses = await Promise.all(fetchPromises);
-    const data = await Promise.all(responses.map((res) => res.json()));
-
-    const [clientsData, employeesData, casesData, tasksData, eventsData] = data;
-
-    state.clients = clientsData.data.clients;
-    state.employees = employeesData.data.employees;
-    state.cases = casesData.data.cases;
-    state.tasks = tasksData.data.tasks;
-    state.events = eventsData.data.events;
-
-    return typeOfData
-      ? data.find((item) => item.data[typeOfData]).data[typeOfData]
-      : state;
-  } catch (err) {
-    console.error(`${err}💣💣💣💣`);
-    throw err;
-  }
-};
-
-export const loadData1 = async function (typeOfData) {
-  try {
     // This code is temporary only to maintain state until backend is implemented
     if (state.clients.length >= 1)
       return (typeOfData && state.typeOfData) || state;
@@ -186,28 +159,14 @@ export const handleCaseObject = async function (caseObj) {
 };
 
 export const getCurTask = async function (id) {
-  const res = await fetch(`${API_URL}/tasks/${id.split("?")[1].slice(1)}`);
+  const res = await fetch(`${API_URL}/tasks/${id.slice(1)}`);
   const data = await res.json();
   const curTask = data.data.task;
-  console.log(curTask);
   return curTask;
 };
 
-export const getCurClient = async function (id) {
-  const res = await fetch(`${API_URL}/clients/${id.split("?")[1].slice(1)}`);
-  const data = await res.json();
-  const curClient = data.data.client;
-  return curClient;
-};
-
-export const getCurCase = async function (id) {
-  const res = await fetch(`${API_URL}/cases/${id.split("?")[1].slice(1)}`);
-  const data = await res.json();
-  const curCase = data.data.curCase;
-  return curCase;
-};
-
 export const updateCurTask = async function (id, updatedTaskData) {
+  console.log("Reached");
   try {
     const response = await fetch(`${API_URL}/tasks/${id.slice(1)}`, {
       method: "PATCH",

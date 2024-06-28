@@ -19,7 +19,14 @@ class RenderModal extends Views {
     super();
   }
 
-  addHandlerModal(data, id, handler, currentUser) {
+  addHandlerModal(
+    data,
+    id,
+    handler,
+    currentUser,
+    controlGetCurTask,
+    controlUpdateTask
+  ) {
     this._modalData = data;
     let curHashId = window.location.hash.slice(1);
     let actualId = id?.split("?")[1];
@@ -49,23 +56,13 @@ class RenderModal extends Views {
     if (actualId) {
       switch (actualId) {
         case actualId.match(/^I.*$/)?.input:
-          renderCreateClientModal(
-            actualId,
-            this._modalData,
-            this._parentElement
-          );
+          renderCreateClientModal(this._modalData, this._parentElement);
           break;
         case actualId.match(/^C.*$/)?.input:
-          renderCreateCaseModal(actualId, this._modalData, this._parentElement);
+          renderCreateCaseModal(this._modalData, this._parentElement);
           break;
         case actualId.match(/^T.*$/)?.input:
-          renderCreateTaskModal(
-            actualId,
-            this._modalData,
-            this._parentElement,
-            curHashId,
-            currentUser
-          );
+          renderCreateTaskModal(this._modalData, this._parentElement);
           break;
       }
     }
@@ -337,10 +334,7 @@ class RenderModal extends Views {
         formMap.get("assign-to"),
         this._modalData
       );
-      const requestedBy = this._employeeNameToId(
-        formMap.get("requested-by"),
-        this._modalData
-      );
+      const requestedBy = currentUser.employeeId;
       const description = formMap.get("objective");
       const due = formMap.get("due-date");
       const isAppointment = formMap.get("appointment-check") === "on";
@@ -421,7 +415,7 @@ class RenderModal extends Views {
           return;
         }
 
-        handler(updatedTaskObj);
+        controlUpdateTask(curHashId.slice(1), updatedTaskObj);
         this.renderSpinner("Updating Task...");
         setTimeout(() => {
           window.location.hash = "tasks";

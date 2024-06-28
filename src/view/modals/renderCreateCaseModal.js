@@ -1,21 +1,21 @@
 // import { getDateString } from "../../utils/helpers.js";
 
-export default function renderCreateCaseModal(id, modalData, parentElm) {
-  let curCase = {};
+export default function renderCreateCaseModal(modalData, parentElm) {
+  const curCase = modalData;
   let curClient = {};
-  if (id) {
-    curCase = modalData.cases.filter((c) => c.caseId === id)[0];
-    curClient = modalData.clients.filter(
-      (cl) => cl.id === curCase?.clientId
-    )[0];
-  }
+  // if (id) {
+  //   curCase = modalData.cases.filter((c) => c.caseId === id)[0];
+  //   curClient = modalData.clients.filter(
+  //     (cl) => cl.id === curCase?.clientId
+  //   )[0];
+  // }
 
-  function empIdtoName(assignedToId) {
-    return modalData.employees
-      .filter((i) => i.employeeId === assignedToId)
-      .map((i) => i.name)
-      .join("");
-  }
+  // function empIdtoName(assignedToId) {
+  //   return modalData.employees
+  //     .filter((i) => i.employeeId === assignedToId)
+  //     .map((i) => i.name)
+  //     .join("");
+  // }
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
@@ -45,9 +45,7 @@ export default function renderCreateCaseModal(id, modalData, parentElm) {
                     } </label> `
                   : `<input type="text" class="form-input" id="client" name="client"  placeholder="Search Name"         autocomplete="off" list="clients" name="client">
                       <datalist id="clients">
-                        ${modalData.clients
-                          .map((cl) => `<option value="${cl.name}">`)
-                          .join("")}
+                      list of client
                       </datalist>`
               }
 
@@ -134,12 +132,7 @@ export default function renderCreateCaseModal(id, modalData, parentElm) {
               id="case-consultant"
               name="case-consultant"
             >
-              ${modalData.employees.map(
-                (e) =>
-                  `<option ${
-                    curCase?.assignedTo === e.employeeId ? "selected" : ""
-                  }>${e.name}</option>`
-              )}
+             List of employees
               </select>
             </div>
           </div>
@@ -158,15 +151,12 @@ export default function renderCreateCaseModal(id, modalData, parentElm) {
               
               <div class="notes-history">                  
             ${curCase?.notes
-              ?.sort((a, b) => (b.writtenAt) - (a.writtenAt))
+              ?.sort((a, b) => b.writtenAt - a.writtenAt)
               .map(
                 (n) =>
                   `<div class="form-row-flex" style="gap:1rem;">
-                    <strong><p>${(n.writtenAt)}&nbsp;</p></strong>
-                    <div style="display: flex; flex-grow: 1; "><p style="text-decoration: underline;">${empIdtoName(
-                      n.writtenBy,
-                      modalData
-                    )}:&nbsp </p><p>${n.note}</p> </div>
+                    <strong><p>${n.writtenAt}&nbsp;</p></strong>
+                    <div style="display: flex; flex-grow: 1; "><p style="text-decoration: underline;">${n.writtenBy}:&nbsp </p><p>${n.note}</p> </div>
                 </div>`
               )
               .join(`\n`)}

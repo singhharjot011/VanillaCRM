@@ -1,11 +1,7 @@
 // import { getDateString } from "../../utils/helpers.js";
 
-export default function renderCreateClientModal(id, modalData, parentElm) {
-  let curClient = {};
-  if (id) {
-    curClient = modalData.clients.filter((cl) => cl.id === id)[0];
-  }
-
+export default function renderCreateClientModal(modalData, parentElm ) {
+  const curClient = modalData;
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
   modalElement.classList.add("modal");
@@ -141,15 +137,7 @@ export default function renderCreateClientModal(id, modalData, parentElm) {
               id="client-consultant"
               name="client-consultant"
             >
-              ${modalData.employees.map(
-                (e) =>
-                  `<option ${
-                    curClient.consultant &&
-                    curClient.consultant === e.employeeId
-                      ? "selected"
-                      : ""
-                  }>${e.name}</option>`
-              )}
+              Placeholder
               </select>
             </div>
           </div>
@@ -171,9 +159,7 @@ export default function renderCreateClientModal(id, modalData, parentElm) {
           ${
             curClient.lastUpdatedAt
               ? `<div class="form-row-flex">
-              <p>Last Updated:&nbsp;${
-               curClient.lastUpdatedAt
-              }</p>
+              <p>Last Updated:&nbsp;${curClient.lastUpdatedAt}</p>
           </div>
           `
               : ""

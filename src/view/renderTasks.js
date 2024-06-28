@@ -3,14 +3,13 @@ import Views from "./views.js";
 class RenderTasks extends Views {
   _generateMarkup() {
     setTimeout(() => {
-      const createCaseBtn =
+      const createTaskBtn =
         this._parentElement.querySelector("#create-task-btn");
-      createCaseBtn.addEventListener(
+      createTaskBtn.addEventListener(
         "click",
         this._dispatchCustomEvent.bind(this)
       );
     }, 0);
-
     return `
     <div class="table-row-horizontal">
     <h1 class="heading"> Tasks</h1>
@@ -37,18 +36,17 @@ class RenderTasks extends Views {
       <td>Assigned To</td>
       <td>Date</td>
     </tr>
-    ${this._data.tasks
-      .filter((t) => t.assignedTo === this._currentUser.employeeId)
+    ${this._data
       .map(
         (t) =>
           `<tr class="table-row">
-            <td><a href="#task?${t.id}">${t.id}</a></td>
+            <td><a href="#task?T${t._id}">${t.id}</a></td>
             <td>${t.description}</td>
-            <td>${this._employeeIdToName(t.requestedBy)}</td>
+            <td>${t.requestedBy}</td>
             <td style="color: ${t.completed ? "green" : "red"}">${
             t.completed
           }</td>
-            <td>${this._employeeIdToName(t.assignedTo)}</td>
+            <td>${t.assignedTo}</td>
             <td>${t.appointmentDate || t.due}</td>
           </tr>`
       )

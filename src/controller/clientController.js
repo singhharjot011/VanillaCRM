@@ -16,6 +16,18 @@ const getAllClients = async (req, res) => {
   }
 };
 
+const getClient = async (req, res) => {
+  try {
+    const client = await Client.findById(req.params.id);
+    res.status(200).json({ status: "success", data: { client } });
+  } catch (err) {
+    return {
+      status: "fail",
+      message: err.message,
+    };
+  }
+};
+
 const createClient = async (req, res) => {
   try {
     const newClient = await Client.create(req.body);
@@ -32,5 +44,4 @@ const createClient = async (req, res) => {
   }
 };
 
-export { getAllClients, createClient };
-
+export { getAllClients, createClient, getClient };

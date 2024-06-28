@@ -46,6 +46,7 @@ const taskSchema = new mongoose.Schema({
   appointmentAgenda: {
     type: String,
     trim: true,
+    default: "",
   },
 });
 

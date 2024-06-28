@@ -146,8 +146,6 @@ class RenderDashboard extends Views {
       );
     }, 5);
 
-    // console.log(this._data);
-
     return `
     <div id="dashboard">
         <div class="table-row-horizontal">
@@ -292,10 +290,18 @@ class RenderDashboard extends Views {
 
       <div id="dashboard-news-tile">
           <div class="dashboard-news-sub-tile">
-            <h4>Latest News Highlights</h4>
-            <p>Apologies for the inconvenience, but we're currently experiencing issues with our News API integration on our Netlify production site. As a result, this section will temporarily display a curated selection of the latest news highlights manually updated by our team. We appreciate your patience as we work to resolve this issue. </p>
-            
- 
+          <h4>Latest News Highlights</h4>
+            <p>${this._newsData.articles
+              ?.map((n, i) =>
+                i < 5
+                  ? `<div class="table-row">
+                  <p><strong>${n.author ? n.author : ""}: </strong>
+                  <a href="${n.url}" target="_blank" >${n.title}</a>
+                  </p>
+                  </div>`
+                  : ""
+              )
+              .join("")}</p>
             
 
             
@@ -329,3 +335,6 @@ export default new RenderDashboard();
 //       : ""
 //   )
 //   .join("")}
+
+// <h4>Latest News Highlights</h4>
+//             <p>Apologies for the inconvenience, but we're currently experiencing issues with our News API integration on our Netlify production site. As a result, this section will temporarily display a curated selection of the latest news highlights manually updated by our team. We appreciate your patience as we work to resolve this issue. </p>

@@ -15,6 +15,19 @@ const getAllCases = async (req, res) => {
     });
   }
 };
+
+const getCase = async (req, res) => {
+  try {
+    const curCase = await Case.findById(req.params.id);
+    res.status(200).json({ status: "success", data: { curCase } });
+  } catch (err) {
+    return {
+      status: "fail",
+      message: err.message,
+    };
+  }
+};
+
 const createCase = async (req, res) => {
   try {
     const newCase = await Case.create(req.body);
@@ -31,4 +44,4 @@ const createCase = async (req, res) => {
   }
 };
 
-export { getAllCases, createCase };
+export { getAllCases, getCase, createCase };
