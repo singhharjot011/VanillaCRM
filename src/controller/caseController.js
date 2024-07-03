@@ -16,6 +16,34 @@ const getAllCases = async (req, res) => {
   }
 };
 
+const getDataForLastDays = async (req, res) => {
+  try {
+    const days = parseInt(req.params.days);
+
+    if (![7, 30, 90].includes(days)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid number of days. Must be 7, 30, or 90.",
+      });
+    }
+
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+
+    const data = await Case.find({
+      createdAt: { $gte: date },
+    });
+
+    res.status(200).json({
+      status: "success",
+      results: data.length,
+      data: { data },
+    });
+  } catch (err) {
+    res.status(400).json({ status: "fail", message: "Invalid Data sent" });
+  }
+};
+
 const getCase = async (req, res) => {
   try {
     const curCase = await Case.findById(req.params.id);
@@ -44,4 +72,4 @@ const createCase = async (req, res) => {
   }
 };
 
-export { getAllCases, getCase, createCase };
+export { getAllCases, getCase, createCase, getDataForLastDays };

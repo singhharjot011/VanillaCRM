@@ -20,39 +20,32 @@ const renderData = async function (typeOfData) {
 
     let data;
 
-    // const newsData = {};
-    const newsData = await model.getNews();
-    // const currentUser = data.employees.filter((e) => e.isLoggedIn)[0];
-
-    // renderHeader.render(data);
-
     switch (id) {
       case "calendar":
-        // renderCalendar.render(data);
-        // renderModal.addHandlerModal(data);
+        data = await model.loadData("events");
+        renderCalendar.render(data);
         break;
       case "dashboard":
+        const newsData = await model.getNews();
+        data = await model.loadData();
+        renderDashboard.addHandlerRender(controlGetLastDaysData);
         renderDashboard.render(data, null, newsData);
         break;
       case "clients":
         data = await model.loadData(typeOfData);
         renderClients.render(data);
-        // renderModal.addHandlerModal(data, id, controlHandleClient);
         break;
       case "my-clients":
         data = await model.loadData("clients");
         renderMyClients.render(data);
-        // renderModal.addHandlerModal(data, id, controlHandleClient);
         break;
       case "tasks":
         data = await model.loadData(typeOfData);
         renderTasks.render(data);
-        // renderModal.addHandlerModal(data, id, controlHandleTask, currentUser);
         break;
       case "cases":
         data = await model.loadData(typeOfData);
         renderCases.render(data);
-        // renderModal.addHandlerModal(data, id, controlHandleCase);
         break;
       case "knowledge-base":
         renderKnowledgeBase.render(data);
@@ -102,6 +95,9 @@ const controlHandleCase = function (caseObj) {
   model.handleCaseObject(caseObj);
 };
 
+const controlGetLastDaysData = async function (days) {
+  return await model.loadDashboardData(days);
+};
 const controlGetCurTask = function (id) {
   return model.getCurTask(id);
 };
@@ -111,7 +107,7 @@ const controlUpdateTask = function (id, updatedTaskData) {
 };
 
 const init = function () {
-  renderCalendar.addHandlerRender(renderData); // This handles main Hash and Load Event Listeners
+  renderCalendar.addHandlerRender(renderData);
   renderMenu.addHandlerMenu();
 };
 

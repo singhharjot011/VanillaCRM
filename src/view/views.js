@@ -5,9 +5,10 @@ export default class Views {
   _newsData;
   _parentElement = document.querySelector("#main");
 
-  render(data, el, newsData) {
+  render(data, el, newsData, lastDaysData) {
     this._data = data;
     this._newsData = newsData;
+    this._lastDaysData = lastDaysData;
     this._currentUser = this._data?.employees?.filter((e) => e.isLoggedIn)[0];
 
     const markup = this._generateMarkup(el);

@@ -43,5 +43,32 @@ const createClient = async (req, res) => {
     };
   }
 };
+const getDataForLastDays = async (req, res) => {
+  try {
+    const days = parseInt(req.params.days);
 
-export { getAllClients, createClient, getClient };
+    if (![7, 30, 90].includes(days)) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid number of days. Must be 7, 30, or 90.",
+      });
+    }
+
+    const date = new Date();
+    date.setDate(date.getDate() - days);
+
+    const data = await Client.find({
+      createdAt: { $gte: date },
+    });
+
+    res.status(200).json({
+      status: "success",
+      results: data.length,
+      data: { data },
+    });
+  } catch (err) {
+    res.status(400).json({ status: "fail", message: "Invalid Data sent" });
+  }
+};
+
+export { getAllClients, createClient, getClient, getDataForLastDays };

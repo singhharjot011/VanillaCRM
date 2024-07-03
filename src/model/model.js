@@ -42,48 +42,23 @@ export const loadData = async function (typeOfData) {
   }
 };
 
-export const loadData1 = async function (typeOfData) {
+export const loadDashboardData = async (days = 7) => {
   try {
-    // This code is temporary only to maintain state until backend is implemented
-    if (state.clients.length >= 1)
-      return (typeOfData && state.typeOfData) || state;
+    const casesResponse = await fetch(`${API_URL}/cases/data/${days}`);
+    const clientsResponse = await fetch(`${API_URL}/clients/data/${days}`);
 
-    // const { clients } = data[0];
+    // Parse JSON response
+    const casesData = await casesResponse.json();
+    const clientsData = await clientsResponse.json();
 
-    const clientRes = await fetch(`${API_URL}/clients`);
-    const clientsArr = await clientRes.json();
-    const { clients } = clientsArr.data;
-
-    const employeesRes = await fetch(`${API_URL}/employees`);
-    const employeesArr = await employeesRes.json();
-    const { employees } = employeesArr.data;
-
-    const casesRes = await fetch(`${API_URL}/cases`);
-    const casesArr = await casesRes.json();
-    const { cases } = casesArr.data;
-
-    const tasksRes = await fetch(`${API_URL}/tasks`);
-    const tasksArr = await tasksRes.json();
-    const { tasks } = tasksArr.data;
-
-    // const usersRes = await fetch(`${API_URL}/users`);
-    // const usersArr = await usersRes.json();
-    // const { users } = usersArr.data;
-
-    const eventsRes = await fetch(`${API_URL}/events`);
-    const eventsArr = await eventsRes.json();
-    const { events } = eventsArr.data;
-
-    state.clients = clients;
-    state.employees = employees;
-    state.cases = cases;
-    state.tasks = tasks;
-    // state.users = users;
-    state.events = events;
-    return (typeOfData && state.typeOfData) || state;
-  } catch (err) {
-    console.error(`${err}💣💣💣💣`);
-    throw err;
+    // Combine the data as needed
+    const combinedData = {
+      cases: casesData.data,
+      clients: clientsData.data,
+    };
+    return combinedData;
+  } catch (error) {
+    console.error("Error loading dashboard data:", error);
   }
 };
 

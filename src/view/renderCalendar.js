@@ -44,9 +44,7 @@ class RenderCalendar extends Views {
         info.jsEvent.target.dispatchEvent(ev);
       },
 
-      events: this._data.events.filter(
-        (e) => e.assignedTo === this._currentUser.employeeId
-      ),
+      events: this._data,
     });
     // Delaying rendering by a short interval as it produce CSS Issues otherwise
     setTimeout(() => {
