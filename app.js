@@ -14,8 +14,6 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
 //  Start Server
 
 export default app;

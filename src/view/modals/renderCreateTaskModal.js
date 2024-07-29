@@ -2,22 +2,7 @@ import { API_URL } from "../../utils/config.js";
 import { getDateTimeString } from "../../utils/helpers.js";
 
 export default async function renderCreateTaskModal(modalData, parentElm) {
-  const curTask = modalData;
-  console.log(curTask);
-
-  // function empIdtoName(assignedToId, modalData) {
-  //   return modalData.employees
-  //     .filter((i) => i.employeeId === assignedToId)
-  //     .map((i) => i.name)
-  //     .join("");
-  // }
-
-  // function clientIdToName(clientId, modalData) {
-  //   return modalData.clients
-  //     .filter((c) => c.id === clientId)
-  //     .map((c) => c.name)
-  //     .join("");
-  // }
+  const curTask = modalData || {};
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;

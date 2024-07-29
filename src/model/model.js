@@ -164,7 +164,6 @@ export const getCurTask = async function (id) {
   const res = await fetch(`${API_URL}/tasks/${id.split("?")[1].slice(1)}`);
   const data = await res.json();
   const curTask = data.data.task;
-  console.log(curTask);
   return curTask;
 };
 

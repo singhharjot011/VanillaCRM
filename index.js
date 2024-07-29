@@ -7,6 +7,8 @@ import caseRouter from "./routes/caseRoutes.js";
 import eventRouter from "./routes/eventRoutes.js";
 import taskRouter from "./routes/taskRoutes.js";
 import cors from "cors";
+import appError from "./src/utils/appError.js";
+import { globalErrorHandler } from "./src/controller/errorController.js";
 
 dotenv.config({ path: "./config.env" });
 
@@ -47,6 +49,12 @@ mongoose
   })
   .then(() => console.log("DB Connection Successful"))
   .catch((err) => console.error("DB Connection Error:", err));
+
+app.all("*", (req, res, next) => {
+  next(new appError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler);
 
 app.listen(PORT, () => {
   console.log(`App running on port ${PORT}...`);

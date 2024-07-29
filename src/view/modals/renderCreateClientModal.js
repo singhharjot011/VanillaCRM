@@ -1,7 +1,7 @@
 // import { getDateString } from "../../utils/helpers.js";
 
-export default function renderCreateClientModal(modalData, parentElm ) {
-  const curClient = modalData;
+export default function renderCreateClientModal(modalData, parentElm) {
+  const curClient = modalData || {};
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
   modalElement.classList.add("modal");

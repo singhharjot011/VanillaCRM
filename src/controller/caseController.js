@@ -56,6 +56,8 @@ const getCase = async (req, res) => {
   }
 };
 
+
+
 const createCase = async (req, res) => {
   try {
     const newCase = await Case.create(req.body);

@@ -55,14 +55,14 @@ const renderData = async function (typeOfData) {
         renderModal.addHandlerModal(clientData, id);
         break;
       case "new-client":
-        renderModal.addHandlerModal(data, id, controlHandleClient);
+        renderModal.addHandlerModal();
         break;
       case id.match(/^my-client\?.*$/)?.input:
         const myClientData = await model.getCurClient(id);
         renderModal.addHandlerModal(myClientData, id);
         break;
       case "new-case":
-        renderModal.addHandlerModal(data, id, controlHandleCase);
+        renderModal.addHandlerModal();
         break;
       case id.match(/^case\?.*$/)?.input:
         const caseData = await model.getCurCase(id);
@@ -73,7 +73,7 @@ const renderData = async function (typeOfData) {
         renderModal.addHandlerModal(taskData, id);
         break;
       case "new-task":
-        renderModal.addHandlerModal(data, id, controlHandleTask, currentUser);
+        renderModal.addHandlerModal();
         break;
       default:
         renderPageNotFound.render(null, null, null);

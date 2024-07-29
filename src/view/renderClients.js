@@ -2,42 +2,16 @@ import Views from "./views.js";
 import { getDateTimeString, formatPhoneNumber } from "../utils/helpers.js";
 
 class RenderClients extends Views {
-  _getLatestCaseId(clientId) {
-    return "placeholder";
-
-    // const allCases = this._data.cases.filter((c) => c.clientId === clientId);
-    // if (allCases.length === 0) return "N/A";
-    // const latestCaseId = allCases.sort(
-    //   (a, b) =>
-    //     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    // )[0].caseId;
-    // return allCases.length > 1 ? latestCaseId : allCases[0].caseId;
-  }
-
-  _getLatestAppointment(clientId) {
-    return "Placeholder";
-    // const allAppointments = this._data.events.filter(
-    //   (e) => e.isAppointment && e.clientId === clientId
-    // );
-    // if (allAppointments?.length === 0) return "N/A";
-    // if (allAppointments?.length === 1)
-    //   return `<strong>${allAppointments[0].title}</strong> on ${allAppointments[0].start}`;
-    // const latestAppointment = allAppointments.sort(
-    //   (a, b) => b.start.getTime() - a.start.getTime()
-    // );
-    // return latestAppointment[0].title + latestAppointment[0].start;
-  }
+  _clientCasesData;
 
   _generateMarkup() {
-    setTimeout(() => {
-      //  Create Client Button
-      const createClientBtn =
-        this._parentElement.querySelector("#create-client-btn");
-      createClientBtn?.addEventListener(
-        "click",
-        this._dispatchCustomEvent.bind(this)
-      );
-    }, 5);
+    //  Create Client Button
+    this._parentElement.addEventListener("click", (e) => {
+      if (e.target.id === "create-client-btn") {
+        window.location.hash = "new-client";
+      }
+    });
+
 
     return `
     <div class="table-row-horizontal">

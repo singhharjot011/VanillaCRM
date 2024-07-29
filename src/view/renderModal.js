@@ -36,23 +36,16 @@ class RenderModal extends Views {
     });
 
     if (curHashId === "new-client") {
-      renderCreateClientModal(null, this._modalData, this._parentElement);
+      renderCreateClientModal(null, this._parentElement);
     }
 
     if (curHashId === "new-task") {
-      renderCreateTaskModal(
-        null,
-        this._modalData,
-        this._parentElement,
-        curHashId,
-        currentUser
-      );
+      renderCreateTaskModal(null, this._parentElement);
     }
 
     if (curHashId === "new-case") {
-      renderCreateCaseModal(null, this._modalData, this._parentElement);
+      renderCreateCaseModal(null, this._parentElement);
     }
-
     if (actualId) {
       switch (actualId) {
         case actualId.match(/^I.*$/)?.input:
@@ -72,18 +65,7 @@ class RenderModal extends Views {
       renderEventModal(e.detail, this._parentElement, this._modalData);
     });
 
-    this._parentElement.addEventListener("custom:createCaseClicked", (e) => {
-      window.location.hash = "new-case";
-    });
-
-    this._parentElement.addEventListener("custom:createClientClicked", (e) => {
-      window.location.hash = "new-client";
-    });
-
-    this._parentElement.addEventListener("custom:createTaskClicked", (e) => {
-      window.location.hash = "new-task";
-    });
-
+ 
     // Click event listener for closing modals
     this._parentElement.addEventListener("click", (e) => {
       if (e.target.closest(".close-icon")) {
@@ -161,7 +143,7 @@ class RenderModal extends Views {
         const invalidFields = [];
 
         const newClientObj = {
-          id: `I${101 + this._modalData.clients.length}`,
+          id: `I${101 + this._modalData?.clients.length}`,
           name: newName,
           email: newEmail,
           phone: newPhone,

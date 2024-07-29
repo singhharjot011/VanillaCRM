@@ -1,21 +1,8 @@
 // import { getDateString } from "../../utils/helpers.js";
 
 export default function renderCreateCaseModal(modalData, parentElm) {
-  const curCase = modalData;
+  const curCase = modalData || {};
   let curClient = {};
-  // if (id) {
-  //   curCase = modalData.cases.filter((c) => c.caseId === id)[0];
-  //   curClient = modalData.clients.filter(
-  //     (cl) => cl.id === curCase?.clientId
-  //   )[0];
-  // }
-
-  // function empIdtoName(assignedToId) {
-  //   return modalData.employees
-  //     .filter((i) => i.employeeId === assignedToId)
-  //     .map((i) => i.name)
-  //     .join("");
-  // }
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;

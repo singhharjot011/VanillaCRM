@@ -2,14 +2,12 @@ import Views from "./views.js";
 
 class RenderTasks extends Views {
   _generateMarkup() {
-    setTimeout(() => {
-      const createTaskBtn =
-        this._parentElement.querySelector("#create-task-btn");
-      createTaskBtn.addEventListener(
-        "click",
-        this._dispatchCustomEvent.bind(this)
-      );
-    }, 0);
+    this._parentElement.addEventListener("click", (e) => {
+      if (e.target.id === "create-task-btn") {
+        window.location.hash = "new-task";
+      }
+    });
+
     return `
     <div class="table-row-horizontal">
     <h1 class="heading"> Tasks</h1>
@@ -52,14 +50,6 @@ class RenderTasks extends Views {
       )
       .join("")}
   </table>`;
-  }
-
-  _dispatchCustomEvent(e) {
-    const ev = new CustomEvent("custom:createTaskClicked", {
-      bubbles: true,
-      detail: {},
-    });
-    this._parentElement.dispatchEvent(ev);
   }
 }
 

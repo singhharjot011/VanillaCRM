@@ -28,6 +28,12 @@ export default class Views {
     });
   }
 
+  addHandlerClientCase(handler) {
+    console.log('reached')
+    const data = handler("667cd4733a8aa425a277070e");
+    return data;
+  }
+
   renderSpinner(status = "Loading...") {
     const markup = `
         <div class="spinner" role="status">

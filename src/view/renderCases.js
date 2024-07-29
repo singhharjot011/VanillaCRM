@@ -20,14 +20,11 @@ class RenderCases extends Views {
   }
 
   _generateMarkup() {
-    setTimeout(() => {
-      const createCaseBtn =
-        this._parentElement.querySelector("#create-case-btn");
-      createCaseBtn.addEventListener(
-        "click",
-        this._dispatchCustomEvent.bind(this)
-      );
-    }, 0);
+    this._parentElement.addEventListener("click", (e) => {
+      if (e.target.id === "create-case-btn") {
+        window.location.hash = "new-case";
+      }
+    });
 
     return `<div class="table-row-horizontal">
     <h1 class="heading"> Cases </h1>
@@ -76,13 +73,7 @@ class RenderCases extends Views {
   </table>`;
   }
 
-  _dispatchCustomEvent(e) {
-    const ev = new CustomEvent("custom:createCaseClicked", {
-      bubbles: true,
-      detail: {},
-    });
-    this._parentElement.dispatchEvent(ev);
-  }
+
 }
 
 export default new RenderCases();

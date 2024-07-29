@@ -3,7 +3,7 @@ import {
   createClient,
   getAllClients,
   getClient,
-  getDataForLastDays
+  getDataForLastDays,
 } from "../src/controller/clientController.js";
 
 const clientRouter = express.Router();
