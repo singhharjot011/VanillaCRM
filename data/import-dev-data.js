@@ -7,14 +7,17 @@ import Case from "../src/model/caseModel.js";
 import Task from "../src/model/taskModel.js";
 import Event from "../src/model/eventModel.js";
 
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "./../config.env" });
 
-const DB = process.env.DATABASE.replace(
-  "<PASSWORD>",
-  process.env.DATABASE_PASSWORD
-);
+console.log(process.env);
 
-console.log(process.argv);
+const DB =
+  "mongodb+srv://harjot:Sum%21mer%40@cluster0.ga83gzs.mongodb.net/CRM?retryWrites=true&w=majority&appName=Cluster0";
+
+// const DB = process.env.DATABASE.replace(
+//   "<PASSWORD>",
+//   process.env.DATABASE_PASSWORD
+// );
 
 mongoose
   .connect(DB, {

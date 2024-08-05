@@ -29,7 +29,7 @@ export default class Views {
   }
 
   addHandlerClientCase(handler) {
-    console.log('reached')
+    console.log("reached");
     const data = handler("667cd4733a8aa425a277070e");
     return data;
   }
@@ -52,31 +52,27 @@ export default class Views {
   // Some helper functions for rendering data
 
   _employeeIdToName(assignedToId, data) {
-    if (data) this._data = data;
-    return this._data.employees
+    return data.employees
       .filter((i) => i.employeeId === assignedToId)
       .map((i) => i.name)
       .join("");
   }
 
   _employeeNameToId(assignedToName, data) {
-    if (data) this._data = data;
-    return this._data.employees
+    return data.employees
       .filter((e) => e.name === assignedToName)
       .map((e) => e.employeeId)
       .join("");
   }
 
   _clientNameToId(clientName, data) {
-    if (data) this._data = data;
-    return this._data.clients
+    return data.clients
       .filter((c) => c.name === clientName)
       .map((c) => c.id)
       .join("");
   }
   _clientIdToName(clientId, data) {
-    if (data) this._data = data;
-    return this._data.clients
+    return data.clients
       .filter((c) => c.id === clientId)
       .map((c) => c.name)
       .join("");

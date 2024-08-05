@@ -1,7 +1,22 @@
 // import { getDateString } from "../../utils/helpers.js";
 
-export default function renderCreateClientModal(modalData, parentElm) {
+export default function renderCreateClientModal(
+  modalData,
+  parentElm,
+  completeData
+) {
   const curClient = modalData || {};
+
+  const consultantsData = modalData.employees
+    ? modalData.employees
+    : completeData.employees;
+  const consultants = consultantsData.map((c) => c.name);
+
+  function getEmployeeIdToName(empId) {
+    const empName = consultantsData.find((c) => c.employeeId === empId).name;
+    return empName;
+  }
+
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
   modalElement.classList.add("modal");
@@ -137,7 +152,17 @@ export default function renderCreateClientModal(modalData, parentElm) {
               id="client-consultant"
               name="client-consultant"
             >
-              Placeholder
+             ${consultants.map(
+               (c) =>
+                 `<option ${
+                   curClient.consultant &&
+                   getEmployeeIdToName(curClient.consultant)
+                     .toLowerCase()
+                     .trim() === c.toLowerCase().trim()
+                     ? "selected"
+                     : ""
+                 }>${c}</option>`
+             )}
               </select>
             </div>
           </div>

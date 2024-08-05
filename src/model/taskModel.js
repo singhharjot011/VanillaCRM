@@ -5,6 +5,9 @@ const taskSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  clientId: {
+    type: String,
+  },
   assignedTo: {
     type: String,
     required: [true, "Consultant Name is required"],
@@ -20,6 +23,9 @@ const taskSchema = new mongoose.Schema({
   due: {
     type: String,
   },
+  taskCompletionNotes: {
+    type: String,
+  },
   createdAt: {
     type: Date,
     default: new Date().toISOString(),
@@ -27,6 +33,9 @@ const taskSchema = new mongoose.Schema({
   completed: {
     type: Boolean,
     default: false,
+  },
+  completedAt: {
+    type: Date,
   },
   deleted: {
     type: Boolean,

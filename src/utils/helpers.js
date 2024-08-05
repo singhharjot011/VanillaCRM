@@ -1,4 +1,4 @@
-function getDateTimeString(ISODate) {
+function getDateTimeString(ISODate) { 
   const fullDate = new Date(ISODate);
 
   const monthArray = [

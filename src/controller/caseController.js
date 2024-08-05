@@ -1,4 +1,5 @@
 import Case from "../model/caseModel.js";
+import catchAsync from "../utils/catchAsync.js";
 
 const getAllCases = async (req, res) => {
   try {
@@ -56,7 +57,14 @@ const getCase = async (req, res) => {
   }
 };
 
-
+const updateCase = catchAsync(async (req, res, next) => {
+  const caseEntity = await Case.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json({ status: "success", data: { caseEntity } });
+  next();
+});
 
 const createCase = async (req, res) => {
   try {
@@ -74,4 +82,4 @@ const createCase = async (req, res) => {
   }
 };
 
-export { getAllCases, getCase, createCase, getDataForLastDays };
+export { getAllCases, getCase, createCase, getDataForLastDays, updateCase };

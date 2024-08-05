@@ -4,13 +4,14 @@ import {
   getAllClients,
   getClient,
   getDataForLastDays,
+  updateClient,
 } from "../src/controller/clientController.js";
 
 const clientRouter = express.Router();
 
 clientRouter.route("/").get(getAllClients).post(createClient);
 
-clientRouter.route("/:id").get(getClient);
+clientRouter.route("/:id").get(getClient).patch(updateClient);
 
 clientRouter.route("/data/:days").get(getDataForLastDays);
 

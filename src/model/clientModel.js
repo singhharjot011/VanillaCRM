@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 const clientSchema = new mongoose.Schema({
-  id: String,
+  id: { type: String, unique: true },
   name: {
     type: String,
     required: [true, "Client Name is required"],
     unique: true,
+    collation: { locale: "en", strength: 2 },
   },
   email: {
     type: String,

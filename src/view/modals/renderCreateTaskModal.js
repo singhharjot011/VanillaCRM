@@ -1,8 +1,22 @@
 import { API_URL } from "../../utils/config.js";
 import { getDateTimeString } from "../../utils/helpers.js";
 
-export default async function renderCreateTaskModal(modalData, parentElm) {
+export default async function renderCreateTaskModal(
+  modalData,
+  parentElm,
+  completeData
+) {
   const curTask = modalData || {};
+
+  const consultantsData = modalData.employees
+    ? modalData.employees
+    : completeData.employees;
+  const consultants = consultantsData.map((c) => c.name);
+
+  function getEmployeeIdToName(empId) {
+    const empName = consultantsData.find((c) => c.employeeId === empId).name;
+    return empName;
+  }
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
@@ -25,24 +39,30 @@ export default async function renderCreateTaskModal(modalData, parentElm) {
       <form id="task-form" class="form-class" >
 
           <div class="form-row-flex">
-              <label ${
-                !curTask.requestedBy ? `for="requested-by" ` : ""
-              } class="form-label">Requested By:  </label>
-              ${
-                !curTask.requestedBy
-                  ? `<select
-                  class=" form-input"
-                  id="requested-by"
-                  name="requested-by"
-                  disabled
-                   >
-           
-                        <option selected >ZZZZ</option>
-                    
-                </select>`
-                  : `<label  class="form-label"> ${curTask.requestedBy} </label>`
-              }
+              <label for="requested-by" 
+              class="form-label">Requested By:  </label>
+              <select
+              class=" form-input"
+              id="requested-by"
+              name="requested-by"
+            ${curTask.requestedBy ? "disabled" : ""}
+              >
+              ${consultants.map(
+                (c) =>
+                  `<option ${
+                    curTask.requestedBy &&
+                    getEmployeeIdToName(curTask.requestedBy)
+                      .toLowerCase()
+                      .trim() === c.toLowerCase().trim()
+                      ? "selected"
+                      : ""
+                  }>${c}</option>`
+              )}
+            </select>
+
+
           </div>
+
           <div class="form-row">
               <label for="assign-to" class="form-label">Assign To </label>
               <select
@@ -51,7 +71,17 @@ export default async function renderCreateTaskModal(modalData, parentElm) {
                 name="assign-to"
               ${curTask.assignedTo ? "disabled" : ""}
                 >
-                  zzzzzzzzzzzz
+                ${consultants.map(
+                  (c) =>
+                    `<option ${
+                      curTask.assignedTo &&
+                      getEmployeeIdToName(curTask.assignedTo)
+                        .toLowerCase()
+                        .trim() === c.toLowerCase().trim()
+                        ? "selected"
+                        : ""
+                    }>${c}</option>`
+                )}
               </select>
           </div>
           
@@ -62,7 +92,9 @@ export default async function renderCreateTaskModal(modalData, parentElm) {
               } >${curTask.description ? curTask.description : ""} </textarea>
           </div>
           
-          ${`<div class="form-row-flex">
+          ${`<div class="form-row-flex ${
+            curTask?.isAppointment ? "sr-only" : ""
+          } " id="due-date-box">
               <label for="due-date" class="form-label">Due Date  </label>
               <input type="date" id="due-date" class="form-input" name="due-date"  min="2020-01-01" max="2030-12-31" value="${
                 curTask.due ? curTask.due : ""
@@ -76,14 +108,26 @@ export default async function renderCreateTaskModal(modalData, parentElm) {
           <textarea id="completion-note" name="completion-note" class="form-input" rows="3" placeholder="Briefly tell about the completed task"  ${
             curTask.completedAt && `disabled`
           }>${
-                  curTask.notes && curTask.notes.length > 0 ? curTask.notes : ""
+                  curTask.taskCompletionNotes &&
+                  curTask.taskCompletionNotes.length > 0
+                    ? curTask.taskCompletionNotes
+                    : ""
                 }</textarea>
       </div>`
               : ``
           }
 
          
-          
+      <div class="form-row-flex  ${curTask._id ? "sr-only" : ""}">
+        <label for="appointment-check-new">Appointment ?</label>
+          <input
+            type="checkbox"
+            id="appointment-check-new"
+            name="appointment-check"
+
+           
+        />
+      </div>
 
 
           <div id="appointment-details">
@@ -94,10 +138,7 @@ export default async function renderCreateTaskModal(modalData, parentElm) {
                 <input type="text" class="form-input" id="client" name="client"  placeholder="Search Name"  autocomplete="off" list="clients" name="client"
                         ${
                           curTask?.clientId &&
-                          ` value="${clientIdToName(
-                            curTask.clientId,
-                            modalData
-                          )}" selected disabled`
+                          ` value="${curTask.clientId}" selected disabled`
                         }/>    
                         
                 <label for="appointment-date" class="form-label">Appointment Date  </label>

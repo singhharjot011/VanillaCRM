@@ -1,12 +1,25 @@
 import Views from "./views.js";
 
 class RenderTasks extends Views {
+  _filteredTasks;
+
+  _employeeIdToName(empId) {
+    const empName = this._data.employees.find(
+      (e) => e.employeeId === empId
+    ).name;
+    return empName;
+  }
+
   _generateMarkup() {
     this._parentElement.addEventListener("click", (e) => {
       if (e.target.id === "create-task-btn") {
         window.location.hash = "new-task";
       }
     });
+
+    this._filteredTasks = this._data.tasks.filter(
+      (t) => t.assignedTo === "E202"
+    );
 
     return `
     <div class="table-row-horizontal">
@@ -34,17 +47,17 @@ class RenderTasks extends Views {
       <td>Assigned To</td>
       <td>Date</td>
     </tr>
-    ${this._data
+    ${this._filteredTasks
       .map(
         (t) =>
           `<tr class="table-row">
             <td><a href="#task?T${t._id}">${t.id}</a></td>
             <td>${t.description}</td>
-            <td>${t.requestedBy}</td>
+            <td>${this._employeeIdToName(t.requestedBy)}</td>
             <td style="color: ${t.completed ? "green" : "red"}">${
             t.completed
           }</td>
-            <td>${t.assignedTo}</td>
+            <td>${this._employeeIdToName(t.assignedTo)}</td>
             <td>${t.appointmentDate || t.due}</td>
           </tr>`
       )

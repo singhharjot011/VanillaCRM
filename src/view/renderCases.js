@@ -11,12 +11,23 @@ class RenderCases extends Views {
       Completed: "Green",
       Referred: "Grey",
       Cancelled: "Grey",
-      Closed: "SlateGrey",
+      "Closed-Win": "SlateGrey",
+      "Closed-Lost": "SlateGrey",
     })
   );
 
   _getColor(key) {
     return this._colorMap.get(key);
+  }
+  _getClientName(clientId) {
+    return this._data.clients.find((c) => c.id === clientId).name;
+  }
+
+  _employeeIdToName(empId) {
+    const empName = this._data.employees.find(
+      (e) => e.employeeId === empId
+    ).name;
+    return empName;
   }
 
   _generateMarkup() {
@@ -52,12 +63,12 @@ class RenderCases extends Views {
       <td>Created</td>
       <td>Assigned To</td>
     </tr>
-    ${this._data
+    ${this._data.cases
       .map(
         (cases) =>
           `<tr class="table-row">
             <td><a href="#case?C${cases._id}">${cases.caseId}</a></td>
-            <td>${cases.clientId}</td>
+            <td>${this._getClientName(cases.clientId)}</td>
             <td>${cases.caseDescription}</td>
             <td>${cases.caseType}</td>
             <td style="white-space: nowrap; background-color:${this._getColor(
@@ -66,14 +77,12 @@ class RenderCases extends Views {
             cases.caseStatus
           }</td>
             <td>${getDateTimeString(cases.createdAt)}</td>
-            <td>${cases.assignedTo}</td>
+            <td>${this._employeeIdToName(cases.assignedTo)}</td>
           </tr>`
       )
       .join("")}
   </table>`;
   }
-
-
 }
 
 export default new RenderCases();

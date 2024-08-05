@@ -24,6 +24,15 @@ const createClient = catchAsync(async (req, res) => {
   });
 });
 
+const updateClient = catchAsync(async (req, res, next) => {
+  const client = await Client.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json({ status: "success", data: { client } });
+  next();
+});
+
 const getDataForLastDays = catchAsync(async (req, res) => {
   const days = parseInt(req.params.days);
 
@@ -48,4 +57,10 @@ const getDataForLastDays = catchAsync(async (req, res) => {
   });
 });
 
-export { getAllClients, createClient, getClient, getDataForLastDays };
+export {
+  getAllClients,
+  createClient,
+  getClient,
+  getDataForLastDays,
+  updateClient,
+};

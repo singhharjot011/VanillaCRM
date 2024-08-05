@@ -14,9 +14,20 @@ import renderCreateTaskModal from "./modals/renderCreateTaskModal.js";
 class RenderModal extends Views {
   _calendar;
   _modalData;
+  _completeData;
 
   constructor() {
     super();
+  }
+
+  _employeeIdToName(empId, data) {
+    const empName = data.employees.find((e) => e.employeeId === empId).name;
+    return empName;
+  }
+
+  _employeeNameToId(empName, data) {
+    const empId = data.employees.find((e) => e.name === empName).employeeId;
+    return empId;
   }
 
   addHandlerModal(
@@ -24,10 +35,12 @@ class RenderModal extends Views {
     id,
     handler,
     currentUser,
-    controlGetCurTask,
-    controlUpdateTask
+    completeData,
+    controlUpdateTask,
+    secondHandler
   ) {
     this._modalData = data;
+    this._completeData = completeData;
     let curHashId = window.location.hash.slice(1);
     let actualId = id?.split("?")[1];
 
@@ -36,36 +49,52 @@ class RenderModal extends Views {
     });
 
     if (curHashId === "new-client") {
-      renderCreateClientModal(null, this._parentElement);
+      renderCreateClientModal(this._modalData, this._parentElement);
     }
 
     if (curHashId === "new-task") {
-      renderCreateTaskModal(null, this._parentElement);
+      renderCreateTaskModal(this._modalData, this._parentElement);
     }
 
     if (curHashId === "new-case") {
-      renderCreateCaseModal(null, this._parentElement);
+      renderCreateCaseModal(this._modalData, this._parentElement);
     }
     if (actualId) {
       switch (actualId) {
         case actualId.match(/^I.*$/)?.input:
-          renderCreateClientModal(this._modalData, this._parentElement);
+          renderCreateClientModal(
+            this._modalData,
+            this._parentElement,
+            this._completeData
+          );
           break;
         case actualId.match(/^C.*$/)?.input:
-          renderCreateCaseModal(this._modalData, this._parentElement);
+          renderCreateCaseModal(
+            this._modalData,
+            this._parentElement,
+            this._completeData
+          );
           break;
         case actualId.match(/^T.*$/)?.input:
-          renderCreateTaskModal(this._modalData, this._parentElement);
+          renderCreateTaskModal(
+            this._modalData,
+            this._parentElement,
+            this._completeData
+          );
           break;
       }
     }
 
     // Event listeners for custom events
     this._parentElement.addEventListener("custom:eventClicked", (e) => {
-      renderEventModal(e.detail, this._parentElement, this._modalData);
+      renderEventModal(
+        this._modalData,
+        e.detail,
+        this._parentElement,
+        this._completeData
+      );
     });
 
- 
     // Click event listener for closing modals
     this._parentElement.addEventListener("click", (e) => {
       if (e.target.closest(".close-icon")) {
@@ -132,18 +161,19 @@ class RenderModal extends Views {
       const newCity = formMap.get("city");
       const newPostalCode = formMap.get("postal-code");
       const newProvince = formMap.get("province");
-      const newClientNote = formMap.get("client-note");
+      const newClientNote = formMap.get("client-note").trim();
       const newConsultant = this._employeeNameToId(
         formMap.get("client-consultant"),
-        this._modalData
+        this._completeData || this._modalData
       );
 
       if (curHashId === "new-client") {
         const missingFields = [];
         const invalidFields = [];
 
+        const numberOfClients = this._modalData.clients.length;
         const newClientObj = {
-          id: `I${101 + this._modalData?.clients.length}`,
+          id: `I${101 + numberOfClients}`,
           name: newName,
           email: newEmail,
           phone: newPhone,
@@ -153,14 +183,16 @@ class RenderModal extends Views {
           city: newCity,
           province: newProvince,
           postalCode: newPostalCode,
-          // createdBy:
+          createdBy: "E202",
           createdAt: new Date().toISOString(),
           isLead: true,
         };
 
         !newName.trim() && missingFields.push("Name");
         !newEmail && missingFields.push("Email Address");
-        this._modalData.clients.find((c) => c.name === newName) &&
+        this._modalData.clients.find(
+          (c) => c.name.toLowerCase() === newName.toLowerCase()
+        ) &&
           invalidFields.push(
             "Name already exists. Please add a numerical prefix"
           );
@@ -190,9 +222,7 @@ class RenderModal extends Views {
         const missingFields = [];
         const invalidFields = [];
 
-        const originalData = this._modalData.clients.filter(
-          (cl) => cl.id === actualId
-        )[0];
+        const originalData = this._modalData;
 
         const {
           name: originalName,
@@ -207,7 +237,7 @@ class RenderModal extends Views {
         } = originalData;
 
         originalName === newName || updatedValues.push(newName);
-        originalPhone === newPhone || updatedValues.push(newPhone);
+        originalPhone == newPhone || updatedValues.push(newPhone);
         originalEmail === newEmail || updatedValues.push(newEmail);
         originalVisaType === newVisaType || updatedValues.push(newVisaType);
         originalCity === newCity || updatedValues.push(newCity);
@@ -232,7 +262,7 @@ class RenderModal extends Views {
           province: newProvince,
           consultant: newConsultant,
           clientNote: newClientNote,
-          // lastUpdatedBy: this.getCurrentLoggedInId(),
+          lastUpdatedBy: "E202",
           lastUpdatedAt: new Date().toISOString(),
         };
 
@@ -245,12 +275,19 @@ class RenderModal extends Views {
         !newPostalCode && missingFields.push("Postal Code");
         !validatePostalCode(newPostalCode) && invalidFields.push("Postal Code");
 
+        this._completeData.clients
+          .filter((c) => c.id !== updatedClientObj.id)
+          .find((c) => c.name.toLowerCase() === newName.toLowerCase()) &&
+          invalidFields.push(
+            "Name already exists. Please add a numerical prefix"
+          );
+
         if (missingFields.length > 0 || invalidFields.length > 0) {
           renderToastModal(missingFields, invalidFields, this._parentElement);
           return;
         }
 
-        handler(updatedClientObj);
+        handler(updatedClientObj, true);
         this.renderSpinner("Updating Client...");
         setTimeout(() => {
           if (curHashId.startsWith("my-client")) {
@@ -268,9 +305,12 @@ class RenderModal extends Views {
       "input[name=appointment-check]"
     );
 
+    const dueDateBox = taskForm?.querySelector("#due-date-box");
+
     appointmentCheckbox?.addEventListener("change", (e) => {
       const checked = e.target.checked;
       const appointmentDetails = taskForm.querySelector("#appointment-details");
+      dueDateBox.classList.add("sr-only");
 
       const html = `<div class="form-row">
           <label for="client" class="form-label"><strong>Client</strong> </label>
@@ -297,6 +337,7 @@ class RenderModal extends Views {
         appointmentDetails.innerHTML = html;
       } else if (!checked && appointmentDetails) {
         appointmentDetails.innerHTML = "";
+        dueDateBox.classList.remove("sr-only");
       }
     });
 
@@ -312,15 +353,25 @@ class RenderModal extends Views {
       const formMap = new Map(formData);
 
       const taskCompletionNotes = formMap.get("completion-note");
-      const assignedTo = this._employeeNameToId(
-        formMap.get("assign-to"),
-        this._modalData
-      );
-      const requestedBy = currentUser.employeeId;
+      const assignedTo =
+        formMap.get("assign-to") &&
+        this._employeeNameToId(
+          formMap.get("assign-to"),
+          this._completeData || this._modalData
+        );
+      const requestedBy =
+        formMap.get("requested-by") &&
+        this._employeeNameToId(
+          formMap.get("requested-by"),
+          this._completeData || this._modalData
+        );
       const description = formMap.get("objective");
       const due = formMap.get("due-date");
       const isAppointment = formMap.get("appointment-check") === "on";
-      const clientId = this._clientNameToId(formMap.get("client"));
+      const clientId = this._clientNameToId(
+        formMap.get("client"),
+        this._completeData || this._modalData
+      );
       const appointmentDate = formMap.get("appointment-date");
       const appointmentStartTime = formMap.get("appointment-start-time");
       const appointmentEndTime = formMap.get("appointment-end-time");
@@ -340,7 +391,7 @@ class RenderModal extends Views {
           completed: false,
           deleted: false,
           hidden: false,
-          notes: taskCompletionNotes,
+          taskCompletionNotes,
           isAppointment,
           clientId,
           appointmentDate,
@@ -367,7 +418,34 @@ class RenderModal extends Views {
           return;
         }
 
-        handler(newTaskObj);
+        // Event Object
+
+        const isAppt = newTaskObj.isAppointment;
+        const apptDate = newTaskObj.appointmentDate; // e.g., "2024-07-31"
+        const apptStartTime = newTaskObj.appointmentStartTime; // e.g., "14:30:00"
+        const dueDate = newTaskObj.due || new Date().toISOString(); // Default to current date if undefined
+
+        const start = isAppt
+          ? new Date(`${apptDate}T${apptStartTime}`).toISOString()
+          : new Date(dueDate).toISOString();
+
+        const newEventObj = {
+          id: `A${100 + this._modalData.tasks.length}`,
+          clientId: newTaskObj.isAppointment ? newTaskObj.clientId : "",
+          title: newTaskObj.description || "Untitled Task",
+          start: start,
+          end: isAppointment
+            ? new Date(
+                `${appointmentDate}T${newTaskObj.appointmentEndTime}`
+              ).toISOString()
+            : new Date(dueDate).toISOString(),
+          assignedTo: newTaskObj.assignedTo || "Unassigned",
+          taskId: newTaskObj.id,
+          classNames: isAppointment ? ["appointment"] : ["alerts"],
+        };
+
+        handler(newTaskObj, false);
+        secondHandler(newEventObj);
         this.renderSpinner("Creating Task...");
         setTimeout(() => {
           window.location.hash = "tasks";
@@ -377,16 +455,12 @@ class RenderModal extends Views {
 
         const missingFields = [];
 
-        const curTask = this._modalData.tasks.filter(
-          (t) => t.id === actualId
-        )[0];
-
-        if (curTask.completed) return;
+        const curTask = this._modalData;
 
         let updatedTaskObj = {
           ...curTask,
           completed: true,
-          notes: taskCompletionNotes,
+          taskCompletionNotes,
           completedAt: new Date().toISOString(),
         };
 
@@ -397,7 +471,20 @@ class RenderModal extends Views {
           return;
         }
 
-        controlUpdateTask(curHashId.slice(1), updatedTaskObj);
+        const curEvent = this._completeData.events.find(
+          (ev) => ev.taskId === curTask.id
+        );
+
+        let updatedEventObj = {
+          ...curEvent,
+          completed: updatedTaskObj.completed,
+          classNames: ["completed"],
+        };
+
+        console.log(updatedEventObj);
+
+        handler(updatedTaskObj, true);
+        secondHandler(updatedEventObj, true);
         this.renderSpinner("Updating Task...");
         setTimeout(() => {
           window.location.hash = "tasks";
@@ -427,9 +514,10 @@ class RenderModal extends Views {
       input.addEventListener("focusout", (e) => {
         if (!e.target.getAttribute("name")) return;
         const formData = new FormData(caseForm);
-        const client = this._modalData.clients.filter(
-          (c) => c.name === formData.get("client")
-        )[0];
+        const client =
+          this._modalData.clients.filter(
+            (c) => c.name === formData.get("client")
+          )[0] || {};
         emailAddressLabel.textContent = client.email;
         phoneNumberLabel.textContent = client.phone;
         visaTypeLabel.textContent = client.visaType;
@@ -446,17 +534,22 @@ class RenderModal extends Views {
       const formData = new FormData(caseForm);
       const formMap = new Map(formData);
 
-      const newClient = this._clientNameToId(
-        formMap.get("client"),
-        this._modalData
-      );
+      // const newClient = this._clientNameToId(
+      //   formMap.get("client"),
+      //   this._modalData
+      // );
       const newCaseType = formMap.get("case-type");
       const newCaseStatus = formMap.get("case-status");
       const newCaseDescription = formMap.get("case-description");
       const newCaseConsultant = this._employeeNameToId(
-        formMap.get("case-consultant")
+        formMap.get("case-consultant"),
+        this._completeData || this._modalData
       );
       const newCaseNote = formMap.get("case-note");
+      const newClient = this._clientNameToId(
+        formMap.get("client"),
+        this._completeData || this._modalData
+      );
 
       if (curHashId === "new-case") {
         const missingFields = [];
@@ -484,12 +577,18 @@ class RenderModal extends Views {
         !newClient && missingFields.push("Client Name");
         !newCaseNote.trim() && missingFields.push("Notes");
 
+        const curClient = this._modalData.clients.find(
+          (c) => c.id === newClient
+        );
+        // Converting lead to client
+
         if (missingFields.length > 0) {
           renderToastModal(missingFields, null, this._parentElement);
           return;
         }
 
         handler(newCaseObj);
+        secondHandler({ ...curClient, isLead: false }, true);
         this.renderSpinner("Creating Case...");
         setTimeout(() => {
           window.location.hash = "cases";
@@ -497,13 +596,12 @@ class RenderModal extends Views {
       } else {
         // Code for Updating Case starts here
 
+        let isNoteUpdated = false;
         let updatedCaseObj = {};
 
         const updatedValues = [];
 
-        const originalData = this._modalData.cases.filter(
-          (c) => c.caseId === actualId
-        )[0];
+        const originalData = this._modalData;
 
         const {
           caseType: originalCaseType,
@@ -522,7 +620,9 @@ class RenderModal extends Views {
           updatedValues.push(newCaseConsultant);
         originalLatestCaseNote[
           originalLatestCaseNote.length - 1
-        ].note.trim() === newCaseNote || updatedValues.push(newCaseNote);
+        ].note.trim() === newCaseNote ||
+          newCaseNote.trim() === "" ||
+          (updatedValues.push(newCaseNote) && (isNoteUpdated = true));
 
         if (updatedValues.length === 0) return;
 
@@ -532,19 +632,22 @@ class RenderModal extends Views {
           caseStatus: newCaseStatus,
           caseDescription: newCaseDescription,
           assignedTo: newCaseConsultant,
-          notes: [
-            ...originalData.notes,
-            {
-              note: newCaseNote,
-              writtenBy: "E202",
-              writtenAt: new Date().toISOString(),
-            },
-          ],
+          notes: isNoteUpdated
+            ? [
+                ...originalData.notes,
+                {
+                  note: newCaseNote,
+                  writtenBy: "E202",
+                  writtenAt: new Date().toISOString(),
+                },
+              ]
+            : originalData.notes,
           // lastUpdatedBy: this.getCurrentLoggedInId(),
           lastUpdatedAt: new Date().toISOString(),
         };
-        handler(updatedCaseObj);
-        this.renderSpinner("Updating Client...");
+
+        handler(updatedCaseObj, true);
+        this.renderSpinner("Updating Case...");
         setTimeout(() => {
           window.location.hash = "cases";
         }, 500);

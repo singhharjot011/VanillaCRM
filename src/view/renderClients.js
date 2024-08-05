@@ -4,6 +4,39 @@ import { getDateTimeString, formatPhoneNumber } from "../utils/helpers.js";
 class RenderClients extends Views {
   _clientCasesData;
 
+  _getLatestCase(clientId) {
+    const latestCase = this._data.cases
+      .filter((c) => c.clientId === clientId)
+      .sort((a, b) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      })[0];
+
+    return latestCase
+      ? { caseId: latestCase.caseId, _id: latestCase._id }
+      : null;
+  }
+
+  _getLatestAppointment(clientId) {
+    const latestAppointment = this._data.tasks
+      .filter((t) => t.clientId === clientId)
+      .sort((a, b) => {
+        return new Date(b.start).getTime() - new Date(a.start).getTime();
+      })[0];
+
+    return latestAppointment
+      ? { taskId: latestAppointment.id, _id: latestAppointment._id }
+      : null;
+  }
+
+  _employeeIdToName(empId) {
+    const empName = this._data.employees.find(
+      (e) => e.employeeId === empId
+    ).name;
+    return empName;
+  }
+
   _generateMarkup() {
     //  Create Client Button
     this._parentElement.addEventListener("click", (e) => {
@@ -11,7 +44,6 @@ class RenderClients extends Views {
         window.location.hash = "new-client";
       }
     });
-
 
     return `
     <div class="table-row-horizontal">
@@ -45,7 +77,7 @@ class RenderClients extends Views {
         </tr>
       </thead>
       <tbody>
-      ${this._data
+      ${this._data.clients
         .map(
           (c) =>
             `<tr class="table-row">
@@ -59,11 +91,25 @@ class RenderClients extends Views {
               <td style="text-wrap:nowrap;">${c.email}</td>
               <td>${c.visaType}</td>
               <td >${getDateTimeString(c.createdAt)}</td>
-              <td>z</td>
+              <td style="text-wrap:nowrap;">${
+                this._getLatestCase(c.id)
+                  ? `<a href="#case?C${this._getLatestCase(c.id)._id}">${
+                      this._getLatestCase(c.id).caseId
+                    }</a>`
+                  : "N/A"
+              }</td>
               <td>
-                z
+              ${
+                this._getLatestAppointment(c.id)
+                  ? `<a href="#task?T${this._getLatestAppointment(c.id)._id}">${
+                      this._getLatestAppointment(c.id).taskId
+                    }</a>`
+                  : "N/A"
+              }
               </td>
-              <td>${c.consultant}</td>
+              <td style="text-wrap:nowrap;">${this._employeeIdToName(
+                c.consultant
+              )}</td>
             </tr>`
         )
         .join("")}
@@ -76,14 +122,6 @@ class RenderClients extends Views {
       </div>
     </div>
     `;
-  }
-
-  _dispatchCustomEvent() {
-    const ev = new CustomEvent("custom:createClientClicked", {
-      bubbles: true,
-      detail: {},
-    });
-    this._parentElement.dispatchEvent(ev);
   }
 }
 

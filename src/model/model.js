@@ -62,39 +62,81 @@ export const loadDashboardData = async (days = 7) => {
   }
 };
 
-export const handleClientObject = async function (clientObj) {
+export const handleClientObject = async function (clientObj, isUpdating) {
   try {
     // Client exists, so update it
-    const result = await fetch(`${API_URL}/clients`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(clientObj),
-    });
-    return result;
+    if (isUpdating) {
+      const result = await fetch(`${API_URL}/clients/${clientObj._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(clientObj),
+      });
+      return result;
+    } else {
+      const result = await fetch(`${API_URL}/clients`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(clientObj),
+      });
+      return result;
+    }
   } catch (err) {
     console.error("Error handling client object:", err.message);
   }
 };
 
-export const handleTaskObject = async function (taskObj) {
+export const handleTaskObject = async function (taskObj, isUpdating) {
   try {
-    const response = await fetch(`${API_URL}/tasks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(taskObj),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (isUpdating) {
+      const result = await fetch(`${API_URL}/tasks/${taskObj._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskObj),
+      });
+      return result;
+    } else {
+      const result = await fetch(`${API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskObj),
+      });
+      return result;
     }
+  } catch (err) {
+    console.error("Error handling task object:", err.message);
+    throw err;
+  }
+};
 
-    // Parse the response as JSON
-    const result = await response.json();
-    return result;
+export const handleEventObject = async function (eventObj, isUpdating) {
+  try {
+    if (isUpdating) {
+      const result = await fetch(`${API_URL}/events/${eventObj._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(eventObj),
+      });
+      return result;
+    } else {
+      const result = await fetch(`${API_URL}/events`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(eventObj),
+      });
+      return result;
+    }
   } catch (err) {
     console.error("Error handling task object:", err.message);
     throw err;
@@ -142,19 +184,30 @@ export const handleTaskObject = async function (taskObj) {
 //   }
 // };
 
-export const handleCaseObject = async function (caseObj) {
+export const handleCaseObject = async function (caseObj, isUpdating) {
   try {
-    // case exists, so update it
-    const result = await fetch(`${API_URL}/cases`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(caseObj),
-    });
-    return result;
+    // Client exists, so update it
+    if (isUpdating) {
+      const result = await fetch(`${API_URL}/cases/${caseObj._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(caseObj),
+      });
+      return result;
+    } else {
+      const result = await fetch(`${API_URL}/cases`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(caseObj),
+      });
+      return result;
+    }
   } catch (err) {
-    console.error("Error handling case object:", err.message);
+    console.error("Error handling client object:", err.message);
   }
 
   // Patching client to isLead field is pending

@@ -1,8 +1,30 @@
-// import { getDateString } from "../../utils/helpers.js";
+import { getDateTimeString } from "../../utils/helpers.js";
 
-export default function renderCreateCaseModal(modalData, parentElm) {
+export default function renderCreateCaseModal(
+  modalData,
+  parentElm,
+  completeData
+) {
   const curCase = modalData || {};
   let curClient = {};
+  curClient = completeData
+    ? completeData.clients.find((cl) => cl.id === curCase.clientId)
+    : {};
+
+  const clientsData = modalData.clients
+    ? modalData.clients
+    : completeData.clients;
+  const clients = clientsData.map((c) => c.name);
+
+  const consultantsData = modalData.employees
+    ? modalData.employees
+    : completeData.employees;
+  const consultants = consultantsData.map((c) => c.name);
+
+  function getEmployeeIdToName(empId) {
+    const empName = consultantsData.find((c) => c.employeeId === empId).name;
+    return empName;
+  }
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
@@ -31,9 +53,11 @@ export default function renderCreateCaseModal(modalData, parentElm) {
                       curClient?.name || ""
                     } </label> `
                   : `<input type="text" class="form-input" id="client" name="client"  placeholder="Search Name"         autocomplete="off" list="clients" name="client">
-                      <datalist id="clients">
-                      list of client
-                      </datalist>`
+                  <datalist id="clients">
+                    ${clients
+                      .map((client) => `<option value="${client}">`)
+                      .join("")}
+                  </datalist>`
               }
 
           </div>
@@ -103,7 +127,8 @@ export default function renderCreateCaseModal(modalData, parentElm) {
               "Completed",
               "Referred",
               "Cancelled",
-              "Closed",
+              "Closed-Win",
+              "Closed-Lost",
             ].map(
               (i) =>
                 `<option ${
@@ -119,7 +144,17 @@ export default function renderCreateCaseModal(modalData, parentElm) {
               id="case-consultant"
               name="case-consultant"
             >
-             List of employees
+            ${consultants.map(
+              (c) =>
+                `<option ${
+                  curCase.assignedTo &&
+                  getEmployeeIdToName(curCase.assignedTo)
+                    .toLowerCase()
+                    .trim() === c.toLowerCase().trim()
+                    ? "selected"
+                    : ""
+                }>${c}</option>`
+            )}
               </select>
             </div>
           </div>
@@ -142,8 +177,12 @@ export default function renderCreateCaseModal(modalData, parentElm) {
               .map(
                 (n) =>
                   `<div class="form-row-flex" style="gap:1rem;">
-                    <strong><p>${n.writtenAt}&nbsp;</p></strong>
-                    <div style="display: flex; flex-grow: 1; "><p style="text-decoration: underline;">${n.writtenBy}:&nbsp </p><p>${n.note}</p> </div>
+                    <strong><p style="font-size:1.3rem; text-wrap:nowrap;">${getDateTimeString(
+                      n.writtenAt
+                    )}&nbsp;</p></strong>
+                    <div style="display: flex; flex-grow: 1; gap:1rem; "><p style="text-decoration: underline;font-size:1.3rem;  text-wrap:nowrap;">${getEmployeeIdToName(
+                      n.writtenBy
+                    )}:&nbsp </p><pre>${n.note}</pre> </div>
                 </div>`
               )
               .join(`\n`)}

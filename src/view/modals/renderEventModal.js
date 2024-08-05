@@ -1,13 +1,18 @@
 import { getDateTimeString } from "../../utils/helpers.js";
 
-export default function renderEventModal(event, parentElm, modalData) {
-  const fullEvent = modalData.events.filter((e) => e.id === event.id)[0];
+export default function renderEventModal(
+  eventData,
+  event,
+  parentElm,
+  completeData
+) {
 
-  const client = modalData.clients.filter(
-    (c) => c.id === fullEvent?.clientId
-  )[0];
+  const fullEvent = eventData.find((e) => e.id === event.id);
 
-  const task = modalData.tasks.filter((t) => t.id === fullEvent?.taskId)[0];
+  const client = completeData.clients.find((c) => c.id === fullEvent.clientId);
+
+
+  const task = completeData.tasks.find((t) => t.id === fullEvent?.taskId);
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
@@ -43,8 +48,8 @@ export default function renderEventModal(event, parentElm, modalData) {
           }
 
       </div>
-      <button class="btn-medium btn-primary"><a href="#task?${
-        task.id
+      <button class="btn-medium btn-primary"><a href="#task?T${
+        task._id
       }" style="text-decoration:none; color: white; ">Open Task</a></button>
     </div>`;
 

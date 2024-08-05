@@ -13,7 +13,7 @@
     "start": "nodemon index.js"
   },
   "name": "crm",
-  "description": "This CRM is designed to help you manage your clients and tasks efficiently. Our key features include:",
+  "description": "This CRM is designed to help you manage your clients and tasks efficiently. ",
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",

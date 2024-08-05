@@ -22,8 +22,16 @@ const renderData = async function (typeOfData) {
 
     switch (id) {
       case "calendar":
-        data = await model.loadData("events");
-        renderCalendar.render(data);
+        const eventData = await model.loadData("events");
+        data = await model.loadData();
+        renderCalendar.render(eventData);
+        renderModal.addHandlerModal(
+          eventData,
+          id,
+          controlHandleEvent,
+          null,
+          data
+        );
         break;
       case "dashboard":
         const newsData = await model.getNews();
@@ -32,19 +40,19 @@ const renderData = async function (typeOfData) {
         renderDashboard.render(data, null, newsData);
         break;
       case "clients":
-        data = await model.loadData(typeOfData);
+        data = await model.loadData();
         renderClients.render(data);
         break;
       case "my-clients":
-        data = await model.loadData("clients");
+        data = await model.loadData();
         renderMyClients.render(data);
         break;
       case "tasks":
-        data = await model.loadData(typeOfData);
+        data = await model.loadData();
         renderTasks.render(data);
         break;
       case "cases":
-        data = await model.loadData(typeOfData);
+        data = await model.loadData();
         renderCases.render(data);
         break;
       case "knowledge-base":
@@ -52,28 +60,79 @@ const renderData = async function (typeOfData) {
         break;
       case id.match(/^client\?.*$/)?.input:
         const clientData = await model.getCurClient(id);
-        renderModal.addHandlerModal(clientData, id);
+        data = await model.loadData();
+        renderModal.addHandlerModal(
+          clientData,
+          id,
+          controlHandleClient,
+          null,
+          data
+        );
         break;
       case "new-client":
-        renderModal.addHandlerModal();
+        data = await model.loadData();
+        renderModal.addHandlerModal(data, null, controlHandleClient);
         break;
       case id.match(/^my-client\?.*$/)?.input:
         const myClientData = await model.getCurClient(id);
-        renderModal.addHandlerModal(myClientData, id);
+        data = await model.loadData();
+        renderModal.addHandlerModal(
+          myClientData,
+          id,
+          controlHandleClient,
+          null,
+          data
+        );
         break;
       case "new-case":
-        renderModal.addHandlerModal();
+        data = await model.loadData();
+        renderModal.addHandlerModal(
+          data,
+          null,
+          controlHandleCase,
+          null,
+          null,
+          null,
+          controlHandleClient
+        );
         break;
       case id.match(/^case\?.*$/)?.input:
         const caseData = await model.getCurCase(id);
-        renderModal.addHandlerModal(caseData, id);
+        data = await model.loadData();
+        renderModal.addHandlerModal(
+          caseData,
+          id,
+          controlHandleCase,
+          null,
+          data,
+          null,
+          controlHandleClient
+        );
         break;
       case id.match(/^task\?.*$/)?.input:
         const taskData = await model.getCurTask(id);
-        renderModal.addHandlerModal(taskData, id);
+        data = await model.loadData();
+        renderModal.addHandlerModal(
+          taskData,
+          id,
+          controlHandleTask,
+          null,
+          data,
+          null,
+          controlHandleEvent
+        );
         break;
       case "new-task":
-        renderModal.addHandlerModal();
+        data = await model.loadData();
+        renderModal.addHandlerModal(
+          data,
+          null,
+          controlHandleTask,
+          null,
+          null,
+          null,
+          controlHandleEvent
+        );
         break;
       default:
         renderPageNotFound.render(null, null, null);
@@ -83,27 +142,24 @@ const renderData = async function (typeOfData) {
   }
 };
 
-const controlHandleClient = function (clientObj) {
-  model.handleClientObject(clientObj);
+const controlHandleClient = function (clientObj, isUpdating) {
+  model.handleClientObject(clientObj, isUpdating);
 };
 
-const controlHandleTask = function (taskObj) {
-  model.handleTaskObject(taskObj);
+const controlHandleCase = function (caseObj, isUpdating) {
+  model.handleCaseObject(caseObj, isUpdating);
 };
 
-const controlHandleCase = function (caseObj) {
-  model.handleCaseObject(caseObj);
+const controlHandleTask = function (taskObj, isUpdating) {
+  model.handleTaskObject(taskObj, isUpdating);
+};
+
+const controlHandleEvent = function (eventObj, isUpdating) {
+  model.handleEventObject(eventObj, isUpdating);
 };
 
 const controlGetLastDaysData = async function (days) {
   return await model.loadDashboardData(days);
-};
-const controlGetCurTask = function (id) {
-  return model.getCurTask(id);
-};
-
-const controlUpdateTask = function (id, updatedTaskData) {
-  return model.updateCurTask(id, updatedTaskData);
 };
 
 const init = function () {
