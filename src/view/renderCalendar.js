@@ -4,12 +4,16 @@ class RenderCalendar extends Views {
   _parentElement = document.querySelector("#main");
   _container = document.createElement("div");
   _calendar = null;
+  _calendarData;
 
   constructor() {
     super();
   }
 
   initCalendar() {
+    this._calendarData = this._data.filter(
+      (e) => e.assignedTo === "E202" || e.requestedBy === "E202"
+    );
     this._calendar = new FullCalendar.Calendar(this._container, {
       initialView: "dayGridMonth",
       dayMaxEventRows: true, // for all non-TimeGrid views
@@ -44,7 +48,7 @@ class RenderCalendar extends Views {
         info.jsEvent.target.dispatchEvent(ev);
       },
 
-      events: this._data,
+      events: this._calendarData,
     });
     // Delaying rendering by a short interval as it produce CSS Issues otherwise
     setTimeout(() => {

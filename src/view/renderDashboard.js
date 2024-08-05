@@ -5,6 +5,8 @@ class RenderDashboard extends Views {
   _parentElement = document.querySelector("#main");
   _days = "7";
   _loading = true;
+  _pendingCases;
+  _myPendingCases;
 
   constructor() {
     super();
@@ -47,113 +49,25 @@ class RenderDashboard extends Views {
     }
   }
 
-  //   if (!type) type = "client";
-  //   if (!days) days = "7";
-  //   if (type === "client") {
-  //     switch (days) {
-  //       case "7":
-  //         return this._data.clients.filter(
-  //           (c) => getDayDifference(c.createdAt, null) <= days
-  //         ).length;
-  //       case "30":
-  //         return this._data.clients.filter(
-  //           (c) =>
-  //             getDayDifference(c.createdAt, null) <= days &&
-  //             getDayDifference(c.createdAt, null) > 7
-  //         ).length;
-  //       case "90":
-  //       case "30":
-  //         return this._data.clients.filter(
-  //           (c) =>
-  //             getDayDifference(c.createdAt, null) <= days &&
-  //             getDayDifference(c.createdAt, null) > 30
-  //         ).length;
-  //     }
-  //   }
-  //   if (type === "lead") {
-  //     switch (days) {
-  //       case "7":
-  //         return this._data.clients.filter(
-  //           (c) => c.isLead && getDayDifference(c.createdAt, null) <= days
-  //         ).length;
-  //       case "30":
-  //         return this._data.clients.filter(
-  //           (c) =>
-  //             c.isLead &&
-  //             getDayDifference(c.createdAt, null) <= days &&
-  //             getDayDifference(c.createdAt, null) > 7
-  //         ).length;
-  //       case "90":
-  //         return this._data.clients.filter(
-  //           (c) =>
-  //             c.isLead &&
-  //             getDayDifference(c.createdAt, null) <= days &&
-  //             getDayDifference(c.createdAt, null) > 30
-  //         ).length;
-  //     }
-  //   }
-  // };
-
-  // filteredCaseData = (type, days) => {
-  //   if (!type) type = "active";
-  //   if (!days) days = "7";
-  //   if (type === "active") {
-  //     switch (days) {
-  //       case "7":
-  //         return this._data.cases.filter(
-  //           (cs) =>
-  //             cs.caseStatus !== "Completed" &&
-  //             cs.caseStatus !== "Closed" &&
-  //             getDayDifference(cs.createdAt, null) <= days
-  //         ).length;
-  //       case "30":
-  //         return this._data.cases.filter(
-  //           (cs) =>
-  //             cs.caseStatus !== "Completed" &&
-  //             cs.caseStatus !== "Closed" &&
-  //             getDayDifference(cs.createdAt, null) <= days &&
-  //             getDayDifference(cs.createdAt, null) > 7
-  //         ).length;
-  //       case "90":
-  //         return this._data.cases.filter(
-  //           (cs) =>
-  //             cs.caseStatus !== "Completed" &&
-  //             cs.caseStatus !== "Closed" &&
-  //             getDayDifference(cs.createdAt, null) <= days &&
-  //             getDayDifference(cs.createdAt, null) > 30
-  //         ).length;
-  //     }
-  //   }
-  //   if (type === "closed") {
-  //     switch (days) {
-  //       case "7":
-  //         return this._data.cases.filter(
-  //           (cs) =>
-  //             cs.caseStatus === "Completed" &&
-  //             cs.caseStatus === "Closed" &&
-  //             getDayDifference(cs.createdAt, null) <= days
-  //         ).length;
-  //       case "30":
-  //         return this._data.cases.filter(
-  //           (cs) =>
-  //             cs.caseStatus === "Completed" &&
-  //             cs.caseStatus === "Closed" &&
-  //             getDayDifference(cs.createdAt, null) <= days &&
-  //             getDayDifference(cs.createdAt, null) > 7
-  //         ).length;
-  //       case "90":
-  //         return this._data.cases.filter(
-  //           (cs) =>
-  //             cs.caseStatus === "Completed" &&
-  //             cs.caseStatus === "Closed" &&
-  //             getDayDifference(cs.createdAt, null) <= days &&
-  //             getDayDifference(cs.createdAt, null) > 30
-  //         ).length;
-  //     }
-  //   }
-  // };
-
   _generateMarkup() {
+    this._pendingCases = this._data.cases.filter(
+      (c) =>
+        c.caseStatus !== "Closed-Lost" ||
+        c.caseStatus !== "Cancelled" ||
+        c.caseStatus !== "Completed" ||
+        c.caseStatus !== "Closed-Win"
+    ).length;
+
+    this._myPendingCases = this._data.cases
+      .filter(
+        (c) =>
+          c.caseStatus !== "Closed-Lost" ||
+          c.caseStatus !== "Cancelled" ||
+          c.caseStatus !== "Completed" ||
+          c.caseStatus !== "Closed-Win"
+      )
+      .filter((c) => c.assignedTo === "E202").length;
+
     setTimeout(() => {
       const filter7Days = this._parentElement.querySelector("#filter-7days");
       const filter30Days = this._parentElement.querySelector("#filter-30days");
@@ -210,9 +124,10 @@ class RenderDashboard extends Views {
             <span>${
               this._lastDaysData?.cases?.data.filter(
                 (c) =>
-                  c.caseStatus !== "Closed" ||
+                  c.caseStatus !== "Closed-Lost" ||
                   c.caseStatus !== "Cancelled" ||
-                  c.caseStatus !== "Completed"
+                  c.caseStatus !== "Completed" ||
+                  c.caseStatus !== "Closed-Win"
               ).length || "0"
             }</span>
           </div>
@@ -249,7 +164,7 @@ class RenderDashboard extends Views {
               this._data?.events
                 .filter(
                   (e) =>
-                    e.assignedTo === this._currentUser.employeeId &&
+                    e.assignedTo === "E202" &&
                     getDayDifference(null, e.start) === 0
                 )
                 .map(
@@ -257,14 +172,11 @@ class RenderDashboard extends Views {
             <div class="appointment-row ">
               ${
                 e.classNames.includes("appointment")
-                  ? `<p><span>Time: ${e.start
-                      .split(" ")
-                      .slice(-2)
-                      .join(" ")}</span> </p>
+                  ? `<p><span>Time: ${getDateTimeString(e.start)}</span> </p>
                       <p><span style="color: var(--color-green-600);" >Appt:</span> ${
                         e.title
                       }</p>
-              <p>Appointment with ${this._clientIdToName(e.clientId)} </p>`
+              <p>Appointment with 'Client Name'} </p>`
                   : `<p><span style="color: var(--color-red-700);" >Task:</span> ${e.title}</p>`
               }
               </div>
@@ -286,14 +198,11 @@ class RenderDashboard extends Views {
             <div class="appointment-row ">
               ${
                 e.classNames.includes("appointment")
-                  ? `<p><span>Time: ${e.start
-                      .split(" ")
-                      .slice(-2)
-                      .join(" ")}</span> </p>
+                  ? `<p><span>Time: ${getDateTimeString(e.start)}</span> </p>
                       <p><span style="color: var(--color-green-600);" >Appt:</span> ${
                         e.title
                       }</p>
-              <p>Appointment with ${this._clientIdToName(e.clientId)} </p>`
+              <p>Appointment with 'Client Name' </p>`
                   : `<p><span style="color: var(--color-red-700);" >Task:</span> ${e.title}</p>`
               }
               </div>
@@ -312,11 +221,11 @@ class RenderDashboard extends Views {
             <h4> Pending Cases </h4>
             <h4>My Cases</h4>
             <div class="table-row">
-              <p>${this._data?.cases.length}</p>
+              <p>${this._myPendingCases}</p>
             </div>
             <h4>Total Pending Cases</h4>
             <div class="table-row">
-              <p>${this._data?.cases.length}</p>
+              <p>${this._pendingCases}</p>
             </div>           
         </div>
       </div>

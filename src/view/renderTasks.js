@@ -18,7 +18,7 @@ class RenderTasks extends Views {
     });
 
     this._filteredTasks = this._data.tasks.filter(
-      (t) => t.assignedTo === "E202"
+      (t) => t.assignedTo === "E202" || t.requestedBy === "E202"
     );
 
     return `

@@ -603,6 +603,14 @@ button.btn-small {
   background-color: var(--color-green-600);
 }
 
+.completed {
+  color: whitesmoke;
+  background-color: var(--color-red-800);
+}
+.completed:hover {
+  background-color: var(--color-red-700);
+}
+
 .modal {
   position: fixed;
   top: 30%;

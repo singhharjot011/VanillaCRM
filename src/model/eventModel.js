@@ -19,6 +19,10 @@ const eventsSchema = new mongoose.Schema({
     type: String,
     required: [true, "Consultant Name is required"],
   },
+  requestedBy: {
+    type: String,
+    required: [true, "Consultant Name is required"],
+  },
   taskId: String,
   classNames: [String],
   clientId: String,

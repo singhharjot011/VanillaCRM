@@ -439,7 +439,8 @@ class RenderModal extends Views {
                 `${appointmentDate}T${newTaskObj.appointmentEndTime}`
               ).toISOString()
             : new Date(dueDate).toISOString(),
-          assignedTo: newTaskObj.assignedTo || "Unassigned",
+          assignedTo: newTaskObj.assignedTo,
+          requestedBy: newTaskObj.requestedBy,
           taskId: newTaskObj.id,
           classNames: isAppointment ? ["appointment"] : ["alerts"],
         };
@@ -480,8 +481,6 @@ class RenderModal extends Views {
           completed: updatedTaskObj.completed,
           classNames: ["completed"],
         };
-
-        console.log(updatedEventObj);
 
         handler(updatedTaskObj, true);
         secondHandler(updatedEventObj, true);
