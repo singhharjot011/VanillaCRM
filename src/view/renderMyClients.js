@@ -6,40 +6,36 @@ class RenderMyClients extends Views {
   _filteredData;
 
   _getFilteredData() {
-    this._filteredData = this._data.clients.filter(
+    this._filteredData = this._data?.clients?.filter(
       (c) => c.consultant === "E202"
     );
   }
 
   _getLatestCase(clientId) {
-    const latestCase = this._data.cases
-      .filter((c) => c.clientId === clientId)
-      .sort((a, b) => {
-        return a.createdAt - b.createdAt;
-      })[0];
-
+    const cases =
+      this._data.cases?.filter((c) => c.clientId === clientId) || [];
+    const latestCase = cases.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    )[0];
     return latestCase
       ? { caseId: latestCase.caseId, _id: latestCase._id }
       : null;
   }
 
   _getLatestAppointment(clientId) {
-    const latestAppointment = this._data.tasks
-      .filter((t) => t.clientId === clientId)
-      .sort((a, b) => {
-        return a.start - b.start;
-      })[0];
-
+    const tasks =
+      this._data.tasks?.filter((t) => t.clientId === clientId) || [];
+    const latestAppointment = tasks.sort(
+      (a, b) => new Date(b.start) - new Date(a.start)
+    )[0];
     return latestAppointment
       ? { taskId: latestAppointment.id, _id: latestAppointment._id }
       : null;
   }
 
   _employeeIdToName(empId) {
-    const empName = this._data.employees.find(
-      (e) => e.employeeId === empId
-    ).name;
-    return empName;
+    const employee = this._data.employees?.find((e) => e.employeeId === empId);
+    return employee?.name || "Unknown";
   }
 
   _generateMarkup() {

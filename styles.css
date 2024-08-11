@@ -148,6 +148,67 @@ danger: css`
 `,
 }; */
 
+.signup-page,
+.signin-page {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  background-color: transparent;
+}
+.signup-page > *,
+.signin-page > * {
+  z-index: 1;
+}
+
+.signup-page::before,
+.signin-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: url("./public/assets/img/signup/signup.jpg");
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+}
+
+.signup-prompt,
+.signin-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  height: max-content;
+  min-width: 600px;
+  background-color: whitesmoke;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 10px 5px 90px rgba(0, 0, 0, 0.5);
+}
+
+.signup-prompt img,
+.signin-prompt img {
+  height: 70px;
+  align-self: center;
+}
+
+.signup-form form,
+.signin-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px 0px;
+}
+
+.signup-form-button,
+.signin-form-button {
+  align-self: center;
+}
+
 button.btn-secondary {
   display: flex;
   flex-direction: center;
@@ -758,6 +819,7 @@ button.btn-small {
 
 .form-row-flex {
   display: flex;
+  gap: 0px 10px;
   /* flex-wrap: wrap; */
   justify-content: space-between;
   padding: 1.2rem 0;

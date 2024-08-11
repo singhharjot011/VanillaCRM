@@ -1,4 +1,5 @@
 import express from "express";
+import { protect } from "../src/controller/authController.js";
 import {
   createClient,
   getAllClients,
@@ -10,6 +11,7 @@ import {
 const clientRouter = express.Router();
 
 clientRouter.route("/").get(getAllClients).post(createClient);
+// clientRouter.route("/").get(protect, getAllClients).post(createClient);
 
 clientRouter.route("/:id").get(getClient).patch(updateClient);
 

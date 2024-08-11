@@ -5,8 +5,8 @@ class RenderClients extends Views {
   _clientCasesData;
 
   _getLatestCase(clientId) {
-    const latestCase = this._data.cases
-      .filter((c) => c.clientId === clientId)
+    const latestCase = this._data?.cases
+      ?.filter((c) => c.clientId === clientId)
       .sort((a, b) => {
         return (
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -19,8 +19,8 @@ class RenderClients extends Views {
   }
 
   _getLatestAppointment(clientId) {
-    const latestAppointment = this._data.tasks
-      .filter((t) => t.clientId === clientId)
+    const latestAppointment = this._data?.tasks
+      ?.filter((t) => t.clientId === clientId)
       .sort((a, b) => {
         return new Date(b.start).getTime() - new Date(a.start).getTime();
       })[0];
@@ -31,10 +31,8 @@ class RenderClients extends Views {
   }
 
   _employeeIdToName(empId) {
-    const empName = this._data.employees.find(
-      (e) => e.employeeId === empId
-    ).name;
-    return empName;
+    const employee = this._data.employees?.find((e) => e.employeeId === empId);
+    return employee?.name || "Unknown";
   }
 
   _generateMarkup() {
@@ -77,8 +75,8 @@ class RenderClients extends Views {
         </tr>
       </thead>
       <tbody>
-      ${this._data.clients
-        .map(
+      ${this._data?.clients
+        ?.map(
           (c) =>
             `<tr class="table-row">
               <td><a href="#client?I${c._id}">${c.id}</a></td>

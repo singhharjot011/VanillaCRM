@@ -50,7 +50,7 @@ class RenderDashboard extends Views {
   }
 
   _generateMarkup() {
-    this._pendingCases = this._data.cases.filter(
+    this._pendingCases = this._data?.cases.filter(
       (c) =>
         c.caseStatus !== "Closed-Lost" ||
         c.caseStatus !== "Cancelled" ||
@@ -58,7 +58,7 @@ class RenderDashboard extends Views {
         c.caseStatus !== "Closed-Win"
     ).length;
 
-    this._myPendingCases = this._data.cases
+    this._myPendingCases = this._data?.cases
       .filter(
         (c) =>
           c.caseStatus !== "Closed-Lost" ||

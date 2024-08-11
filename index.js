@@ -6,6 +6,7 @@ import employeeRouter from "./routes/employeeRoutes.js";
 import caseRouter from "./routes/caseRoutes.js";
 import eventRouter from "./routes/eventRoutes.js";
 import taskRouter from "./routes/taskRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 import cors from "cors";
 import appError from "./src/utils/appError.js";
 import { globalErrorHandler } from "./src/controller/errorController.js";
@@ -36,6 +37,7 @@ app.use("/api/v1/employees", employeeRouter);
 app.use("/api/v1/cases", caseRouter);
 app.use("/api/v1/events", eventRouter);
 app.use("/api/v1/tasks", taskRouter);
+app.use("/api/v1/users", userRouter);
 
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",

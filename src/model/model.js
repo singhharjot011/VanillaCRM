@@ -27,14 +27,14 @@ export const loadData = async function (typeOfData) {
 
     const [clientsData, employeesData, casesData, tasksData, eventsData] = data;
 
-    state.clients = clientsData.data.clients;
-    state.employees = employeesData.data.employees;
-    state.cases = casesData.data.cases;
-    state.tasks = tasksData.data.tasks;
-    state.events = eventsData.data.events;
+    state.clients = clientsData?.data.clients;
+    state.employees = employeesData?.data.employees;
+    state.cases = casesData?.data.cases;
+    state.tasks = tasksData?.data.tasks;
+    state.events = eventsData?.data.events;
 
     return typeOfData
-      ? data.find((item) => item.data[typeOfData]).data[typeOfData]
+      ? data?.find((item) => item.data[typeOfData]).data[typeOfData]
       : state;
   } catch (err) {
     console.error(`${err}💣💣💣💣`);

@@ -4,7 +4,7 @@ class RenderTasks extends Views {
   _filteredTasks;
 
   _employeeIdToName(empId) {
-    const empName = this._data.employees.find(
+    const empName = this._data?.employees.find(
       (e) => e.employeeId === empId
     ).name;
     return empName;
@@ -17,7 +17,7 @@ class RenderTasks extends Views {
       }
     });
 
-    this._filteredTasks = this._data.tasks.filter(
+    this._filteredTasks = this._data?.tasks.filter(
       (t) => t.assignedTo === "E202" || t.requestedBy === "E202"
     );
 

@@ -10,6 +10,8 @@ import renderModal from "../view/renderModal.js";
 import renderMyClients from "../view/renderMyClients.js";
 import renderPageNotFound from "../view/renderPageNotFound.js";
 import renderTasks from "../view/renderTasks.js";
+import renderSignup from "../view/renderSignup.js";
+import renderSignin from "../view/renderSignin.js";
 
 const renderData = async function (typeOfData) {
   try {
@@ -21,6 +23,12 @@ const renderData = async function (typeOfData) {
     let data;
 
     switch (id) {
+      case "signup":
+        renderSignup.render();
+        break;
+      case "signin":
+        renderSignin.render();
+        break;
       case "calendar":
         const eventData = await model.loadData("events");
         data = await model.loadData();

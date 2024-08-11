@@ -21,12 +21,12 @@ class RenderModal extends Views {
   }
 
   _employeeIdToName(empId, data) {
-    const empName = data.employees.find((e) => e.employeeId === empId).name;
+    const empName = data?.employees?.find((e) => e.employeeId === empId).name;
     return empName;
   }
 
   _employeeNameToId(empName, data) {
-    const empId = data.employees.find((e) => e.name === empName).employeeId;
+    const empId = data?.employees?.find((e) => e.name === empName).employeeId;
     return empId;
   }
 
