@@ -19,16 +19,6 @@ class RenderCases extends Views {
   _getColor(key) {
     return this._colorMap.get(key);
   }
-  _getClientName(clientId) {
-    return this._data.clients.find((c) => c.id === clientId).name;
-  }
-
-  _employeeIdToName(empId) {
-    const empName = this._data.employees.find(
-      (e) => e.employeeId === empId
-    ).name;
-    return empName;
-  }
 
   _generateMarkup() {
     this._parentElement.addEventListener("click", (e) => {
@@ -63,12 +53,12 @@ class RenderCases extends Views {
       <td>Created</td>
       <td>Assigned To</td>
     </tr>
-    ${this._data.cases
+    ${this._data
       .map(
         (cases) =>
           `<tr class="table-row">
             <td><a href="#case?C${cases._id}">${cases.caseId}</a></td>
-            <td>${this._getClientName(cases.clientId)}</td>
+            <td>${cases.client.name}</td>
             <td>${cases.caseDescription}</td>
             <td>${cases.caseType}</td>
             <td style="white-space: nowrap; background-color:${this._getColor(
@@ -77,7 +67,7 @@ class RenderCases extends Views {
             cases.caseStatus
           }</td>
             <td>${getDateTimeString(cases.createdAt)}</td>
-            <td>${this._employeeIdToName(cases.assignedTo)}</td>
+            <td>${cases.assignedTo.name}</td>
           </tr>`
       )
       .join("")}

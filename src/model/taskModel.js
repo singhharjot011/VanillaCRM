@@ -59,6 +59,17 @@ const taskSchema = new mongoose.Schema({
   },
 });
 
+
+taskSchema.pre("save", async function (next) {
+  if (!this.id) {
+    const count = await mongoose.model("Task").countDocuments();
+    this.id = `T${100 + count + 1}`;
+  }
+  next();
+});
+
+
+
 const Task = mongoose.model("Task", taskSchema);
 
 export default Task;

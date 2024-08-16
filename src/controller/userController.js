@@ -34,7 +34,7 @@ const updateMe = catchAsync(async (req, res, next) => {
   }
 
   // 2) Update user document
-  const filteredBody = filterObj(req.body, "name", "email");
+  const filteredBody = filterObj(req.body, "name", "email", "photo");
 
   // 3) Update User document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
@@ -60,12 +60,20 @@ const createUser = (req, res) => {
     message: "This route is not yet defined",
   });
 };
-const getUser = (req, res) => {
+const getUser = async (req, res) => {
+  // const user = await User.findOne({ _id: req.params.name });
+  // res.status(200).json({ status: "success", data: { user } });
   res.status(500).json({
     status: "error",
     message: "This route is not yet defined",
   });
 };
+
+// const getClient = catchAsync(async (req, res) => {
+//   const client = await Client.findById(req.params.id).populate("consultant");
+//   res.status(200).json({ status: "success", data: { client } });
+// });
+
 const updateUser = (req, res) => {
   res.status(500).json({
     status: "error",

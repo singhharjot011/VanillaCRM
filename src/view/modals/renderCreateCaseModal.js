@@ -1,30 +1,17 @@
 import { getDateTimeString } from "../../utils/helpers.js";
 
 export default function renderCreateCaseModal(
-  modalData,
+  curCaseData,
   parentElm,
-  completeData
+  usersData,
+  clientsData
 ) {
-  const curCase = modalData || {};
-  let curClient = {};
-  curClient = completeData
-    ? completeData.clients.find((cl) => cl.id === curCase.clientId)
-    : {};
+  const curCase = curCaseData || {};
 
-  const clientsData = modalData.clients
-    ? modalData.clients
-    : completeData.clients;
-  const clients = clientsData.map((c) => c.name);
-
-  const consultantsData = modalData.employees
-    ? modalData.employees
-    : completeData.employees;
+  const consultantsData = usersData;
   const consultants = consultantsData.map((c) => c.name);
 
-  function getEmployeeIdToName(empId) {
-    const empName = consultantsData.find((c) => c.employeeId === empId).name;
-    return empName;
-  }
+  const clients = clientsData.map((c) => c.name);
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
@@ -45,12 +32,14 @@ export default function renderCreateCaseModal(
         </svg>
       </div>
       <form id="case-form" class="form-class">
+      ${curCase?`<label for="client" class="form-label" style="color:red;"><strong>${curCase?.caseId}</strong> </label>`:''}
           <div class="form-row">
+          
               <label for="client" class="form-label"><strong>Client</strong> </label>
               ${
-                curClient?.name
+                curCase?.client?.name
                   ? `<label for="email-address" class="form-label"> ${
-                      curClient?.name || ""
+                      curCase?.client?.name || ""
                     } </label> `
                   : `<input type="text" class="form-input" id="client" name="client"  placeholder="Search Name"         autocomplete="off" list="clients" name="client">
                   <datalist id="clients">
@@ -65,19 +54,19 @@ export default function renderCreateCaseModal(
           <div class="form-col-flex-col" >
             <label  class="form-label"  ><strong>Email: &nbsp;</strong></label>
             <label for="email-address" name="email-address-label" style="width:215px" class="form-label"> ${
-              curClient?.phone || ""
+              curCase?.client?.phone || ""
             }  </label>
           </div>
             <div class="form-col-flex-col" >
               <label  class="form-label"  ><strong>Phone: &nbsp;</strong></label>
               <label for="phone-number" name="phone-number-label" style="width:215px" class="form-label"> ${
-                curClient?.phone || ""
+                curCase?.client?.phone || ""
               }  </label>
             </div>
             <div class="form-col-flex-col">
               <label  class="form-label"><strong>Visa Type: &nbsp;</strong></label>
               <label for="visa-type" name="visa-type-label" style="width:215px" class="form-label"> ${
-                curClient?.visaType || ""
+                curCase?.client?.visaType || ""
               }  </label>
             </div>
           </div>
@@ -148,9 +137,8 @@ export default function renderCreateCaseModal(
               (c) =>
                 `<option ${
                   curCase.assignedTo &&
-                  getEmployeeIdToName(curCase.assignedTo)
-                    .toLowerCase()
-                    .trim() === c.toLowerCase().trim()
+                  curCase.assignedTo.name.toLowerCase().trim() ===
+                    c.toLowerCase().trim()
                     ? "selected"
                     : ""
                 }>${c}</option>`
@@ -180,9 +168,9 @@ export default function renderCreateCaseModal(
                     <strong><p style="font-size:1.3rem; text-wrap:nowrap;">${getDateTimeString(
                       n.writtenAt
                     )}&nbsp;</p></strong>
-                    <div style="display: flex; flex-grow: 1; gap:1rem; "><p style="text-decoration: underline;font-size:1.3rem;  text-wrap:nowrap;">${getEmployeeIdToName(
+                    <div style="display: flex; flex-grow: 1; gap:1rem; "><p style="text-decoration: underline;font-size:1.3rem;  text-wrap:nowrap;">${
                       n.writtenBy
-                    )}:&nbsp </p><pre>${n.note}</pre> </div>
+                    }:&nbsp </p><pre>${n.note}</pre> </div>
                 </div>`
               )
               .join(`\n`)}

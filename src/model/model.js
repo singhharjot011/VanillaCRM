@@ -2,40 +2,54 @@ import { API_URL, NEWS_API_KEY } from "../utils/config.js";
 
 export const state = {
   clients: {},
-  employees: {},
-  tasks: {},
   users: {},
+  cases: {},
+  tasks: {},
   events: {},
 };
 
 /**
  *
- * @param {string} typeOfData The type of data to load (e.g., 'clients', 'employees', 'tasks', 'users').
+ * @param {string} typeOfData The type of data to load (e.g., 'clients', 'users', 'tasks', 'users').
  * @returns {Promise<object>} A promise that resolves to the loaded data object.
  * @throws {Error} If there is an error loading the data.
  */
 
 export const loadData = async function (typeOfData) {
   try {
-    const endpoints = ["clients", "employees", "cases", "tasks", "events"];
-    const fetchPromises = endpoints.map((endpoint) =>
-      fetch(`${API_URL}/${endpoint}`)
-    );
+    const endpoints = {
+      clients: "clients",
+      users: "users",
+      cases: "cases",
+      tasks: "tasks",
+      events: "events",
+    };
 
-    const responses = await Promise.all(fetchPromises);
-    const data = await Promise.all(responses.map((res) => res.json()));
+    if (typeOfData && endpoints[typeOfData]) {
+      const response = await fetch(`${API_URL}/${endpoints[typeOfData]}`);
+      const data = await response.json();
+      state[typeOfData] = data?.data[typeOfData];
 
-    const [clientsData, employeesData, casesData, tasksData, eventsData] = data;
+      return data?.data[typeOfData];
+    } else {
+      // Fetch all data if typeOfData is not provided or is invalid
+      const fetchPromises = Object.values(endpoints).map((endpoint) =>
+        fetch(`${API_URL}/${endpoint}`)
+      );
 
-    state.clients = clientsData?.data.clients;
-    state.employees = employeesData?.data.employees;
-    state.cases = casesData?.data.cases;
-    state.tasks = tasksData?.data.tasks;
-    state.events = eventsData?.data.events;
+      const responses = await Promise.all(fetchPromises);
+      const data = await Promise.all(responses.map((res) => res.json()));
 
-    return typeOfData
-      ? data?.find((item) => item.data[typeOfData]).data[typeOfData]
-      : state;
+      const [clientsData, usersData, casesData, tasksData, eventsData] = data;
+
+      state.clients = clientsData?.data.clients;
+      state.users = usersData?.data.users;
+      state.cases = casesData?.data.cases;
+      state.tasks = tasksData?.data.tasks;
+      state.events = eventsData?.data.events;
+
+      return state;
+    }
   } catch (err) {
     console.error(`${err}💣💣💣💣`);
     throw err;
@@ -62,7 +76,10 @@ export const loadDashboardData = async (days = 7) => {
   }
 };
 
-export const handleClientObject = async function (clientObj, isUpdating) {
+export const handleClientObject = async function (
+  clientObj,
+  isUpdating = false
+) {
   try {
     // Client exists, so update it
     if (isUpdating) {
@@ -89,7 +106,36 @@ export const handleClientObject = async function (clientObj, isUpdating) {
   }
 };
 
-export const handleTaskObject = async function (taskObj, isUpdating) {
+export const handleCaseObject = async function (caseObj, isUpdating = false) {
+  try {
+    // Client exists, so update it
+    if (isUpdating) { 
+      const result = await fetch(`${API_URL}/cases/${caseObj._id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(caseObj),
+      });
+      return result;
+    } else {
+      const result = await fetch(`${API_URL}/cases`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(caseObj),
+      });
+      return result;
+    }
+  } catch (err) {
+    console.error("Error handling client object:", err.message);
+  }
+
+  // Patching client to isLead field is pending
+};
+
+export const handleTaskObject = async function (taskObj, isUpdating = false) {
   try {
     if (isUpdating) {
       const result = await fetch(`${API_URL}/tasks/${taskObj._id}`, {
@@ -141,76 +187,6 @@ export const handleEventObject = async function (eventObj, isUpdating) {
     console.error("Error handling task object:", err.message);
     throw err;
   }
-};
-
-// export const handleTaskObject = function (taskObj) {
-//   const index = state.tasks.findIndex((t) => t.id === taskObj.id);
-
-//   let eventObj;
-
-//   if (taskObj.isAppointment) {
-//     eventObj = {
-//       id: `A` + (101 + state.events.length),
-//       title: taskObj.description,
-//       start: taskObj.appointmentDate + " " + taskObj.appointmentStartTime,
-//       end: taskObj.appointmentDate + " " + taskObj.appointmentEndTime,
-//       completed: false,
-//       assignedTo: taskObj.assignedTo,
-//       completedAt: "",
-//       taskId: taskObj.id,
-//       classNames: ["appointment"],
-//       clientId: taskObj.clientId,
-//     };
-//   } else {
-//     eventObj = {
-//       id: `A` + (101 + state.events.length),
-//       title: taskObj.description,
-//       start: taskObj.due,
-//       taskId: taskObj.id,
-//       completed: false,
-//       assignedTo: taskObj.assignedTo,
-//       completedAt: "",
-//       classNames: ["alerts"],
-//     };
-//   }
-
-//   // if index !== -1 which means it exists, client will be updated
-//   if (index !== -1) {
-//     state.tasks[index] = taskObj;
-//   } else {
-//     // if index === -1 which means it doesn't exist, client will be added
-//     state.tasks.push(taskObj);
-//     eventObj && state.events.push(eventObj);
-//   }
-// };
-
-export const handleCaseObject = async function (caseObj, isUpdating) {
-  try {
-    // Client exists, so update it
-    if (isUpdating) {
-      const result = await fetch(`${API_URL}/cases/${caseObj._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(caseObj),
-      });
-      return result;
-    } else {
-      const result = await fetch(`${API_URL}/cases`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(caseObj),
-      });
-      return result;
-    }
-  } catch (err) {
-    console.error("Error handling client object:", err.message);
-  }
-
-  // Patching client to isLead field is pending
 };
 
 export const getCurTask = async function (id) {

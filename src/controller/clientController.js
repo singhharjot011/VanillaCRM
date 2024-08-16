@@ -1,8 +1,13 @@
 import Client from "./../model/clientModel.js";
 import catchAsync from "../utils/catchAsync.js";
+import User from "../model/userModel.js";
 
 const getAllClients = catchAsync(async (req, res) => {
-  const clients = await Client.find();
+  const clients = await Client.find().populate([
+    "cases",
+    "consultant",
+    "lastUpdatedBy",
+  ]);
   res.status(200).json({
     status: "success",
     results: clients.length,
@@ -11,12 +16,29 @@ const getAllClients = catchAsync(async (req, res) => {
 });
 
 const getClient = catchAsync(async (req, res) => {
-  const client = await Client.findById(req.params.id);
+  const client = await Client.findById(req.params.id).populate([
+    "cases",
+    "consultant",
+    "lastUpdatedBy",
+  ]);
   res.status(200).json({ status: "success", data: { client } });
 });
 
 const createClient = catchAsync(async (req, res) => {
-  const newClient = await Client.create(req.body);
+  const consultant = await User.findOne({ name: req.body.consultantName });
+  const newClient = await Client.create({
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+    consultant: consultant._id, // Save the ObjectId of the consultant
+    clientNote: req.body.clientNote,
+    visaType: req.body.visaType,
+    city: req.body.city,
+    province: req.body.province,
+    postalCode: req.body.postalCode,
+    createdBy: req.body.createdBy,
+    createdAt: req.body.createdAt,
+  });
 
   res.status(201).json({
     status: "success",
@@ -25,12 +47,34 @@ const createClient = catchAsync(async (req, res) => {
 });
 
 const updateClient = catchAsync(async (req, res, next) => {
-  const client = await Client.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
+  const consultant = await User.findOne({ name: req.body.consultantName });
+  const updatedClient = await Client.findByIdAndUpdate(
+    req.params.id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      consultant: consultant._id, // Save the ObjectId of the consultant
+      clientNote: req.body.clientNote,
+      visaType: req.body.visaType,
+      city: req.body.city,
+      province: req.body.province,
+      postalCode: req.body.postalCode,
+      createdBy: req.body.createdBy,
+      createdAt: req.body.createdAt,
+      lastUpdatedAt: req.body.lastUpdatedAt,
+      lastUpdatedBy: req.body.lastUpdatedBy,
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.status(200).json({
+    status: "success",
+    data: { client: updatedClient },
   });
-  res.status(200).json({ status: "success", data: { client } });
-  next();
 });
 
 const getDataForLastDays = catchAsync(async (req, res) => {

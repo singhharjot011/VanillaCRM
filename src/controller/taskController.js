@@ -1,4 +1,6 @@
 import Task from "../model/taskModel.js";
+import User from "../model/userModel.js";
+import catchAsync from "../utils/catchAsync.js";
 
 const getAllTasks = async (req, res) => {
   try {
@@ -18,7 +20,27 @@ const getAllTasks = async (req, res) => {
 
 const createTask = async (req, res) => {
   try {
-    const newTask = await Task.create(req.body);
+    const assignedToData = await User.findOne({
+      name: req.body.assignedToName,
+    });
+
+    const requestedByData = await User.findOne({
+      name: req.body.requestedByName,
+    });
+
+    const clientData = req.body.clientName
+      ? await User.findOne({ name: req.body.clientName })
+      : undefined;
+
+    const newTask = await Task.create({
+      clientId: clientData?._id,
+      assignedTo: assignedToData._id,
+      requestedBy: requestedByData._id,
+      description: req.body.description,
+      due: req.body.due,
+      taskCompletionNotes: req.body.taskCompletionNotes,
+      createdAt: req.body.createdAt,
+    });
 
     res.status(201).json({
       status: "success",
@@ -31,6 +53,7 @@ const createTask = async (req, res) => {
     };
   }
 };
+
 
 const getTask = async (req, res) => {
   try {

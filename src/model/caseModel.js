@@ -31,21 +31,39 @@ const caseSchema = new mongoose.Schema({
     required: [true, "Case Status is required"],
   },
   assignedTo: {
-    type: String,
-    required: [true, "Consultant Name is required"],
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
   },
-  clientId: {
-    type: String,
-    required: [true, "Client should be selected"],
+  client: { 
+    type: mongoose.Schema.ObjectId,
+    ref: "Client",
   },
   notes: {
     type: [caseNotesSchema],
-    default: undefined,
   },
   createdAt: {
     type: Date,
     default: new Date().toISOString(),
   },
+});
+
+
+caseSchema.pre("save", async function (next) {
+  if (!this.caseId) {
+    const count = await mongoose.model("Case").countDocuments();
+    console.log(count);
+    console.log(1000 + count + 1);
+    this.caseId = `C${1000 + count + 1}`;
+  }
+  next();
+});
+
+caseSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "assignedTo",
+    select: "-__v -passwordChangedAt",
+  }).populate({ path: "client", select: "name phone email visaType" });
+  next();
 });
 
 const Case = mongoose.model("Case", caseSchema);

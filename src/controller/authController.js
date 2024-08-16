@@ -38,6 +38,7 @@ const signup = catchAsync(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     role: req.body.role,
+    photo: req.body.photo,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
   });

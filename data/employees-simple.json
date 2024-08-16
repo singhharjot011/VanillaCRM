@@ -1,12 +1,12 @@
 [
   {
-    "employeeId": "E201",
     "name": "John Naisan",
-    "position": "Manager",
-    "username": "jw",
-    "password": "passwordjw",
-    "img": "./img/avatars/avatar-anisha.png",
-    "isLoggedIn": false
+    "email": "jw@manager.com",
+    "role": "manager",
+    "active": true,
+    "_id": "66bbf10166d40cfdf864e884",
+    "employeeId": "E201",
+    "__v": 0
   },
   {
     "employeeId": "E202",

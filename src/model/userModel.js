@@ -4,7 +4,12 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: [true, "Please tell us your name!"] },
+  employeeId: { type: String },
+  name: {
+    type: String,
+    unique: true,
+    required: [true, "Please tell us your name!"],
+  },
   email: {
     type: String,
     required: [true, "Please provide your email."],
@@ -14,10 +19,10 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["user", "guide", "lead-guide", "admin"],
+    enum: ["user", "manager", "assistant", "admin"],
     default: "user",
   },
-  photo: String,
+
   password: {
     type: String,
     required: [true, "Please provide a password"],
@@ -34,10 +39,19 @@ const userSchema = new mongoose.Schema({
       message: "Passwords are not the same",
     },
   },
+  photo: { type: String },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
   active: { type: Boolean, default: true, select: false },
+});
+
+userSchema.pre("save", async function (next) {
+  if (!this.employeeId) {
+    const count = await mongoose.model("User").countDocuments();
+    this.employeeId = `E${200 + count + 1}`;
+  }
+  next();
 });
 
 userSchema.pre("save", async function (next) {

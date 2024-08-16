@@ -211,7 +211,7 @@ danger: css`
 
 button.btn-secondary {
   display: flex;
-  flex-direction: center;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   color: var(--color-grey-600);
@@ -231,7 +231,7 @@ button.btn-secondary:active {
 
 button.btn-primary {
   display: flex;
-  flex-direction: center;
+  flex-direction: row;
   justify-content: center;
   gap: 1rem;
   align-items: center;
@@ -500,7 +500,6 @@ button.btn-small {
   text-decoration: none;
   cursor: pointer;
   color: var(--color-blue-700);
-  line-clamp: 2;
 }
 
 #dashboard-news-tile::before {

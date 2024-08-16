@@ -21,6 +21,13 @@ const renderData = async function (typeOfData) {
     renderCalendar.renderSpinner();
 
     let data;
+    let clientsData;
+    let myClientsData;
+    let usersData;
+    let curClientData;
+    let casesData;
+    let tasksData;
+    let curCaseData;
 
     switch (id) {
       case "signup":
@@ -48,38 +55,46 @@ const renderData = async function (typeOfData) {
         renderDashboard.render(data, null, newsData);
         break;
       case "clients":
-        data = await model.loadData();
-        renderClients.render(data);
+        clientsData = await model.loadData("clients");
+        renderClients.render(clientsData);
         break;
       case "my-clients":
-        data = await model.loadData();
-        renderMyClients.render(data);
+        myClientsData = await model.loadData("clients");
+        renderMyClients.render(myClientsData);
         break;
       case "tasks":
-        data = await model.loadData();
-        renderTasks.render(data);
+        tasksData = await model.loadData("tasks");
+        renderTasks.render(tasksData);
         break;
       case "cases":
-        data = await model.loadData();
-        renderCases.render(data);
+        casesData = await model.loadData("cases");
+        renderCases.render(casesData);
         break;
       case "knowledge-base":
         renderKnowledgeBase.render(data);
         break;
       case id.match(/^client\?.*$/)?.input:
-        const clientData = await model.getCurClient(id);
-        data = await model.loadData();
+        usersData = await model.loadData("users");
+        curClientData = await model.getCurClient(id);
+        clientsData = await model.loadData("clients");
         renderModal.addHandlerModal(
-          clientData,
           id,
-          controlHandleClient,
-          null,
-          data
+          usersData,
+          clientsData,
+          curClientData,
+          controlHandleClient
         );
         break;
       case "new-client":
-        data = await model.loadData();
-        renderModal.addHandlerModal(data, null, controlHandleClient);
+        usersData = await model.loadData("users");
+        clientsData = await model.loadData("clients");
+        renderModal.addHandlerModal(
+          id,
+          usersData,
+          clientsData,
+          null,
+          controlHandleClient
+        );
         break;
       case id.match(/^my-client\?.*$/)?.input:
         const myClientData = await model.getCurClient(id);
@@ -93,28 +108,26 @@ const renderData = async function (typeOfData) {
         );
         break;
       case "new-case":
-        data = await model.loadData();
+        usersData = await model.loadData("users");
+        clientsData = await model.loadData("clients");
         renderModal.addHandlerModal(
-          data,
+          id,
+          usersData,
+          clientsData,
           null,
-          controlHandleCase,
-          null,
-          null,
-          null,
-          controlHandleClient
+          controlHandleCase
         );
         break;
       case id.match(/^case\?.*$/)?.input:
-        const caseData = await model.getCurCase(id);
-        data = await model.loadData();
+        curCaseData = await model.getCurCase(id);
+        usersData = await model.loadData("users");
+        clientsData = await model.loadData("clients");
         renderModal.addHandlerModal(
-          caseData,
           id,
+          usersData,
+          clientsData,
+          curCaseData,
           controlHandleCase,
-          null,
-          data,
-          null,
-          controlHandleClient
         );
         break;
       case id.match(/^task\?.*$/)?.input:
@@ -131,15 +144,14 @@ const renderData = async function (typeOfData) {
         );
         break;
       case "new-task":
-        data = await model.loadData();
+        usersData = await model.loadData("users");
+        clientsData = await model.loadData("clients");
         renderModal.addHandlerModal(
-          data,
+          id,
+          usersData,
+          clientsData,
           null,
-          controlHandleTask,
-          null,
-          null,
-          null,
-          controlHandleEvent
+          controlHandleTask
         );
         break;
       default:

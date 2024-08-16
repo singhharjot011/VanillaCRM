@@ -1,21 +1,14 @@
-// import { getDateString } from "../../utils/helpers.js";
+import { getDateTimeString } from "../../utils/helpers.js";
 
 export default function renderCreateClientModal(
-  modalData,
+  curClientData,
   parentElm,
-  completeData
+  usersData  
 ) {
-  const curClient = modalData || {};
+  const curClient = curClientData || {};
 
-  const consultantsData = modalData.employees
-    ? modalData.employees
-    : completeData.employees;
+  const consultantsData = usersData;
   const consultants = consultantsData.map((c) => c.name);
-
-  function getEmployeeIdToName(empId) {
-    const empName = consultantsData.find((c) => c.employeeId === empId).name;
-    return empName;
-  }
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
@@ -155,10 +148,8 @@ export default function renderCreateClientModal(
              ${consultants.map(
                (c) =>
                  `<option ${
-                   curClient.consultant &&
-                   getEmployeeIdToName(curClient.consultant)
-                     .toLowerCase()
-                     .trim() === c.toLowerCase().trim()
+                   curClient.consultant?.name.toLowerCase().trim() ===
+                   c.toLowerCase().trim()
                      ? "selected"
                      : ""
                  }>${c}</option>`
@@ -184,7 +175,9 @@ export default function renderCreateClientModal(
           ${
             curClient.lastUpdatedAt
               ? `<div class="form-row-flex">
-              <p>Last Updated:&nbsp;${curClient.lastUpdatedAt}</p>
+              <p style="font-size:smaller;"><strong>Last Updated:</strong>&nbsp;${getDateTimeString(
+                curClient.lastUpdatedAt
+              )} by<strong>  ${curClient.lastUpdatedBy?.name}</strong></p>
           </div>
           `
               : ""

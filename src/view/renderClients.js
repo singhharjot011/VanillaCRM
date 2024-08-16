@@ -30,11 +30,6 @@ class RenderClients extends Views {
       : null;
   }
 
-  _employeeIdToName(empId) {
-    const employee = this._data.employees?.find((e) => e.employeeId === empId);
-    return employee?.name || "Unknown";
-  }
-
   _generateMarkup() {
     //  Create Client Button
     this._parentElement.addEventListener("click", (e) => {
@@ -75,7 +70,7 @@ class RenderClients extends Views {
         </tr>
       </thead>
       <tbody>
-      ${this._data?.clients
+      ${this._data
         ?.map(
           (c) =>
             `<tr class="table-row">
@@ -90,24 +85,16 @@ class RenderClients extends Views {
               <td>${c.visaType}</td>
               <td >${getDateTimeString(c.createdAt)}</td>
               <td style="text-wrap:nowrap;">${
-                this._getLatestCase(c.id)
-                  ? `<a href="#case?C${this._getLatestCase(c.id)._id}">${
-                      this._getLatestCase(c.id).caseId
+                c.cases[0]
+                  ? `<a href="#case?C${c.cases.at(-1)?._id}">${
+                      c.cases.at(-1).caseId
                     }</a>`
                   : "N/A"
               }</td>
               <td>
-              ${
-                this._getLatestAppointment(c.id)
-                  ? `<a href="#task?T${this._getLatestAppointment(c.id)._id}">${
-                      this._getLatestAppointment(c.id).taskId
-                    }</a>`
-                  : "N/A"
-              }
+              ${0 ? `<a href="#task?T${"000000"}">${"000000"}</a>` : "N/A"}
               </td>
-              <td style="text-wrap:nowrap;">${this._employeeIdToName(
-                c.consultant
-              )}</td>
+              <td style="text-wrap:nowrap;">${c.consultant?.name}</td>
             </tr>`
         )
         .join("")}

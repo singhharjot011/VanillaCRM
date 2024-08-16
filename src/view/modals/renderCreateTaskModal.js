@@ -2,21 +2,15 @@ import { API_URL } from "../../utils/config.js";
 import { getDateTimeString } from "../../utils/helpers.js";
 
 export default async function renderCreateTaskModal(
-  modalData,
+  curClientData,
   parentElm,
-  completeData
+  usersData
 ) {
-  const curTask = modalData || {};
+  const curTask = {};
+  const curClient = curClientData || {};
 
-  const consultantsData = modalData.employees
-    ? modalData.employees
-    : completeData.employees;
+  const consultantsData = usersData;
   const consultants = consultantsData.map((c) => c.name);
-
-  function getEmployeeIdToName(empId) {
-    const empName = consultantsData.find((c) => c.employeeId === empId).name;
-    return empName;
-  }
 
   const modalElement = document.createElement("div");
   if (parentElm.querySelector(".modal")) return;
@@ -50,10 +44,8 @@ export default async function renderCreateTaskModal(
               ${consultants.map(
                 (c) =>
                   `<option ${
-                    curTask.requestedBy &&
-                    getEmployeeIdToName(curTask.requestedBy)
-                      .toLowerCase()
-                      .trim() === c.toLowerCase().trim()
+                    curTask.consultant?.name.toLowerCase().trim() ===
+                    c.toLowerCase().trim()
                       ? "selected"
                       : ""
                   }>${c}</option>`

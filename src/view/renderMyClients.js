@@ -6,8 +6,8 @@ class RenderMyClients extends Views {
   _filteredData;
 
   _getFilteredData() {
-    this._filteredData = this._data?.clients?.filter(
-      (c) => c.consultant === "E202"
+    this._filteredData = this._data?.filter(
+      (c) => c.consultant._id === "66bd6daf18b4120ed48ad221"
     );
   }
 
@@ -33,11 +33,6 @@ class RenderMyClients extends Views {
       : null;
   }
 
-  _employeeIdToName(empId) {
-    const employee = this._data.employees?.find((e) => e.employeeId === empId);
-    return employee?.name || "Unknown";
-  }
-
   _generateMarkup() {
     this._getFilteredData();
 
@@ -61,10 +56,10 @@ class RenderMyClients extends Views {
         </tr>
       </thead>
       <tbody>
-      ${this._filteredData
-        .map(
-          (c) =>
-            `<tr class="table-row">
+       ${this._filteredData
+         ?.map(
+           (c) =>
+             `<tr class="table-row">
               <td><a href="#client?I${c._id}">${c.id}</a></td>
               <td ${
                 c.isLead
@@ -91,12 +86,10 @@ class RenderMyClients extends Views {
                   : "N/A"
               }
               </td>
-              <td style="text-wrap:nowrap;">${this._employeeIdToName(
-                c.consultant
-              )}</td>
+              <td style="text-wrap:nowrap;">${c.consultant?.name}</td>
             </tr>`
-        )
-        .join("")}
+         )
+         .join("")}
         </tbody>
     </table>
     <div class="table-row-horizontal">
