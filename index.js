@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -23,6 +24,9 @@ const app = express(); // Initialize express app here
 const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
+
+app.set("view engine", "pug");
+app.set("views", path.join(__dirname, "views"));
 
 // 1) GLOBAL MIDDLEWARES
 

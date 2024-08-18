@@ -1,28 +1,24 @@
 import Client from "./../model/clientModel.js";
 import catchAsync from "../utils/catchAsync.js";
 import User from "../model/userModel.js";
+import { deleteOne, getAll, getOne } from "./handlerFactory.js";
 
-const getAllClients = catchAsync(async (req, res) => {
-  const clients = await Client.find().populate([
-    "cases",
-    "consultant",
-    "lastUpdatedBy",
-  ]);
-  res.status(200).json({
-    status: "success",
-    results: clients.length,
-    data: { clients },
-  });
-});
+// const getAllClients = catchAsync(async (req, res) => {
+//   const clients = await Client.find().populate([
+//     "cases",
+//     "consultant",
+//     "lastUpdatedBy",
+//   ]);
+//   res.status(200).json({
+//     status: "success",
+//     results: clients.length,
+//     data: { clients },
+//   });
+// });
 
-const getClient = catchAsync(async (req, res) => {
-  const client = await Client.findById(req.params.id).populate([
-    "cases",
-    "consultant",
-    "lastUpdatedBy",
-  ]);
-  res.status(200).json({ status: "success", data: { client } });
-});
+const getAllClients = getAll(Client, ["cases", "consultant", "lastUpdatedBy"]);
+
+const getClient = getOne(Client, ["cases", "consultant", "lastUpdatedBy"]);
 
 const createClient = catchAsync(async (req, res) => {
   const consultant = await User.findOne({ name: req.body.consultantName });
@@ -77,6 +73,8 @@ const updateClient = catchAsync(async (req, res, next) => {
   });
 });
 
+const deleteClient = deleteOne(Client);
+
 const getDataForLastDays = catchAsync(async (req, res) => {
   const days = parseInt(req.params.days);
 
@@ -107,4 +105,5 @@ export {
   getClient,
   getDataForLastDays,
   updateClient,
+  deleteClient,
 };

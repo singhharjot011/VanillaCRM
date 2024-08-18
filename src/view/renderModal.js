@@ -22,26 +22,14 @@ class RenderModal extends Views {
     super();
   }
 
-  _employeeIdToName(empId, data) {
-    const empName = data?.employees?.find((e) => e.employeeId === empId).name;
-    return empName;
-  }
-
-  _employeeNameToId(empName, data) {
-    console.log();
-    const empId = data?.employees?.find((e) => e.name === empName)._id;
-    console.log(empId);
-    return empId;
-  }
-
   addHandlerModal(
     id,
     usersData,
     clientsData,
     currentData,
-    handler,
+    handler, 
     secondHandler
-  ) {
+  ) { 
     this._usersData = usersData;
     this._clientsData = clientsData;
     this._currentData = currentData;
@@ -396,7 +384,7 @@ class RenderModal extends Views {
 
         !newTaskObj.description.trim() && missingFields.push("Task Objective");
         !isAppointment && !newTaskObj.due && missingFields.push("Due Date");
-        isAppointment && !clientId && missingFields.push("Client Name");
+        isAppointment && !clientName && missingFields.push("Client Name");
         isAppointment &&
           !appointmentDate &&
           missingFields.push("Appointment Date");
@@ -406,6 +394,8 @@ class RenderModal extends Views {
         isAppointment &&
           !appointmentEndTime &&
           missingFields.push("Appointment End Time");
+
+        console.log(newTaskObj);
 
         if (missingFields?.length > 0) {
           renderToastModal(missingFields, null, this._parentElement);
@@ -423,24 +413,23 @@ class RenderModal extends Views {
           ? new Date(`${apptDate}T${apptStartTime}`).toISOString()
           : new Date(dueDate).toISOString();
 
-        // const newEventObj = {
-        //   id: `A${100 + this._modalData.tasks.length}`,
-        //   clientId: newTaskObj.isAppointment ? newTaskObj.clientId : "",
-        //   title: newTaskObj.description || "Untitled Task",
-        //   start: start,
-        //   end: isAppointment
-        //     ? new Date(
-        //         `${appointmentDate}T${newTaskObj.appointmentEndTime}`
-        //       ).toISOString()
-        //     : new Date(dueDate).toISOString(),
-        //   assignedTo: newTaskObj.assignedTo,
-        //   requestedBy: newTaskObj.requestedBy,
-        //   taskId: newTaskObj.id,
-        //   classNames: isAppointment ? ["appointment"] : ["alerts"],
-        // };
+        const newEventObj = {
+          clientName: newTaskObj.isAppointment ? newTaskObj.clientName : "",
+          title: newTaskObj.description || "Untitled Task",
+          start: start,
+          end: isAppointment
+            ? new Date(
+                `${appointmentDate}T${newTaskObj.appointmentEndTime}`
+              ).toISOString()
+            : new Date(dueDate).toISOString(),
+          assignedToName: newTaskObj.assignedToName,
+          requestedByName: newTaskObj.requestedByName,
+          // taskId: newTaskObj.id,
+          classNames: isAppointment ? ["appointment"] : ["alerts"],
+        };
 
         handler(newTaskObj, false);
-        // secondHandler(newEventObj);
+        secondHandler(newEventObj,false);
         this.renderSpinner("Creating Task...");
         setTimeout(() => {
           window.location.hash = "tasks";
@@ -450,7 +439,7 @@ class RenderModal extends Views {
 
         const missingFields = [];
 
-        const curTask = this._modalData;
+        const curTask = this._currentData;
 
         let updatedTaskObj = {
           ...curTask,
@@ -466,18 +455,18 @@ class RenderModal extends Views {
           return;
         }
 
-        const curEvent = this._completeData.events.find(
-          (ev) => ev.taskId === curTask.id
-        );
+        // const curEvent = this._completeData.events.find(
+        //   (ev) => ev.taskId === curTask.id
+        // );
 
-        let updatedEventObj = {
-          ...curEvent,
-          completed: updatedTaskObj.completed,
-          classNames: ["completed"],
-        };
+        // let updatedEventObj = {
+        //   ...curEvent,
+        //   completed: updatedTaskObj.completed,
+        //   classNames: ["completed"],
+        // };
 
         handler(updatedTaskObj, true);
-        secondHandler(updatedEventObj, true);
+        // secondHandler(updatedEventObj, true);
         this.renderSpinner("Updating Task...");
         setTimeout(() => {
           window.location.hash = "tasks";

@@ -28,6 +28,7 @@ const renderData = async function (typeOfData) {
     let casesData;
     let tasksData;
     let curCaseData;
+    let curTaskData;
 
     switch (id) {
       case "signup":
@@ -38,14 +39,13 @@ const renderData = async function (typeOfData) {
         break;
       case "calendar":
         const eventData = await model.loadData("events");
-        data = await model.loadData();
         renderCalendar.render(eventData);
         renderModal.addHandlerModal(
-          eventData,
           id,
-          controlHandleEvent,
           null,
-          data
+          null,
+          eventData,
+          controlHandleEvent
         );
         break;
       case "dashboard":
@@ -127,19 +127,19 @@ const renderData = async function (typeOfData) {
           usersData,
           clientsData,
           curCaseData,
-          controlHandleCase,
+          controlHandleCase
         );
         break;
       case id.match(/^task\?.*$/)?.input:
-        const taskData = await model.getCurTask(id);
-        data = await model.loadData();
+        curTaskData = await model.getCurTask(id);
+        usersData = await model.loadData("users");
+        clientsData = await model.loadData("clients");
         renderModal.addHandlerModal(
-          taskData,
           id,
+          usersData,
+          clientsData,
+          curTaskData,
           controlHandleTask,
-          null,
-          data,
-          null,
           controlHandleEvent
         );
         break;
@@ -151,7 +151,8 @@ const renderData = async function (typeOfData) {
           usersData,
           clientsData,
           null,
-          controlHandleTask
+          controlHandleTask,
+          controlHandleEvent
         );
         break;
       default:
@@ -182,9 +183,19 @@ const controlGetLastDaysData = async function (days) {
   return await model.loadDashboardData(days);
 };
 
-const init = function () {
+const init = async function () {
+  const userData = await model.loadData("users");
+  const loggedInUser = userData[0];
+  renderHeader.render(loggedInUser); // Render header only once at initial load
+  
+  // Initialize calendar and menu handlers
   renderCalendar.addHandlerRender(renderData);
   renderMenu.addHandlerMenu();
+
+  // Trigger an initial render based on the current hash or default to dashboard
+  renderData();
 };
+
+init();
 
 init();

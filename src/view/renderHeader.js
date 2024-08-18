@@ -4,6 +4,7 @@ class RenderHeader extends Views {
   _parentElement = document.querySelector("#header");
 
   _generateMarkup() {
+
     return `<div id="header-options">
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -29,8 +30,8 @@ class RenderHeader extends Views {
     </svg>
   </div>
   <div id="avatar">
-    <img src="${this._currentUser.img}" alt="Avatar" />
-    <span>${this._currentUser.name}</span>
+    <img src="${this._data?.photo || ""}" alt="Avatar" />
+    <span>${this._data?.name}</span>
   </div>`;
   }
 }

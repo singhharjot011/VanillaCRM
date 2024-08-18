@@ -5,16 +5,13 @@ const taskSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  clientId: {
-    type: String,
-  },
   assignedTo: {
-    type: String,
-    required: [true, "Consultant Name is required"],
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
   },
   requestedBy: {
-    type: String,
-    required: [true, "Consultant Name is required"],
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
   },
   description: {
     type: String,
@@ -49,6 +46,10 @@ const taskSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  client: {
+    type: mongoose.Schema.ObjectId,
+    ref: "Client",
+  },
   appointmentDate: String,
   appointmentStartTime: String,
   appointmentEndTime: String,
@@ -59,7 +60,6 @@ const taskSchema = new mongoose.Schema({
   },
 });
 
-
 taskSchema.pre("save", async function (next) {
   if (!this.id) {
     const count = await mongoose.model("Task").countDocuments();
@@ -68,7 +68,13 @@ taskSchema.pre("save", async function (next) {
   next();
 });
 
-
+taskSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "client",
+    select: "name phone email visaType",
+  }).populate({ path: "requestedBy assignedTo", select: "name" });
+  next();
+});
 
 const Task = mongoose.model("Task", taskSchema);
 

@@ -1,23 +1,10 @@
+import Client from "../model/clientModel.js";
 import Task from "../model/taskModel.js";
 import User from "../model/userModel.js";
 import catchAsync from "../utils/catchAsync.js";
+import { getAll, getOne } from "./handlerFactory.js";
 
-const getAllTasks = async (req, res) => {
-  try {
-    const tasks = await Task.find();
-    res.status(200).json({
-      status: "success",
-      results: tasks.length,
-      data: { tasks },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
-
+const getAllTasks = getAll(Task);
 const createTask = async (req, res) => {
   try {
     const assignedToData = await User.findOne({
@@ -28,18 +15,24 @@ const createTask = async (req, res) => {
       name: req.body.requestedByName,
     });
 
-    const clientData = req.body.clientName
-      ? await User.findOne({ name: req.body.clientName })
-      : undefined;
+    const clientData = await Client.findOne({ name: req.body.clientName });
 
     const newTask = await Task.create({
-      clientId: clientData?._id,
       assignedTo: assignedToData._id,
       requestedBy: requestedByData._id,
       description: req.body.description,
+      client: clientData._id,
       due: req.body.due,
       taskCompletionNotes: req.body.taskCompletionNotes,
       createdAt: req.body.createdAt,
+      completed: req.body.completed,
+      deleted: req.body.deleted,
+      hidden: req.body.hidden,
+      isAppointment: req.body.isAppointment,
+      appointmentDate: req.body.appointmentDate,
+      appointmentStartTime: req.body.appointmentStartTime,
+      appointmentEndTime: req.body.appointmentEndTime,
+      appointmentAgenda: req.body.appointmentAgenda,
     });
 
     res.status(201).json({
@@ -54,19 +47,7 @@ const createTask = async (req, res) => {
   }
 };
 
-
-const getTask = async (req, res) => {
-  try {
-    const task = await Task.findById(req.params.id);
-    res.status(200).json({ status: "success", data: { task } });
-  } catch (err) {
-    return {
-      status: "fail",
-      message: err.message,
-    };
-  }
-};
-
+const getTask = getOne(Task);
 const updateTask = async (req, res) => {
   try {
     const task = await Task.findByIdAndUpdate(req.params.id, req.body, {

@@ -4,6 +4,7 @@ export default class Views {
   _data;
   _newsData;
   _parentElement = document.querySelector("#main");
+  _currentUser;
 
   render(data, el, newsData, lastDaysData) {
     this._data = data || {};
@@ -28,11 +29,7 @@ export default class Views {
     });
   }
 
-  addHandlerClientCase(handler) {
-    console.log("reached");
-    const data = handler("667cd4733a8aa425a277070e");
-    return data;
-  }
+
 
   renderSpinner(status = "Loading...") {
     const markup = `
@@ -49,32 +46,4 @@ export default class Views {
     this._parentElement.insertAdjacentHTML("afterbegin", markup);
   }
 
-  // Some helper functions for rendering data
-
-  _employeeIdToName(assignedToId, data) {
-    return data.employees
-      .filter((i) => i.employeeId === assignedToId)
-      .map((i) => i.name)
-      .join("");
-  }
-
-  _employeeNameToId(assignedToName, data) {
-    return data.employees
-      .filter((e) => e.name === assignedToName)
-      .map((e) => e.employeeId)
-      .join("");
-  }
-
-  _clientNameToId(clientName, data) {
-    return data.clients
-      .filter((c) => c.name === clientName)
-      .map((c) => c.id)
-      .join("");
-  }
-  _clientIdToName(clientId, data) {
-    return data.clients
-      .filter((c) => c.id === clientId)
-      .map((c) => c.name)
-      .join("");
-  }
 }

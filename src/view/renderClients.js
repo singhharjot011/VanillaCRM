@@ -4,32 +4,6 @@ import { getDateTimeString, formatPhoneNumber } from "../utils/helpers.js";
 class RenderClients extends Views {
   _clientCasesData;
 
-  _getLatestCase(clientId) {
-    const latestCase = this._data?.cases
-      ?.filter((c) => c.clientId === clientId)
-      .sort((a, b) => {
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      })[0];
-
-    return latestCase
-      ? { caseId: latestCase.caseId, _id: latestCase._id }
-      : null;
-  }
-
-  _getLatestAppointment(clientId) {
-    const latestAppointment = this._data?.tasks
-      ?.filter((t) => t.clientId === clientId)
-      .sort((a, b) => {
-        return new Date(b.start).getTime() - new Date(a.start).getTime();
-      })[0];
-
-    return latestAppointment
-      ? { taskId: latestAppointment.id, _id: latestAppointment._id }
-      : null;
-  }
-
   _generateMarkup() {
     //  Create Client Button
     this._parentElement.addEventListener("click", (e) => {

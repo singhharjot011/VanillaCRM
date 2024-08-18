@@ -30,7 +30,7 @@ export const loadData = async function (typeOfData) {
       const data = await response.json();
       state[typeOfData] = data?.data[typeOfData];
 
-      return data?.data[typeOfData];
+      return data?.data;
     } else {
       // Fetch all data if typeOfData is not provided or is invalid
       const fetchPromises = Object.values(endpoints).map((endpoint) =>
@@ -40,13 +40,14 @@ export const loadData = async function (typeOfData) {
       const responses = await Promise.all(fetchPromises);
       const data = await Promise.all(responses.map((res) => res.json()));
 
+
       const [clientsData, usersData, casesData, tasksData, eventsData] = data;
 
-      state.clients = clientsData?.data.clients;
-      state.users = usersData?.data.users;
-      state.cases = casesData?.data.cases;
-      state.tasks = tasksData?.data.tasks;
-      state.events = eventsData?.data.events;
+      state.clients = clientsData?.data;
+      state.users = usersData?.data;
+      state.cases = casesData?.data;
+      state.tasks = tasksData?.data;
+      state.events = eventsData?.data;
 
       return state;
     }
@@ -108,8 +109,8 @@ export const handleClientObject = async function (
 
 export const handleCaseObject = async function (caseObj, isUpdating = false) {
   try {
-    // Client exists, so update it
-    if (isUpdating) { 
+    // Case exists, so update it
+    if (isUpdating) {
       const result = await fetch(`${API_URL}/cases/${caseObj._id}`, {
         method: "PATCH",
         headers: {
@@ -136,6 +137,7 @@ export const handleCaseObject = async function (caseObj, isUpdating = false) {
 };
 
 export const handleTaskObject = async function (taskObj, isUpdating = false) {
+  console.log(taskObj);
   try {
     if (isUpdating) {
       const result = await fetch(`${API_URL}/tasks/${taskObj._id}`, {
@@ -192,21 +194,21 @@ export const handleEventObject = async function (eventObj, isUpdating) {
 export const getCurTask = async function (id) {
   const res = await fetch(`${API_URL}/tasks/${id.split("?")[1].slice(1)}`);
   const data = await res.json();
-  const curTask = data.data.task;
+  const curTask = data.data.doc;
   return curTask;
 };
 
 export const getCurClient = async function (id) {
   const res = await fetch(`${API_URL}/clients/${id.split("?")[1].slice(1)}`);
   const data = await res.json();
-  const curClient = data.data.client;
+  const curClient = data.data.doc;
   return curClient;
 };
 
 export const getCurCase = async function (id) {
   const res = await fetch(`${API_URL}/cases/${id.split("?")[1].slice(1)}`);
   const data = await res.json();
-  const curCase = data.data.curCase;
+  const curCase = data.data.doc;
   return curCase;
 };
 

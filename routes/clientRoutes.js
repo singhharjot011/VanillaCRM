@@ -1,7 +1,8 @@
 import express from "express";
-import { protect } from "../src/controller/authController.js";
+import { protect, restrictTo } from "../src/controller/authController.js";
 import {
   createClient,
+  deleteClient,
   getAllClients,
   getClient,
   getDataForLastDays,
@@ -11,9 +12,13 @@ import {
 const clientRouter = express.Router();
 
 clientRouter.route("/").get(getAllClients).post(createClient);
-// clientRouter.route("/").get(protect, getAllClients).post(createClient);
+// clientRouter.route("/").get(getAllClients).post(restrictTo('associate','manager'),createClient);
 
-clientRouter.route("/:id").get(getClient).patch(updateClient);
+clientRouter
+  .route("/:id")
+  .get(getClient)
+  .patch(updateClient)
+  .delete(restrictTo("associate", "manager"), deleteClient);
 
 clientRouter.route("/data/:days").get(getDataForLastDays);
 

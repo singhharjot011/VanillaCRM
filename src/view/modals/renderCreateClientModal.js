@@ -3,7 +3,7 @@ import { getDateTimeString } from "../../utils/helpers.js";
 export default function renderCreateClientModal(
   curClientData,
   parentElm,
-  usersData  
+  usersData
 ) {
   const curClient = curClientData || {};
 
@@ -29,6 +29,11 @@ export default function renderCreateClientModal(
         </svg>
       </div>
       <form class="form-class" id="client-form" action="javascript:void(0)"  method="post">
+          <div>    ${
+            curClient?.id
+              ? `<label for="client" class="form-label" style="color:red;"><strong>${curClient?.id}</strong> </label>`
+              : ""
+          }</div>
           <div class="form-row-flex">
               <div class="form-col-flex">
                 <label for="first-name" class="form-label">First Name </label>

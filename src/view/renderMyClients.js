@@ -6,36 +6,13 @@ class RenderMyClients extends Views {
   _filteredData;
 
   _getFilteredData() {
-    this._filteredData = this._data?.filter(
-      (c) => c.consultant._id === "66bd6daf18b4120ed48ad221"
+    this._filteredData = this._data.filter(
+      (d) => d.consultant._id === "66bfab315fc554e42a9e6db6"
     );
-  }
-
-  _getLatestCase(clientId) {
-    const cases =
-      this._data.cases?.filter((c) => c.clientId === clientId) || [];
-    const latestCase = cases.sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    )[0];
-    return latestCase
-      ? { caseId: latestCase.caseId, _id: latestCase._id }
-      : null;
-  }
-
-  _getLatestAppointment(clientId) {
-    const tasks =
-      this._data.tasks?.filter((t) => t.clientId === clientId) || [];
-    const latestAppointment = tasks.sort(
-      (a, b) => new Date(b.start) - new Date(a.start)
-    )[0];
-    return latestAppointment
-      ? { taskId: latestAppointment.id, _id: latestAppointment._id }
-      : null;
   }
 
   _generateMarkup() {
     this._getFilteredData();
-
     return `
     <div class="table-row-horizontal">
     <h1 class="heading">Clients</h1>
@@ -71,20 +48,14 @@ class RenderMyClients extends Views {
               <td>${c.visaType}</td>
               <td >${getDateTimeString(c.createdAt)}</td>
               <td style="text-wrap:nowrap;">${
-                this._getLatestCase(c.id)
-                  ? `<a href="#case?C${this._getLatestCase(c.id)._id}">${
-                      this._getLatestCase(c.id).caseId
+                c.cases[0]
+                  ? `<a href="#case?C${c.cases.at(-1)?._id}">${
+                      c.cases.at(-1).caseId
                     }</a>`
                   : "N/A"
               }</td>
               <td>
-              ${
-                this._getLatestAppointment(c.id)
-                  ? `<a href="#task?T${this._getLatestAppointment(c.id)._id}">${
-                      this._getLatestAppointment(c.id).taskId
-                    }</a>`
-                  : "N/A"
-              }
+              ${0 ? `<a href="#task?T${"000000"}">${"000000"}</a>` : "N/A"}
               </td>
               <td style="text-wrap:nowrap;">${c.consultant?.name}</td>
             </tr>`

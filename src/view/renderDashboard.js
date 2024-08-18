@@ -13,6 +13,7 @@ class RenderDashboard extends Views {
   }
 
   async addHandlerRender(handler) {
+  
     try {
       this._lastDaysData = await handler();
       this._loading = false;

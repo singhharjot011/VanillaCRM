@@ -51,8 +51,6 @@ const caseSchema = new mongoose.Schema({
 caseSchema.pre("save", async function (next) {
   if (!this.caseId) {
     const count = await mongoose.model("Case").countDocuments();
-    console.log(count);
-    console.log(1000 + count + 1);
     this.caseId = `C${1000 + count + 1}`;
   }
   next();

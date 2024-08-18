@@ -32,7 +32,7 @@ export default function renderCreateCaseModal(
         </svg>
       </div>
       <form id="case-form" class="form-class">
-      ${curCase?`<label for="client" class="form-label" style="color:red;"><strong>${curCase?.caseId}</strong> </label>`:''}
+      ${curCase?.caseId?`<label for="client" class="form-label" style="color:red;"><strong>${curCase?.caseId}</strong> </label>`:''}
           <div class="form-row">
           
               <label for="client" class="form-label"><strong>Client</strong> </label>

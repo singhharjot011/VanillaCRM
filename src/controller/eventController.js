@@ -1,28 +1,39 @@
 import Event from "../model/EventModel.js";
+import { getAll } from "./handlerFactory.js";
 
-const getAllEvents = async (req, res) => {
-  try {
-    const events = await Event.find();
-    res.status(200).json({
-      status: "success",
-      results: events.length,
-      data: { events },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
-
+const getAllEvents = getAll(Event);
 const createEvent = async (req, res) => {
   try {
-    const newEvent = await Event.create(req.body);
+    const assignedToData = await User.findOne({
+      name: req.body.assignedToName,
+    });
+
+    const requestedByData = await User.findOne({
+      name: req.body.requestedByName,
+    });
+
+    const clientData = await Client.findOne({ name: req.body.clientName });
+
+    const newEvent = await Task.create({
+      assignedTo: assignedToData._id,
+      requestedBy: requestedByData._id,
+      title: req.body.title,
+      client: clientData._id,
+      due: req.body.due,
+      createdAt: req.body.createdAt,
+      completed: req.body.completed,
+      deleted: req.body.deleted,
+      hidden: req.body.hidden,
+      isAppointment: req.body.isAppointment,
+      appointmentDate: req.body.appointmentDate,
+      appointmentStartTime: req.body.appointmentStartTime,
+      appointmentEndTime: req.body.appointmentEndTime,
+      appointmentAgenda: req.body.appointmentAgenda,
+    });
 
     res.status(201).json({
       status: "success",
-      data: { event: newEvent },
+      data: { task: newEvent },
     });
   } catch (err) {
     return {

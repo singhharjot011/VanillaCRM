@@ -1,5 +1,6 @@
 import User from "../model/userModel.js";
 import catchAsync from "../utils/catchAsync.js";
+import { getAll, getOne } from "./handlerFactory.js";
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -11,16 +12,12 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-const getAllUsers = catchAsync(async (req, res) => {
-  const users = await User.find();
+const getAllUsers = getAll(User);
 
-  // SEND RESPONSE
-  res.status(200).json({
-    status: "success",
-    results: users.length,
-    data: { users },
-  });
-});
+const getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
 
 const updateMe = catchAsync(async (req, res, next) => {
   // 1) Create error if user POSTs password data
@@ -60,14 +57,7 @@ const createUser = (req, res) => {
     message: "This route is not yet defined",
   });
 };
-const getUser = async (req, res) => {
-  // const user = await User.findOne({ _id: req.params.name });
-  // res.status(200).json({ status: "success", data: { user } });
-  res.status(500).json({
-    status: "error",
-    message: "This route is not yet defined",
-  });
-};
+const getUser = getOne(User);
 
 // const getClient = catchAsync(async (req, res) => {
 //   const client = await Client.findById(req.params.id).populate("consultant");
@@ -95,4 +85,5 @@ export {
   deleteUser,
   updateMe,
   deleteMe,
+  getMe,
 };

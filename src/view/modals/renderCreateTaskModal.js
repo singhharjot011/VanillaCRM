@@ -2,12 +2,11 @@ import { API_URL } from "../../utils/config.js";
 import { getDateTimeString } from "../../utils/helpers.js";
 
 export default async function renderCreateTaskModal(
-  curClientData,
+  curTaskData,
   parentElm,
   usersData
 ) {
-  const curTask = {};
-  const curClient = curClientData || {};
+  const curTask = curTaskData || {};
 
   const consultantsData = usersData;
   const consultants = consultantsData.map((c) => c.name);
@@ -31,7 +30,11 @@ export default async function renderCreateTaskModal(
         </svg>
       </div>
       <form id="task-form" class="form-class" >
-
+      <div>    ${
+        curTask?.id
+          ? `<label for="client" class="form-label" style="color:red;"><strong>${curTask?.id}</strong> </label>`
+          : ""
+      }</div>
           <div class="form-row-flex">
               <label for="requested-by" 
               class="form-label">Requested By:  </label>
@@ -67,9 +70,8 @@ export default async function renderCreateTaskModal(
                   (c) =>
                     `<option ${
                       curTask.assignedTo &&
-                      getEmployeeIdToName(curTask.assignedTo)
-                        .toLowerCase()
-                        .trim() === c.toLowerCase().trim()
+                      curTask.assignedTo.name.toLowerCase().trim() ===
+                        c.toLowerCase().trim()
                         ? "selected"
                         : ""
                     }>${c}</option>`
@@ -129,8 +131,8 @@ export default async function renderCreateTaskModal(
                 <label for="client" class="form-label"><strong>Client</strong> </label>
                 <input type="text" class="form-input" id="client" name="client"  placeholder="Search Name"  autocomplete="off" list="clients" name="client"
                         ${
-                          curTask?.clientId &&
-                          ` value="${curTask.clientId}" selected disabled`
+                          curTask?.client &&
+                          ` value="${curTask.client.name}" selected disabled`
                         }/>    
                         
                 <label for="appointment-date" class="form-label">Appointment Date  </label>

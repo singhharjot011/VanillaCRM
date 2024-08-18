@@ -40,11 +40,11 @@ class RenderTasks extends Views {
           `<tr class="table-row">
             <td><a href="#task?T${t._id}">${t.id}</a></td>
             <td>${t.description}</td>
-            <td>${t.requestedBy}</td>
+            <td>${t.requestedBy.name}</td>
             <td style="color: ${t.completed ? "green" : "red"}">${
             t.completed
           }</td>
-            <td>${t.assignedTo}</td>
+            <td>${t.assignedTo.name}</td>
             <td>${t.appointmentDate || t.due}</td>
           </tr>`
       )

@@ -50,9 +50,12 @@ const clientSchema = new mongoose.Schema(
 // Virtual Populate
 clientSchema.virtual("cases", {
   ref: "Case",
-  foreignField: "client", // The field in the Case model that refers to the Client model
-  localField: "_id", // The field in the Client model that should match with the foreignField in Case
+  foreignField: "client",
+  localField: "_id",
 });
+
+clientSchema.index({ createdAt: -1 });
+clientSchema.index({ slug: 1 });
 
 clientSchema.pre("save", async function (next) {
   if (!this.id) {

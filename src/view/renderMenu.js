@@ -1,5 +1,5 @@
 import Views from "./views.js";
-
+ 
 class RenderMenu extends Views {
   _parentElement = document.querySelector("#main-nav");
 

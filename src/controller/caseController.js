@@ -2,34 +2,39 @@ import Case from "../model/caseModel.js";
 import Client from "../model/clientModel.js";
 import User from "../model/userModel.js";
 import catchAsync from "../utils/catchAsync.js";
+import { getAll, getOne } from "./handlerFactory.js";
 
-const getAllCases = async (req, res) => {
-  try {
-    const cases = await Case.find();
-    res.status(200).json({
-      status: "success",
-      results: cases.length,
-      data: { cases },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
+const getAllCases = getAll(Case);
 
-const getCase = async (req, res) => {
-  try {
-    const curCase = await Case.findById(req.params.id);
-    res.status(200).json({ status: "success", data: { curCase } });
-  } catch (err) {
-    return {
-      status: "fail",
-      message: err.message,
-    };
-  }
-};
+// const getAllCases = async (req, res) => {
+//   try {
+//     const cases = await Case.find();
+//     res.status(200).json({
+//       status: "success",
+//       results: cases.length,
+//       data: { cases },
+//     });
+//   } catch (err) {
+//     res.status(404).json({
+//       status: "fail",
+//       message: err,
+//     });
+//   }
+// };
+
+const getCase = getOne(Case);
+
+// const getCase = async (req, res) => {
+//   try {
+//     const curCase = await Case.findById(req.params.id);
+//     res.status(200).json({ status: "success", data: { curCase } });
+//   } catch (err) {
+//     return {
+//       status: "fail",
+//       message: err.message,
+//     };
+//   }
+// };
 
 const getDataForLastDays = async (req, res) => {
   try {
@@ -100,6 +105,7 @@ const createCase = catchAsync(async (req, res) => {
   const consultant = req.body.consultantName
     ? await User.findOne({ name: req.body.consultantName })
     : undefined;
+
   const client = req.body.clientName
     ? await Client.findOne({ name: req.body.clientName })
     : undefined;
@@ -122,6 +128,12 @@ const createCase = catchAsync(async (req, res) => {
     notes: updatedNotes,
     createdAt: req.body.createdAt,
   });
+
+  // Update the client's isLead field to false
+  if (client) {
+    await Client.findByIdAndUpdate(client._id, { isLead: false });
+  }
+
   res.status(201).json({
     status: "success",
     data: { client: newCase },
