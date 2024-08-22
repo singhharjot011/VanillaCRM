@@ -6,8 +6,8 @@ import { deleteOne, getAll, getOne } from "./handlerFactory.js";
 // const getAllClients = catchAsync(async (req, res) => {
 //   const clients = await Client.find().populate([
 //     "cases",
-//     "consultant",
-//     "lastUpdatedBy",
+//     "consultant", 
+//     "lastUpdatedBy", 
 //   ]);
 //   res.status(200).json({
 //     status: "success",

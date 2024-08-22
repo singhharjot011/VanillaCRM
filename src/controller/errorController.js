@@ -19,14 +19,6 @@ const handleValidationErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
-const sendErrorDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
-  });
-};
 const handleJWTError = (err) =>
   new AppError("Invalid Token, Please log in again", 401);
 
@@ -34,22 +26,57 @@ const handleJWTExpiredError = (err) =>
   new AppError("Your token has expired! Please Login again");
 
 const sendErrorProd = (err, res) => {
-  // Operational, trusted error: send message to client
-  if (err.isOperational) {
+  // API
+  if (req.originalUrl.startsWith("/api")) {
+    // Operational, trusted error: send message to client
+    if (err.isOperational) {
+      res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+
+      // Programming or other unknown error: don't leak error details
+    } else {
+      // 1) Log error
+      console.error("ERROR 💥", err);
+
+      // 2) Send generic message
+      res.status(500).json({
+        status: "error",
+        message: "Something went very wrong!",
+      });
+    }
+  } else {
+    if (err.isOperational) {
+      res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+
+      // Programming or other unknown error: don't leak error details
+    } else {
+      res.status(err.statusCode).render("error", {
+        title: "Something went wrong!",
+        msg: "Please try again later",
+      });
+    }
+  }
+};
+
+const sendErrorDev = (err, req, res) => {
+  // API
+  if (req.originalUrl.startsWith("/api")) {
     res.status(err.statusCode).json({
       status: err.status,
+      error: err,
       message: err.message,
+      stack: err.stack,
     });
-
-    // Programming or other unknown error: don't leak error details
   } else {
-    // 1) Log error
-    console.error("ERROR 💥", err);
-
-    // 2) Send generic message
-    res.status(500).json({
-      status: "error",
-      message: "Something went very wrong!",
+    // Rendered Website
+    res.status(err.statusCode).render("error", {
+      title: "Something went wrong!",
+      msg: err.message,
     });
   }
 };
@@ -61,7 +88,7 @@ const globalErrorHandler = (err, req, res, next) => {
   err.status = err.status || "error";
 
   if (process.env.NODE_ENV === "development") {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === "production") {
     let error = { ...err };
 

@@ -1,0 +1,41 @@
+extends base
+
+block content 
+    .table-row-horizontal
+        h1.heading My Clients
+
+
+    table.clients-table
+        thead
+            tr.table-header
+                th Client ID
+                th Client Name
+                th Phone Number
+                th Email Address
+                th Visa Type
+                th Created
+                th Latest Case#
+                th Upcoming Appointment
+                th Consultant
+        tbody
+            each client in clients
+                tr.table-row
+                    td
+                        a(href=`/client/${client.slug}`)= client.id
+                    td(style=client.isLead ? "color: var(--color-green-600); font-weight: bolder;" : "")= client.name
+                    td(style="white-space: nowrap;")= client.phone
+                    td(style="white-space: nowrap;")= client.email
+                    td= client.visaType
+                    td= getDateTimeString(client.createdAt)
+                    td(style="white-space: nowrap;")
+                        if client.cases && client.cases.length > 0
+                            a(href=`#case?C${client.cases[client.cases.length - 1]._id}`) #{client.cases[client.cases.length - 1].caseId}
+                        else
+                            | N/A
+                    td N/A
+                    td(style="white-space: nowrap;")= client.consultant.name
+    .table-row-horizontal
+        .legend
+            .legend-span
+            p Leads
+

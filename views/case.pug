@@ -1,0 +1,88 @@
+extends base
+
+block content
+    .modal
+        div
+            .close-icon
+                svg(xmlns='http://www.w3.org/2000/svg', height='24px', viewBox='0 -960 960 960', width='24px', fill='#5f6368')
+                    path(d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z')
+            form.form-class#case-form(action='javascript:void(0)', method='post')
+                if c && c.caseId
+                    div
+                        label(for='case' class='form-label' style='color:red;')
+                            strong= c.caseId
+                .form-row
+                    label.form-label(for='client')
+                        strong Client
+                    label.form-label(for='client-name')
+                        p= c.client.name
+                .form-row-flex
+                    .form-col-flex-col
+                        label.form-label
+                            strong Email: &nbsp;
+                        label.form-label(for='email-address' name='email-address-label' style='width:215px')
+                            = c.client.email
+                    .form-col-flex-col
+                        label.form-label
+                            strong Email: &nbsp;
+                        label.form-label(for='phone-number' name='phone-number-label' style='width:215px')
+                            = c.client.email
+                    .form-col-flex-col
+                        label.form-label
+                            strong Phone: &nbsp;
+                        label.form-label(for='visa-type' name='visa-type-label' style='width:215px')
+                            = c.client.phone
+                .form-row                  
+                    label.form-label(for='case-description')
+                        strong Case Description
+                    textarea.form-input#case-description(name='case-description'  rows='2')= c.caseDescription
+                .form-row-flex
+                    .form-col-flex
+                        label.form-label(for='case-type')
+                            strong Case Type
+                        select.form-input#case-type(name='case-type')
+                            each caseType in ['General Inquiry','Ongoing Visa Process','Callback Request','Update Request','Payment Related','Others']
+                                - const isSelected = (c.caseType === caseType) ? 'selected' : ''
+                                | <option value="#{caseType}" #{isSelected}>#{caseType}</option>
+
+
+                    .form-col-flex
+                        label.form-label(for='case-status')
+                            strong Case Status
+                        select.form-input#case-status(name='case-status')
+                            each caseStatus in ['In Progress','Pending','Under Review','Completed','Referred','Cancelled','Closed-Win','Closed-Lost']
+                                - const isSelected = (c.caseStatus === caseStatus) ? 'selected' : ''
+                                | <option value="#{caseStatus}" #{isSelected}>#{caseStatus}</option>
+
+                    .form-col-flex
+                        label.form-label(for='case-consultant')
+                            strong Consultant
+                        select.form-input#case-consultant(name='case-consultant')
+                            each consultant in consultants
+                                - const isSelected = (c.assignedTo.name === consultant.name) ? 'selected' : ''
+                                | <option value="#{consultant.name}" #{isSelected}>#{consultant.name}</option>
+                                
+                .form-row               
+                    label.form-label(for='case-note')
+                        strong Notes
+                    textarea.form-input#case-note(name='case-note', rows='4')= c.notes.length > 0 ? c.notes[c.notes.length - 1].note : ''
+                    
+                if c.notes.length > 0
+                    label.form-label(for='notes-history')
+                        strong Notes History
+                    .notes-history
+                        each note in c.notes
+                            .form-row-flex(style="gap:1rem;")
+                                strong
+                                    p(style="font-size:1.3rem; text-wrap:nowrap;")= getDateTimeString(note.writtenAt)
+                                div(style="display: flex; flex-grow: 1; gap:1rem; ")
+                                    p(style="text-decoration: underline;font-size:1.3rem;  text-wrap:nowrap;")
+                                        | #{note.writtenBy ? note.writtenBy.name : 'No writer data'}
+                                        pre= note.note
+
+                .form-row-flex
+                    button.btn-medium.btn-secondary#case-reset-button(type='reset')
+                        p Reset
+                    button.btn-medium.btn-primary#case-submit-button(type='submit')
+                        p= c.caseId ? 'Update Case' : 'Create Case'
+

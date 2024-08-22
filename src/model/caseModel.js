@@ -5,12 +5,13 @@ const caseNotesSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  writtenBy: String,
+  writtenBy: { type: mongoose.Schema.ObjectId, ref: "User" },
   writtenAt: {
     type: Date,
     default: new Date().toISOString(),
   },
 });
+
 
 const caseSchema = new mongoose.Schema({
   caseId: {
@@ -34,7 +35,7 @@ const caseSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "User",
   },
-  client: { 
+  client: {
     type: mongoose.Schema.ObjectId,
     ref: "Client",
   },
@@ -46,7 +47,6 @@ const caseSchema = new mongoose.Schema({
     default: new Date().toISOString(),
   },
 });
-
 
 caseSchema.pre("save", async function (next) {
   if (!this.caseId) {

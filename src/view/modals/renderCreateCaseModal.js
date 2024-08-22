@@ -176,7 +176,7 @@ export default function renderCreateCaseModal(
               .join(`\n`)}
             </div>`
               : ``
-          }
+          } 
           <div class="form-row-flex">        
               <button id="case-reset-button" type="reset" class="btn-medium btn-secondary">Reset</button>
               <button id="case-submit-button" name="case-submit-button" type="submit" value="submit" class="btn-medium btn-primary"

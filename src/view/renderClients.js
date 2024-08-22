@@ -79,7 +79,7 @@ class RenderClients extends Views {
         <div class="legend-span"> </div>
         <p>Leads</p>
       </div>
-    </div>
+    </div> 
     `;
   }
 }

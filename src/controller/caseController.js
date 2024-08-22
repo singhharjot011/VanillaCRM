@@ -72,14 +72,18 @@ const updateCase = catchAsync(async (req, res, next) => {
     ? await Client.findOne({ name: req.body.clientName })
     : undefined;
 
-  const notes = req.body.notes?.map(async (note) => {
-    const writtenByData = note.writtenByName
-      ? await User.findOne({ name: note.writtenByName })
-      : undefined;
-    return { ...note, writtenBy: writtenByData?._id };
-  });
+  const writtenByName = req.body.notes.at(-1)?.writtenByName;
+  const writtenBy = writtenByName
+    ? await User.findOne({ name: writtenByName })
+    : undefined;
 
-  const updatedNotes = notes ? await Promise.all(notes) : undefined;
+  // Update only the last note in the array
+  const updatedNotes = req.body.notes.map(
+    (note, index, array) =>
+      index === array.length - 1
+        ? { ...note, writtenBy: writtenBy ? writtenBy._id : undefined } // Update last note
+        : note // Keep other notes unchanged
+  );
 
   const caseEntity = await Case.findByIdAndUpdate(
     req.params.id,
@@ -102,6 +106,7 @@ const updateCase = catchAsync(async (req, res, next) => {
 });
 
 const createCase = catchAsync(async (req, res) => {
+  // Find consultant and client
   const consultant = req.body.consultantName
     ? await User.findOne({ name: req.body.consultantName })
     : undefined;
@@ -110,22 +115,26 @@ const createCase = catchAsync(async (req, res) => {
     ? await Client.findOne({ name: req.body.clientName })
     : undefined;
 
-  const notes = req.body.notes?.map(async (note) => {
-    const writtenByData = note.writtenByName
-      ? await User.findOne({ name: note.writtenByName })
-      : undefined;
-    return { ...note, writtenBy: writtenByData?._id };
-  });
+  // Find writtenBy user for the first note
+  const writtenByName = req.body.notes[0]?.writtenByName;
+  const writtenBy = writtenByName
+    ? await User.findOne({ name: writtenByName })
+    : undefined;
 
-  const updatedNotes = notes ? await Promise.all(notes) : undefined;
+  // Map notes to include the writtenBy field
+  const notes = req.body.notes.map((note) => ({
+    ...note,
+    writtenBy: writtenBy ? writtenBy._id : undefined, // Assign writtenBy as user ID
+  }));
 
+  // Create a new case
   const newCase = await Case.create({
     caseType: req.body.caseType,
     caseDescription: req.body.caseDescription,
     caseStatus: req.body.caseStatus,
     assignedTo: consultant?._id,
     client: client?._id,
-    notes: updatedNotes,
+    notes,
     createdAt: req.body.createdAt,
   });
 
@@ -134,6 +143,7 @@ const createCase = catchAsync(async (req, res) => {
     await Client.findByIdAndUpdate(client._id, { isLead: false });
   }
 
+  // Send response
   res.status(201).json({
     status: "success",
     data: { client: newCase },

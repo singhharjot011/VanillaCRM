@@ -1,0 +1,75 @@
+extends base
+
+block content
+    .modal
+        div
+            .close-icon
+                svg(xmlns='http://www.w3.org/2000/svg', height='24px', viewBox='0 -960 960 960', width='24px', fill='#5f6368')
+                    path(d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z')
+            form.form-class#client-form(action='javascript:void(0)', method='post')
+                if client && client.id
+                    div
+                        label(for='client' class='form-label' style='color:red;')
+                            strong= client.id
+                .form-row-flex
+                    .form-col-flex
+                        label.form-label(for='first-name') First Name
+                        input.form-input#first-name(name='first-name', type='text', value=client && client.name ? client.name.split(' ')[0] : '')
+                    .form-col-flex
+                        label.form-label(for='last-name') Last Name
+                        input.form-input#last-name(name='last-name', type='text', value=client && client.name ? client.name.split(' ')[1] : '')
+                
+                .form-row-flex
+                    .form-col-flex
+                        label.form-label(for='email') Email Address
+                        input.form-input#email(name='email', type='text', value=client && client.email ? client.email : '')
+                    .form-col-flex
+                        label.form-label(for='province') Province
+
+                        select.form-input#province(name='province')
+                            each p in ['ON', 'QC', 'NS', 'NB', 'MB', 'BC', 'PE', 'SK', 'AB', 'NL', 'NT (Territory)', 'YT (Territory)', 'NU (Territory)']
+                                - const isSelected = (client.province.trim() === p.trim()) ? 'selected' : ''
+                                | <option value="#{p}" #{isSelected}>#{p}</option>
+                    .form-col-flex
+                        label.form-label(for='phone') Phone
+                        input.form-input#phone(name='phone', type='text', maxlength='10', value=client && client.phone ? client.phone : '')
+
+                .form-row-flex
+                    .form-col-flex
+                        label.form-label(for='city') City
+                        input.form-input#city(name='city', type='text', value=client && client.city ? client.city : '')
+
+                    .form-col-flex
+                        label.form-label(for='postal-code') Postal Code
+                        input.form-input#postal-code(name='postal-code', type='text', maxlength='6', value=client && client.postalCode ? client.postalCode : '')
+
+                .form-row-flex
+                    .form-col-flex
+                        label.form-label(for='visa-type') Visa Type
+                        select.form-input#visa-type(name='visa-type')
+                            each p in ['Work Permit', 'Student Visa', 'Super Visa', 'Visitor Visa', 'Express Entry / PR', 'Family-Sponsorship', 'TRV', 'Others']
+                                - const isSelected = (client.visaType === p) ? 'selected' : ''
+                                | <option value="#{p}" #{isSelected}>#{p}</option>
+
+                    .form-col-flex
+                        label.form-label(for='client-consultant') Consultant
+                        select.form-input#client-consultant(name='client-consultant')
+                            each c in consultants
+                                - const isSelected = (client.consultant.name === c.name) ? 'selected' : ''
+                                | <option value="#{c.name}" #{isSelected}>#{c.name}</option>
+
+                .form-row
+                    label.form-label(for='client-note') Notes
+                    textarea.form-input#client-note(name='client-note', rows='4', placeholder='(Enter Important Details only, that did not have its own field above)')= client && client.clientNote ? client.clientNote : ''
+
+                .form-row-flex
+                    button#client-reset-button.btn-medium.btn-secondary(type='reset') Reset
+                    button#client-submit-button.btn-medium.btn-primary(type='submit', value='submit')= client && client.name ? 'Update Client' : 'Create Client'
+
+                if client.lastUpdatedAt
+                    .form-row-flex
+                        p(style='font-size:smaller;')
+                            strong Last Updated:
+                            | &nbsp;#{getDateTimeString(client.lastUpdatedAt)} by
+                            | 
+                            strong= client.lastUpdatedBy.name

@@ -1,6 +1,9 @@
 {
   "dependencies": {
+    "@babel/polyfill": "^7.12.1",
+    "axios": "^1.7.4",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -13,13 +16,18 @@
     "mongoose-validator": "^2.1.0",
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.14",
+    "pug": "^3.0.3",
+    "slugify": "^1.6.6",
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.3"
+    "nodemon": "^3.1.3",
+    "parcel-bundler": "^1.12.5"
   },
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon server.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
   },
   "name": "crm",
   "description": "This CRM is designed to help you manage your clients and tasks efficiently. ",

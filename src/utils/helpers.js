@@ -91,6 +91,23 @@ function validatePostalCode(postalCode) {
   return regx.test(postalCode);
 }
 
+const colorMap = new Map(
+  Object.entries({
+    "In Progress": "MediumSeaGreen",
+    Pending: "Gold",
+    "Under Review": "RoyalBlue",
+    Completed: "Green",
+    Referred: "Grey",
+    Cancelled: "Grey",
+    "Closed-Win": "SlateGrey",
+    "Closed-Lost": "SlateGrey",
+  })
+);
+
+function getColor(key) {
+  return colorMap.get(key);
+}
+
 export {
   getDateTimeString,
   getDayDifference,
@@ -98,4 +115,5 @@ export {
   validatePhone,
   validatePostalCode,
   formatPhoneNumber,
+  getColor,
 };

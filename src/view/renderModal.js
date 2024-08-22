@@ -536,7 +536,7 @@ class RenderModal extends Views {
             {
               note: newCaseNote,
               // Will change WrittenBy Later
-              writtenByName: newCaseConsultant,
+              writtenByName: newCaseConsultant, 
               writtenAt: new Date().toISOString(),
             },
           ],

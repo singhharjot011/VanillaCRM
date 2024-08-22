@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import slugify from "slugify";
 
 const clientSchema = new mongoose.Schema(
   {
@@ -21,10 +22,14 @@ const clientSchema = new mongoose.Schema(
       required: [true, "Client Number is required"],
     },
     // cases: { type: mongoose.Schema.ObjectId, ref: "Case" },
-    consultant: { type: mongoose.Schema.ObjectId, ref: "User" },
+    consultant: { type: mongoose.Schema.ObjectId, ref: "User" }, 
     clientNote: {
       type: String,
       trim: true,
+    },
+    slug: {
+      type: String,
+      unique: true,
     },
     visaType: String,
     city: String,
@@ -54,6 +59,8 @@ clientSchema.virtual("cases", {
   localField: "_id",
 });
 
+
+
 clientSchema.index({ createdAt: -1 });
 clientSchema.index({ slug: 1 });
 
@@ -62,7 +69,11 @@ clientSchema.pre("save", async function (next) {
     const count = await mongoose.model("Client").countDocuments();
     this.id = `I${100 + count + 1}`;
   }
-  console.log(`Generated caseId: ${this.id}`);
+  next();
+});
+
+clientSchema.pre("save", function (next) {
+  this.slug = slugify(this.name, { lower: true });
   next();
 });
 
