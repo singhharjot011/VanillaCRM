@@ -22,8 +22,8 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.post("/signup", signup);
 userRouter.post("/login", login);
+userRouter.post("/signup", signup);
 userRouter.get("/logout", logout);
 
 userRouter.post("/forgotPassword", forgotPassword);

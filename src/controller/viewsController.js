@@ -5,6 +5,12 @@ import AppError from "../utils/appError.js";
 import catchAsync from "../utils/catchAsync.js";
 import { getDateTimeString, getColor } from "../utils/helpers.js";
 
+export const getLoginForm = catchAsync(async (req, res, next) => {
+  res.status(200).render("login", {
+    title: "Login",
+  });
+});
+
 export const getClientsView = catchAsync(async (req, res) => {
   // 1) Get client data from the collection and populate the consultant field
   const clients = await Client.find().populate(["consultant", "cases"]);
@@ -44,7 +50,6 @@ export const getClient = catchAsync(async (req, res) => {
   const consultants = await User.find();
 
   if (!client) {
-
     return next(new AppError("There is no Client of that name"));
   }
 
@@ -90,15 +95,15 @@ export const getCaseView = catchAsync(async (req, res) => {
   });
 });
 
-export const getLoginForm = catchAsync(async (req, res, next) => {
-  res.status(200).render("login", {
-    title: "Login",
-  });
-});
-
 export const getDashboard = catchAsync(async (req, res) => {
   res.status(200).render("dashboard", {
     title: "Dashboard",
+  });
+});
+
+export const getMe = catchAsync(async (req, res) => {
+  res.status(200).render("account", {
+    title: "My Account",
   });
 });
 
@@ -119,3 +124,7 @@ export const getKnowledgeBase = catchAsync((req, res) => {
     title: "Knowledge Base",
   });
 });
+
+export const updateUserData = (req, res, next) => {
+  console.log("Updating user", req.body);
+};

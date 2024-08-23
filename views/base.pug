@@ -11,15 +11,17 @@ html
 
   body
     block login
-      #app-layout 
-        // HEADER
-        include _header
-        
-        // ASIDE
-        include _aside
-        
-        // MAIN
-        include _main
+      block myAccount
+        #app-layout
+          
+          // HEADER
+          include _header
+          
+          // ASIDE
+          include _aside
+          
+          // MAIN
+          include _main
 
     //- script(src='https://cdn.jsdelivr.net/npm/axios@1.7.4/dist/axios.min.js')
     //- script(src='/js/bundle.js')

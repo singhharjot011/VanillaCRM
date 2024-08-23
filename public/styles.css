@@ -282,6 +282,39 @@ button.btn-small {
   border-radius: 10px;
 }
 
+.btn-text:link,
+.btn-text:visited {
+  color: var(--color-brand-500);
+  display: inline-block;
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-brand-500);
+  padding: 3px;
+  -webkit-transition: all 0.2s;
+  transition: all 0.2s;
+}
+
+.btn-text:hover {
+  background-color: var(--color-brand-500);
+  color: #fff;
+  -webkit-box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+  -webkit-transform: translateY(-2px);
+  transform: translateY(-2px);
+}
+
+.btn-text:active {
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+  -webkit-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.btn-text:focus {
+  outline: none;
+  outline: 3px solid var(--color-brand-500);
+  outline-offset: 3px;
+}
+
 /* App Styling */
 
 .header-menu {
@@ -1039,4 +1072,116 @@ td > a {
   font-weight: 700;
   max-width: 50rem;
   margin: 0 auto;
+}
+
+/* My Account */
+
+.account--info {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  top: 30%;
+  left: 40%;
+  transform: translate(-30%, -30%);
+  background-color: var(--color-grey-0);
+  border: 1px solid var(--color-grey-100);
+  border-radius: var(--border-radius-md);
+  z-index: 2;
+  box-shadow: var(--shadow-lg);
+  padding: 0;
+  transition: all 0.5s;
+  min-height: 300px;
+  max-width: 75vw;
+}
+
+.close-icon {
+  position: absolute; /* Absolute positioning relative to .account--info */
+  top: 20px; /* Adjust as needed to position it from the top */
+  right: 40px; /* Adjust as needed to position it from the right */
+  cursor: pointer; /* Change cursor to indicate clickable icon */
+}
+
+.account--info > .left {
+  background-image: linear-gradient(135deg, #4338ca 0%, #764ba2 90%);
+  padding: 2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  color: whitesmoke;
+}
+
+.account--info > .right {
+  display: flex;
+  padding: 2rem 4rem;
+  flex-direction: column;
+}
+
+/* Other code */
+
+.form__input {
+  display: block;
+  font-family: inherit;
+  font-size: 1.5rem;
+  color: inherit;
+  padding: 1.25rem 1.75rem;
+  border: none;
+  width: 100%;
+  background-color: #fff;
+  background-color: #f2f2f2;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  /* Pseudo element (a visible thing that isn't really in the DOM).
+      Also needs -ms- */
+}
+.form__input:focus {
+  outline: none;
+  border-bottom: 3px solid var(--color-brand-500);
+}
+.form__input:focus:invalid {
+  border-bottom: 3px solid #ff7730;
+}
+.form__input::-webkit-input-placeholder {
+  color: #bbb;
+}
+
+.form__group:not(:last-child) {
+  margin-bottom: 2.5rem;
+}
+
+.form__label {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.form__photo-upload {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  font-size: 1.6rem;
+}
+
+.form__user-photo {
+  height: 7.5rem;
+  width: 7.5rem;
+  border-radius: 50%;
+  margin-right: 2rem;
+}
+
+.ma-bt-md {
+  margin-bottom: 3rem !important;
+}
+
+.ma-bt-lg {
+  margin-bottom: 3.5rem !important;
 }

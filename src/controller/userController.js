@@ -57,6 +57,7 @@ const createUser = (req, res) => {
     message: "This route is not yet defined",
   });
 };
+
 const getUser = getOne(User);
 
 // const getClient = catchAsync(async (req, res) => {

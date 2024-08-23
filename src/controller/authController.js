@@ -5,6 +5,7 @@ import crypto from "crypto";
 import AppError from "../utils/appError.js";
 import { promisify } from "util";
 import { sendEmail } from "../utils/email.js";
+import { getDashboard, getLoginForm } from "./viewsController.js";
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -107,8 +108,6 @@ const logout = (req, res, next) => {
 };
 
 const protect = catchAsync(async (req, res, next) => {
-  // 1) Getting token and check if its there
-
   let token;
 
   if (
@@ -121,37 +120,47 @@ const protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token) {
+    console.log("No token found");
     return next(
       new AppError("You are not logged in! Please log in to get access", 401)
     );
   }
 
-  // 2) Verification token
+  try {
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const freshUser = await User.findById(decoded.id);
+    if (!freshUser) {
+      console.log("User not found");
+      return next(
+        new AppError("The token belonging to this user does no longer exist")
+      );
+    }
 
-  // 3) Check if user still exists
+    if (freshUser.changedPasswordAfter(decoded.iat)) {
+      console.log("Password changed");
+      return next(
+        new AppError("User recently changed password, please login again", 401)
+      );
+    }
 
-  const freshUser = await User.findById(decoded.id);
-  if (!freshUser) {
-    return next(
-      new AppError("The token belonging to this user does no longer exist")
-    );
+    req.user = freshUser;
+
+    next();
+  } catch (err) {
+    next(err);
   }
-
-  // 4) Check if user changed password after the token was issued
-  if (freshUser.changedPasswordAfter(decoded.iat)) {
-    return next(
-      new AppError("User recently changed password, please login again", 401)
-    );
-  }
-
-  // GRANT ACCESS TO PROTECTED ROUTE
-
-  req.user = freshUser;
-
-  next();
 });
+
+const redirectBasedOnAuth = (req, res, next) => {
+  if (res.locals.user) {
+    // User is logged in, render the dashboard
+    return getDashboard(req, res, next); // Render the dashboard directly
+  } else {
+    // User is not logged in, render the login form
+    return getLoginForm(req, res, next); // Render the login form directly
+  }
+};
 
 const restrictTo = (...roles) => {
   return (req, res, next) => {
@@ -269,4 +278,5 @@ export {
   restrictTo,
   isLoggedIn,
   logout,
+  redirectBasedOnAuth,
 };

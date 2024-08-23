@@ -11,7 +11,7 @@ import {
 
 const clientRouter = express.Router();
 
-clientRouter.route("/").get(getAllClients).post(createClient);
+clientRouter.route("/").get(protect, getAllClients).post(createClient);
 // clientRouter.route("/").get(getAllClients).post(restrictTo('associate','manager'),createClient);
 
 clientRouter

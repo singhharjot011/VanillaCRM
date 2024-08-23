@@ -4,6 +4,7 @@ import { login, logout } from "./login.js";
 // DOM Elements
 const loginForm = document.querySelector(".signin-form");
 const logOutBtn = document.querySelector("#signout-btn");
+const myAccountBtn = document.querySelector("#my_account-btn");
 
 if (loginForm)
   loginForm.addEventListener("submit", (e) => {
@@ -14,3 +15,8 @@ if (loginForm)
   });
 
 if (logOutBtn) logOutBtn.addEventListener("click", logout);
+if (myAccountBtn) {
+  myAccountBtn.addEventListener("click", () => {
+    location.assign("/me");
+  });
+}
