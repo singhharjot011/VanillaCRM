@@ -12,7 +12,7 @@ import taskRouter from "./routes/taskRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import xss from "xss-clean";
 import hpp from "hpp";
-import { globalErrorHandler } from "./src/controller/errorController.js";
+import { globalErrorHandler } from "./controller/errorController.js";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -71,7 +71,6 @@ app.use(
 // Test Middleware
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
-
   next();
 });
 

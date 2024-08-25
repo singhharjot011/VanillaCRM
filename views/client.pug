@@ -3,10 +3,10 @@ extends base
 block content
     .modal
         div
-            .close-icon
+            .close-icon#closeButton
                 svg(xmlns='http://www.w3.org/2000/svg', height='24px', viewBox='0 -960 960 960', width='24px', fill='#5f6368')
                     path(d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z')
-            form.form-class#client-form(action='javascript:void(0)', method='post')
+            form.form-class#client-form
                 if client && client.id
                     div
                         label(for='client' class='form-label' style='color:red;')
@@ -28,7 +28,7 @@ block content
 
                         select.form-input#province(name='province')
                             each p in ['ON', 'QC', 'NS', 'NB', 'MB', 'BC', 'PE', 'SK', 'AB', 'NL', 'NT (Territory)', 'YT (Territory)', 'NU (Territory)']
-                                - const isSelected = (client.province.trim() === p.trim()) ? 'selected' : ''
+                                - const isSelected = (client?.province.trim() === p.trim()) ? 'selected' : ''
                                 | <option value="#{p}" #{isSelected}>#{p}</option>
                     .form-col-flex
                         label.form-label(for='phone') Phone
@@ -48,14 +48,14 @@ block content
                         label.form-label(for='visa-type') Visa Type
                         select.form-input#visa-type(name='visa-type')
                             each p in ['Work Permit', 'Student Visa', 'Super Visa', 'Visitor Visa', 'Express Entry / PR', 'Family-Sponsorship', 'TRV', 'Others']
-                                - const isSelected = (client.visaType === p) ? 'selected' : ''
+                                - const isSelected = (client?.visaType === p) ? 'selected' : ''
                                 | <option value="#{p}" #{isSelected}>#{p}</option>
 
                     .form-col-flex
                         label.form-label(for='client-consultant') Consultant
                         select.form-input#client-consultant(name='client-consultant')
                             each c in consultants
-                                - const isSelected = (client.consultant.name === c.name) ? 'selected' : ''
+                                - const isSelected = (client?.consultant.name === c.name) ? 'selected' : ''
                                 | <option value="#{c.name}" #{isSelected}>#{c.name}</option>
 
                 .form-row
@@ -66,10 +66,23 @@ block content
                     button#client-reset-button.btn-medium.btn-secondary(type='reset') Reset
                     button#client-submit-button.btn-medium.btn-primary(type='submit', value='submit')= client && client.name ? 'Update Client' : 'Create Client'
 
-                if client.lastUpdatedAt
-                    .form-row-flex
-                        p(style='font-size:smaller;')
-                            strong Last Updated:
-                            | &nbsp;#{getDateTimeString(client.lastUpdatedAt)} by
-                            | 
-                            strong= client.lastUpdatedBy.name
+                if client 
+                    if client.lastUpdatedAt
+                        .form-row-flex
+                            p(style='font-size:smaller;')
+                                strong Last Updated:
+                                | &nbsp;#{getDateTimeString(client.lastUpdatedAt)} by
+                                | 
+                                strong= client.lastUpdatedBy.name
+                .toast.sr-only
+                        .toast-close-icon
+                            svg(xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368")
+                                path(d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z")
+                        .form-col-flex.missing-fields-div
+                            h3 Missing Fields
+                            h4 Please fill the missing fields
+                            .missing-fields
+                        .form-col-flex.invalid-fields-div
+                            h3 Invalid Fields
+                            h4 Please fill the Invalid Fields
+                            .invalid-fields

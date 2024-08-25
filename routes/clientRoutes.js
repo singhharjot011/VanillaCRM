@@ -1,17 +1,18 @@
 import express from "express";
-import { protect, restrictTo } from "../src/controller/authController.js";
+import { protect, restrictTo } from "../controller/authController.js";
 import {
   createClient,
   deleteClient,
   getAllClients,
   getClient,
+  getClientByName,
   getDataForLastDays,
   updateClient,
-} from "../src/controller/clientController.js";
+} from "../controller/clientController.js";
 
 const clientRouter = express.Router();
 
-clientRouter.route("/").get(protect, getAllClients).post(createClient);
+clientRouter.route("/").get(getClientByName, getAllClients).post(createClient);
 // clientRouter.route("/").get(getAllClients).post(restrictTo('associate','manager'),createClient);
 
 clientRouter

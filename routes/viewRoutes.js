@@ -3,7 +3,7 @@ import {
   redirectBasedOnAuth,
   isLoggedIn,
   protect,
-} from "../src/controller/authController.js";
+} from "../controller/authController.js";
 import {
   getCalendar,
   getCasesView,
@@ -17,7 +17,9 @@ import {
   getMyClientsView,
   getTasks,
   updateUserData,
-} from "../src/controller/viewsController.js";
+  getAddClient,
+  getAddCase,
+} from "../controller/viewsController.js";
 
 const viewRouter = express.Router();
 
@@ -30,15 +32,20 @@ viewRouter.use(isLoggedIn);
 viewRouter.get("/", redirectBasedOnAuth);
 viewRouter.get("/dashboard", protect, getDashboard);
 viewRouter.get("/me", protect, getMe);
+
 viewRouter.get("/clients", protect, getClientsView);
+viewRouter.get("/add-client", protect, getAddClient);
 viewRouter.get("/my-clients", protect, getMyClientsView);
 viewRouter.get("/client/:slug", protect, getClient);
 
 viewRouter.get("/cases", protect, getCasesView);
 viewRouter.get("/case/:caseId", protect, getCaseView);
+viewRouter.get("/add-case", protect, getAddCase);
+
 viewRouter.get("/calendar", protect, getCalendar);
 viewRouter.get("/tasks", protect, getTasks);
 viewRouter.get("/knowledge-base", protect, getKnowledgeBase);
-viewRouter.post("/submit-user-data", updateUserData);
+viewRouter.post("/submit-user-data", protect, updateUserData);
+
 
 export default viewRouter;

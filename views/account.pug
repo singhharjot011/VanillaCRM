@@ -2,27 +2,49 @@ extends base
 
 block myAccount
   .account--info
-    a.close-icon(href='/')
+    .close-icon#closeButton
                 svg(xmlns='http://www.w3.org/2000/svg', height='24px', viewBox='0 -960 960 960', width='24px', fill='#5f6368')
                     path(d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z')
     .left
-        img(src=`/img/users/${user.photo || 'placeholder.png'}` alt='Avatar')
+        img.user-img(src=`/img/users/${user.photo || 'placeholder.png'}` alt='Avatar')
         h1= user.name
         h3= user.role.toString().toUpperCase()
     .right
-        h2 YOUR ACCOUNT SETTINGS
-        form.form-user-data(action='/submit-user-data' method='POST')
+      .user-data-div
+          h3 YOUR ACCOUNT SETTINGS
+          
+          //- WITHOUT API
+          //- form.form-user-data(action='/submit-user-data' method='POST') enctype='multipart/form-data'
+          
+          //-  WITH API
+          form.form-user-data
+            .form__group
+              label.form__label(for='name') Name
+              input#name.form__input(type='text', value=user.name, required,name='name')
+            .form__group
+              label.form__label(for='email') Email address
+              input#email.form__input(type='email', value=user.email, required,name='email')
+            .form__group.form__photo-upload
+              input.form__upload(type='file',accept='image/*',id='photo',name='photo')
+              label(for='photo').btn-text Choose new photo
+            .form-row-flex
+              button.btn-medium.btn-secondary(type='reset')
+                          p Reset
+              button.btn-primary.btn-medium.btn-save-data Save settings
+      .user-password-div
+        h3 PASSWORD CHANGE
+        form.form-user-password
           .form__group
-            label.form__label(for='name') Name
-            input#name.form__input(type='text', value=user.name, required,name='name')
-          .form__group.ma-bt-md
-            label.form__label(for='email') Email address
-            input#email.form__input(type='email', value=user.email, required,name='email')
-          .form__group.form__photo-upload
-            img.form__user-photo(src=`/img/users/${user.photo || 'placeholder.png'}`, alt='User photo')
-            a.btn-text(href='') Choose new photo
+            label.form__label(for='password-current') Current Password
+            input#password-current.form__input(type='password', placeholder='••••••••••', required,minlength='8')
+          .form__group
+            label.form__label(for='password') Password
+            input#password.form__input(type='password', placeholder='••••••••••', required,minlength='8')
+          .form__group
+            label.form__label(for='password-confirm') Confirm Password
+            input#password-confirm.form__input(type='password', placeholder='••••••••••', required,minlength='8')
           .form-row-flex
-            button.btn-medium.btn-secondary#case-reset-button(type='reset')
+            button.btn-medium.btn-secondary(type='reset')
                         p Reset
-            button.btn-primary.btn-medium Save settings
+            button.btn-primary.btn-medium.btn-save-password Save
 

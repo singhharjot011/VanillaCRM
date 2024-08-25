@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import {
   getAllUsers,
   createUser,
@@ -8,7 +9,9 @@ import {
   updateMe,
   deleteMe,
   getMe,
-} from "../src/controller/userController.js";
+  uploadUserPhoto,
+  resizeUserPhoto,
+} from "../controller/userController.js";
 import {
   login,
   signup,
@@ -18,7 +21,7 @@ import {
   updatePassword,
   restrictTo,
   logout,
-} from "../src/controller/authController.js";
+} from "../controller/authController.js";
 
 const userRouter = express.Router();
 
@@ -34,7 +37,13 @@ userRouter.patch("/resetPassword/:token", resetPassword);
 userRouter.patch("/updateMyPassword", protect, updatePassword);
 
 userRouter.get("/me", protect, getMe, getUser);
-userRouter.patch("/updateMe", protect, updateMe);
+userRouter.patch(
+  "/updateMe",
+  protect,
+  uploadUserPhoto,
+  resizeUserPhoto,
+  updateMe
+);
 userRouter.delete("/deleteMe", protect, deleteMe);
 
 // userRouter.use(restrictTo('manager'))
