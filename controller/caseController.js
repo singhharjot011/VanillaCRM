@@ -8,6 +8,20 @@ const getAllCases = getAll(Case);
 
 const getCase = getOne(Case);
 
+const getCaseByCaseId = async (req, res, next) => {
+  try {
+    const caseData = await Case.findOne({ caseId: req.query.caseId });
+    if (!caseData) {
+      return next();
+    }
+
+    res.status(200).json({ status: "success", data: { case: caseData } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error", message: "Server error" });
+  }
+};
+
 const getDataForLastDays = async (req, res) => {
   try {
     const days = parseInt(req.params.days);
@@ -44,29 +58,28 @@ const updateCase = catchAsync(async (req, res, next) => {
     ? await Client.findOne({ name: req.body.clientName })
     : undefined;
 
-  const writtenByName = req.body.notes.at(-1)?.writtenByName;
-  const writtenBy = writtenByName
-    ? await User.findOne({ name: writtenByName })
-    : undefined;
+  const existingCase = await Case.findById(req.originalId);
 
-  // Update only the last note in the array
-  const updatedNotes = req.body.notes.map(
-    (note, index, array) =>
-      index === array.length - 1
-        ? { ...note, writtenBy: writtenBy ? writtenBy._id : undefined } // Update last note
-        : note // Keep other notes unchanged
-  );
+  if (!existingCase) {
+    return res.status(404).json({ status: "fail", message: "Case not found" });
+  }
+
+  const newNote = {
+    note: req.body.note,
+    writtenBy: req.user._id,
+  };
 
   const caseEntity = await Case.findByIdAndUpdate(
-    req.params.id,
+    req.originalId,
     {
       caseType: req.body.caseType,
       caseDescription: req.body.caseDescription,
       caseStatus: req.body.caseStatus,
       assignedTo: consultant?._id,
       client: client?._id,
-      notes: updatedNotes,
+      notes: newNote ? [...existingCase.notes, newNote] : existingCase.notes,
       createdAt: req.body.createdAt,
+      createdBy: req.user._id,
     },
     {
       new: true,
@@ -87,17 +100,8 @@ const createCase = catchAsync(async (req, res) => {
     ? await Client.findOne({ name: req.body.clientName })
     : undefined;
 
-  // Find writtenBy user for the first note
-  const writtenByName = req.body.notes[0]?.writtenByName;
-  const writtenBy = writtenByName
-    ? await User.findOne({ name: writtenByName })
-    : undefined;
-
   // Map notes to include the writtenBy field
-  const notes = req.body.notes.map((note) => ({
-    ...note,
-    writtenBy: writtenBy ? writtenBy._id : undefined, // Assign writtenBy as user ID
-  }));
+  const newNote = { note: req.body.note, writtenBy: req.user._id };
 
   // Create a new case
   const newCase = await Case.create({
@@ -106,8 +110,9 @@ const createCase = catchAsync(async (req, res) => {
     caseStatus: req.body.caseStatus,
     assignedTo: consultant?._id,
     client: client?._id,
-    notes,
+    notes: [newNote],
     createdAt: req.body.createdAt,
+    createdBy: req.user._id,
   });
 
   // Update the client's isLead field to false
@@ -122,4 +127,11 @@ const createCase = catchAsync(async (req, res) => {
   });
 });
 
-export { getAllCases, getCase, createCase, getDataForLastDays, updateCase };
+export {
+  getAllCases,
+  getCase,
+  createCase,
+  getDataForLastDays,
+  updateCase,
+  getCaseByCaseId,
+};

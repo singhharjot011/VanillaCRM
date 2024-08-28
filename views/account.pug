@@ -27,6 +27,8 @@ block myAccount
             .form__group.form__photo-upload
               input.form__upload(type='file',accept='image/*',id='photo',name='photo')
               label(for='photo').btn-text Choose new photo
+              | &nbsp; &nbsp;
+              span#file-name No file chosen
             .form-row-flex
               button.btn-medium.btn-secondary(type='reset')
                           p Reset

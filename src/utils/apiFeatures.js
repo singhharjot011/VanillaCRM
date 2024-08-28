@@ -25,7 +25,7 @@ class APIFeatures {
       this.query = this.query.sort(sortBy);
       //sort ('price ratingsAverage')
     } else {
-      this.query = this.query.sort("-createdAt name");
+      this.query = this.query.sort();
     }
     return this;
   }

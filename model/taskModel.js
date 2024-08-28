@@ -79,3 +79,4 @@ taskSchema.pre(/^find/, function (next) {
 const Task = mongoose.model("Task", taskSchema);
 
 export default Task;
+ 

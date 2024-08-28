@@ -4,6 +4,31 @@ block content
     .table-row-horizontal
         h1.heading My Clients
 
+        if totalPages > 1
+            .pagination 
+                // Disable the "Previous" button if the current page is the first page
+                button.btn-primary.btn-medium#prev-btn(
+                    disabled=currentPage === 1
+                ) &#129092; Previous
+
+                each pageNum in Array.from({ length: totalPages }, (_, i) => i + 1)
+                    - const cls = pageNum === currentPage ? 'active' : ''
+                    button.btn-page(class=cls, data-page=pageNum) #{pageNum}
+
+                // Disable the "Next" button if the current page is the last page
+                button.btn-primary.btn-medium#next-btn(
+                    disabled=currentPage === totalPages
+                ) Next &#129094;
+
+        div
+            label.form-label(for='sort') Sort
+                | &nbsp; &nbsp;
+                select.form-input#sort-input-client(name='sort')
+                    each sortOption in ['','Name - (A-Z)','Name - (Z-A)', 'Newest', 'Oldest','Visa Type - (A-Z)']
+                        - const isSelected = sortOption === sortParams ? 'selected' : '';
+                        <option #{isSelected}>#{sortOption}</option> 
+ 
+
 
     table.clients-table
         thead

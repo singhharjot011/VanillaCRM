@@ -1,0 +1,98 @@
+extends base
+
+block content
+    .modal
+        div
+            .close-icon#closeButton
+                svg(xmlns='http://www.w3.org/2000/svg', height='24px', viewBox='0 -960 960 960', width='24px', fill='#5f6368')
+                    path(d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z')
+            form.form-class#task-form(action='javascript:void(0)', method='post' , style="margin-top:40px;")
+                if task && task.id
+                    div
+                        label(for='task' class='form-label' style='color:red;')
+                            strong= task.id || ''
+                .form-row-flex
+                    label.form-label(for="requested-by") Requested By:
+                    select.form-input#requested-by(name="requested-by")
+                        each consultant in consultants
+                                - const isSelected = task && (task.requestedBy.name === consultant.name) ? 'selected disabled' : ''
+                                | <option #{isSelected}>#{consultant.name}</option>
+                .form-row
+                    label.form-label(for="assign-to") Assign To
+                    select.form-input#assign-to(name="assign-to")
+                        each consultant in consultants
+                                - const isSelected = task && (task.assignedTo.name === consultant.name) ? 'selected disabled' : ''
+                                | <option #{isSelected}>#{consultant.name}</option>
+                .form-row
+                    label.form-label(for="objective") Task Objective
+                    - const isDisabled = task && task.description ? true : false
+                    textarea#objective.form-input(name="objective" rows="2" disabled=isDisabled)= task && task.description
+
+
+
+                .form-row-flex#due-date-box(class= task&& task.isAppointment ? "sr-only" : "")
+                    label.form-label(for="due-date") Due Date
+                    if task && task.due
+                        input.form-input#due-date(type="date" name="due-date" min="2020-01-01" max="2030-12-31"  value=`${task.due}`)
+                    else 
+                        input.form-input#due-date(type="date" name="due-date" min="2020-01-01" max="2030-12-31")
+
+
+                if task && task.description 
+                    .form-row
+                        label.form-label(for="completion-note")
+                            strong Completion Notes
+                        - const isDisabled = task && task.completedAt ? true : false
+                        textarea.form-input#completion-note(name="completion-note" rows="3" placeholder="Briefly tell about the completed task" disabled=isDisabled)= task && task.taskCompletionNotes
+
+                .form-row-flex
+                    label(for="appointment-check-new") Appointment?
+                    input#appointment-check-new(type="checkbox" name="appointment-check" checked= task && task.isAppointment)
+
+
+                #appointment-details-container
+                    //- if task && task.isAppointment
+                    .form-row
+                        label.form-label(for="client")
+                            strong Client
+                            // Input field with or without a value, depending on whether c.client exists
+                        if task && task.client
+                            input#client.form-input(type='text' name='client' value=task.client.name readonly)
+                        else
+                            input#client.form-input(type='text' name='client' placeholder='Search Name' autocomplete='off' list='clients' data-client-input)
+
+                        // Datalist options, always shown, but only generated when c.client doesn't exist
+                        datalist#clients
+                            if !(task && task.client)
+                                each client in clients
+                                    option(value=client.name data-id=client._id)
+
+
+                        //- input.form-input#client(type="text" name="client" placeholder="Search Name" autocomplete="off" list="clients" value= task && task.client ? task.client.name : '')
+                        label.form-label(for="appointment-date") Appointment Date
+                        input.form-input#appointment-date(type="date" name="appointment-date" value=task && task.appointmentDate || '')
+                        label.form-label(for="appointment-start-time") Start Time
+                        input.form-input#appointment-start-time(type="time" name="appointment-start-time" value=task && task.appointmentStartTime || '')
+                        label.form-label(for="appointment-end-time") End Time
+                        input.form-input#appointment-end-time(type="time" name="appointment-end-time" value=task && task.appointmentEndTime || '')
+                        label.form-label(for="agenda") Agenda
+                        textarea#agenda(name="agenda" class="form-input" rows="4")= task && task.appointmentAgenda
+
+                .form-row-flex#button-area
+                    if task && task.completed
+                        p#success-message= `Task Completed on ${getDateTimeString(task.completedAt)}`
+                    else
+                        button.btn-medium.btn-secondary#task-reset-button(name="task-reset-button" type="reset") Reset
+                        if task && !task.completed
+                            button.btn-medium.btn-secondary#task-submit-button(name="task-submit-button" type="submit") Mark Completed
+                        else
+                            button.btn-medium.btn-primary#task-submit-button(name="task-submit-button" type="submit") Create Task
+
+
+
+
+
+
+
+
+

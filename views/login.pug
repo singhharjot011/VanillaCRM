@@ -2,8 +2,7 @@ extends base
 block login
     .signin-page
         .signin-prompt
-            img.signin-logo(src="/assets/img/logo/logo.png"
-        alt="Logo")
+            img.signin-logo(src="/assets/img/logo/logo.png" alt="Logo")
             h2 Sign In
 
             form.signin-form
@@ -18,9 +17,9 @@ block login
                         input.form-input(id="password" name="password" type="password" autocomplete="password" required)
                 div(style="display:flex; gap:5px; font-size:smaller; justify-content:center;")
                     p Forgot Password?
-                        a(href="#") Reset
+                        a(href="/forgotPassword") Reset
                 .signin-form-button
                     button.btn-medium.btn-primary#signin-submit-button(name="signin-submit-button") Sign In
                 div(style="display:flex; gap:5px; font-size:smaller; justify-content:center;")
                     p Don't have an account?
-                        a(href="#") Sign Up
+                        a(href="/signup") Sign Up

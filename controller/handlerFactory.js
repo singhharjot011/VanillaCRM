@@ -52,13 +52,18 @@ export const getOne = (Model, popOptions) =>
 
 export const getOneByName = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
+    if (!req.query.name) {
+      return next(); // Pass control to the next middleware
+    }
     let query = Model.findOne({ name: req.query.name });
-    console.log(req.query.name);
-    if (popOptions) query = query.populate(popOptions);
+
+    if (popOptions) {
+      query = query.populate(popOptions);
+    }
     const doc = await query;
 
     if (!doc) {
-      return next(new AppError("No Document found with that ID", 404));
+      return next(new AppError("No document found with that name", 404));
     }
 
     res.status(200).json({ status: "success", data: { doc } });
@@ -67,7 +72,6 @@ export const getOneByName = (Model, popOptions) =>
 export const getAll = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
     let filter = {};
-    // if (req.params.tourId) filter = { tour: req.params.tourId };
 
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()

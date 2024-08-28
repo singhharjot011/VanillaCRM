@@ -55,7 +55,13 @@ const filterObj = (obj, ...allowedFields) => {
 const getAllUsers = getAll(User);
 
 const getMe = (req, res, next) => {
+
+  req.originalId = req.params.id;
+
+
   req.params.id = req.user.id;
+
+
   next();
 };
 

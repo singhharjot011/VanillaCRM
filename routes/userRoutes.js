@@ -23,7 +23,7 @@ import {
   logout,
 } from "../controller/authController.js";
 
-const userRouter = express.Router();
+const userRouter = express.Router(); 
 
 userRouter.post("/login", login);
 userRouter.post("/signup", signup);

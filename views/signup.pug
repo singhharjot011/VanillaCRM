@@ -1,0 +1,27 @@
+extends base
+block login
+    .signup-page
+        .signup-prompt
+            img.signup-logo(src="/assets/img/logo/logo.png" alt="Logo")
+            h2 Sign Up
+            form.signup-form
+                .form-row-flex
+                    label.form-label(for="name") Full Name
+                    .mt-2
+                        input.form-input(id="name" name="name" type="name" autocomplete="name" required)
+                .form-row-flex
+                    label.form-label(for="email") Email Address
+                    .mt-2
+                        input.form-input(id="email" email="email" type="email" autocomplete="email" required)
+                //- .form-row-flex
+                //-     label.form-label(for="token") Token
+                //-     .mt-2
+                //-         input.form-input(id="token" token="token" type="token" required)
+                div(style="display:flex; gap:5px; font-size:smaller; justify-content:center;")
+                    p Already have a token
+                    a(href="/completeSignup") Complete Sign Up
+                .signup-form-button
+                    button.signup-submit-button.btn-medium.btn-primary#signup-submit-button Request Token
+                div(style="display:flex; gap:5px; font-size:smaller; justify-content:center;")
+                    p Already have an account?
+                    a(href="/login") Sign In

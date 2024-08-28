@@ -41,7 +41,7 @@ block content
 
                     .form-col-flex
                         label.form-label(for='postal-code') Postal Code
-                        input.form-input#postal-code(name='postal-code', type='text', maxlength='6', value=client && client.postalCode ? client.postalCode : '')
+                        input.form-input#postal-code(name='postal-code', style="text-transform:uppercase" type='text', maxlength='6', value=client && client.postalCode ? client.postalCode : '')
 
                 .form-row-flex
                     .form-col-flex
@@ -86,3 +86,8 @@ block content
                             h3 Invalid Fields
                             h4 Please fill the Invalid Fields
                             .invalid-fields
+
+        script. 
+            window.clientsNames = !{JSON.stringify(clientsNames)};
+            window.currentClientName = !{JSON.stringify((client && client.name) || null)};
+

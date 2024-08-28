@@ -9,17 +9,23 @@ import {
   getDataForLastDays,
   updateClient,
 } from "../controller/clientController.js";
+import { getMe } from "../controller/userController.js";
 
 const clientRouter = express.Router();
 
-clientRouter.route("/").get(getClientByName, getAllClients).post(createClient);
+clientRouter
+  .route("/")
+  .get(getClientByName, getAllClients)
+  .post(protect, getMe, createClient);
 // clientRouter.route("/").get(getAllClients).post(restrictTo('associate','manager'),createClient);
 
 clientRouter
   .route("/:id")
   .get(getClient)
-  .patch(updateClient)
+  .patch(protect, getMe, updateClient)
   .delete(restrictTo("associate", "manager"), deleteClient);
+
+// clientRouter.route("/tour-stats").get();
 
 clientRouter.route("/data/:days").get(getDataForLastDays);
 

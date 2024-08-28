@@ -6,23 +6,30 @@ block content
             .close-icon#closeButton
                 svg(xmlns='http://www.w3.org/2000/svg', height='24px', viewBox='0 -960 960 960', width='24px', fill='#5f6368')
                     path(d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z')
-            form.form-class#case-form(action='javascript:void(0)', method='post')
+            form.form-class#case-form(action='javascript:void(0)', method='post' , style="margin-top:40px;")
                 if c && c.caseId
                     div
                         label(for='case' class='form-label' style='color:red;')
                             strong= c.caseId || ''
                 .form-row
                     label.form-label(for='client')
-                        strong Client 
-                    label.form-label(for='client')
-                        if c && c.client.name
-                            p= c.client.name
-                        else
-                            input#client.form-input(type='text' name='client' placeholder='Search Name' autocomplete='off' list='clients' data-client-input)
-                            datalist#clients
-                                if clients 
-                                    each client in clients
-                                        option( selected=(c && c.client === client._id))= client.name
+                        strong Client
+
+                    // Input field with or without a value, depending on whether c.client exists
+                    if c && c.client
+                        input#client.form-input(type='text' name='client' value=c.client.name readonly)
+                    else
+                        input#client.form-input(type='text' name='client' placeholder='Search Name' autocomplete='off' list='clients' data-client-input)
+
+                    // Datalist options, always shown, but only generated when c.client doesn't exist
+                    datalist#clients
+                        if !(c && c.client)
+                            each client in clients
+                                option(value=client.name data-id=client._id)
+
+
+
+
                 .form-row-flex
                     .form-col-flex-col
                         label.form-label
@@ -71,7 +78,7 @@ block content
                 .form-row               
                     label.form-label(for='case-note')
                         strong Notes
-                    textarea.form-input#case-note(name='case-note', rows='4')= c && c.notes.length > 0 ? c.notes[c.notes.length - 1].note : ''
+                    textarea.form-input#case-note(name='case-note', rows='4')
                     
                 if c && c.notes.length > 0
                     label.form-label(for='notes-history')
@@ -91,6 +98,19 @@ block content
                         p Reset
                     button.btn-medium.btn-primary#case-submit-button(type='submit')
                         p= c && c.caseId ? 'Update Case' : 'Create Case'
+                
+                .toast.sr-only
+                        .toast-close-icon
+                            svg(xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368")
+                                path(d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z")
+                        .form-col-flex.missing-fields-div
+                            h3 Missing Fields
+                            h4 Please fill the missing fields
+                            .missing-fields
+                        .form-col-flex.invalid-fields-div
+                            h3 Invalid Fields
+                            h4 Please fill the Invalid Fields
+                            .invalid-fields
 
                     
                 

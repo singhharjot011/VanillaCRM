@@ -2,3 +2,8 @@ extends base
 
 block content 
     h1 Calendar
+
+    #calendar-container
+
+    script. 
+        window.calendarTasks = !{JSON.stringify(tasks)};

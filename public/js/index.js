@@ -1,4 +1,7 @@
-import { createClient } from "../../controller/clientController.js";
+import { callCalendar } from "./handleCalendar.js";
+import { handleCaseForm } from "./handleCaseForm.js";
+import { handleClientForm } from "./handleClientForm.js";
+import { handleSort, updateURL } from "./helpers.js";
 import { login, logout } from "./login.js";
 import { updateSettings } from "./updateSettings.js";
 
@@ -10,7 +13,20 @@ const userDataForm = document.querySelector(".form-user-data");
 const userPasswordForm = document.querySelector(".form-user-password");
 const addNewClient = document.querySelector("#create-client-btn");
 const addNewCase = document.querySelector("#create-case-btn");
+const addNewTask = document.querySelector("#create-task-btn");
 const closeButton = document.getElementById("closeButton");
+
+const fileInput = document.querySelector("#photo");
+const fileNameDisplay = document.querySelector("#file-name");
+if (fileInput)
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (file) {
+      fileNameDisplay.textContent = file.name;
+    } else {
+      fileNameDisplay.textContent = "No file chosen";
+    }
+  });
 
 if (loginForm)
   loginForm.addEventListener("submit", (e) => {
@@ -34,6 +50,10 @@ if (addNewClient)
 if (addNewCase)
   addNewCase.addEventListener("click", () => {
     window.location.assign("/add-case");
+  });
+if (addNewTask)
+  addNewTask.addEventListener("click", () => {
+    window.location.assign("/add-task");
   });
 
 if (userDataForm)
@@ -74,155 +94,87 @@ if (closeButton)
 // CASE FORM
 
 const caseForm = document.querySelector("#case-form");
-if (caseForm) {
-  const clientInput = document.querySelector("[data-client-input]");
-  const emailLabel = document.querySelector("[data-email-label]");
-  const phoneLabel = document.querySelector("[data-phone-label]");
-  const visaTypeLabel = document.querySelector("[data-visa-type-label]");
-
-  clientInput?.addEventListener("change", async function () {
-    const clientName = this.value;
-    try {
-      const response = await fetch(
-        `/api/v1/clients?name=${encodeURIComponent(clientName)}`
-      );
-      if (!response.ok) {
-        throw new Error("Client not found");
-      }
-      const res = await response.json();
-      const client = res.data.doc;
-      emailLabel.textContent = client.email || "";
-      phoneLabel.textContent = client.phone || "";
-      visaTypeLabel.textContent = client.visaType || "";
-    } catch (error) {
-      emailLabel.textContent = "";
-      phoneLabel.textContent = "";
-      visaTypeLabel.textContent = "";
-    }
-  });
-}
+if (caseForm) handleCaseForm(caseForm);
 
 // CLIENT FORM
 
 const clientForm = document.querySelector("#client-form");
-if (clientForm) {
-  const toast = document.querySelector(".toast");
+if (clientForm) handleClientForm(clientForm);
 
-  clientForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const formData = new FormData(clientForm);
-    const formMap = new Map(formData);
-    console.log(formMap);
+// SORTING
 
-    const newClientObj = {
-      name: formMap.get("first-name") + " " + formMap.get("last-name"),
-      email: formMap.get("email"),
-      phone: formMap.get("phone"),
-      consultantName: formMap.get("client-consultant"),
-      clientNote: formMap.get("client-note").trim(),
-      visaType: formMap.get("visa-type"),
-      city: formMap.get("city"),
-      province: formMap.get("province"),
-      postalCode: formMap.get("postal-code"),
-    };
+const sortClientsDropdown = document.querySelector("#sort-input-client");
+const sortCasesDropdown = document.querySelector("#sort-input-case");
 
-    const missingFields = [];
-    const invalidFields = [];
+// Function to handle sorting and page changes
 
-    // Validate the fields
-    !newClientObj.name.trim() && missingFields.push("Name");
-    !newClientObj.email && missingFields.push("Email Address");
-    // !validateEmail(newClientObj.email) && invalidFields.push("Email");
-    !newClientObj.phone && missingFields.push("Phone");
-    // !validatePhone(newClientObj.phone) && invalidFields.push("Phone Number");
-    !newClientObj.city && missingFields.push("City");
-    !newClientObj.postalCode && missingFields.push("Postal Code");
-    // !validatePostalCode(newClientObj.postalCode) && invalidFields.push("Postal Code");
+if (sortClientsDropdown) {
+  sortClientsDropdown.addEventListener("change", handleSort);
+}
 
-    if (missingFields.length > 0 || invalidFields.length > 0) {
-      toast.classList.remove("sr-only");
-      showToast(toast, missingFields, invalidFields);
-      return;
-    }
+if (sortCasesDropdown) {
+  sortCasesDropdown.addEventListener("change", handleSort);
+}
 
-    const urlPath = window.location.href.split("/").at(-1);
-    // let apiUrl = "/api/v1/clients";
+const prevButton = document.querySelector("#prev-btn");
+const nextButton = document.querySelector("#next-btn");
+const pageButtons = document.querySelectorAll(".btn-page");
 
-    if (urlPath === "add-client") {
-      document.querySelector("#client-submit-button").textContent =
-        "Creating...";
+let currentPage = parseInt(
+  new URLSearchParams(window.location.search).get("page") || "1",
+  10
+);
 
-      // const response = await fetch(apiUrl, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(newClientObj),
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error("Failed to create client");
-      // }
-
-      // const result = await response.json();
-      // console.log(result);
-
-      document.querySelector("#client-submit-button").textContent =
-        "Create Client";
-      history.back();
-    } else {
-      document.querySelector("#client-submit-button").textContent =
-        "Updating...";
-
-      document.querySelector("#client-submit-button").textContent =
-        "Update Client";
+if (prevButton) {
+  prevButton.addEventListener("click", function () {
+    if (currentPage > 1) {
+      currentPage--;
+      const query =
+        new URLSearchParams(window.location.search).get("sort") || "";
+      updateURL(query, currentPage);
     }
   });
 }
 
-// TOAST FUNCTION
-
-function showToast(toast, missingFields, invalidFields) {
-  const missingFieldsDiv = toast.querySelector(".missing-fields-div");
-  const invalidFieldsDiv = toast.querySelector(".invalid-fields-div");
-
-  const missingFieldsContainer = toast.querySelector(".missing-fields");
-  const invalidFieldsContainer = toast.querySelector(".invalid-fields");
-
-  // Clear previous content
-  missingFieldsContainer.innerHTML = "";
-  invalidFieldsContainer.innerHTML = "";
-
-  // Populate missing fields
-  if (missingFields && missingFields.length > 0) {
-    missingFields.forEach((field) => {
-      const p = document.createElement("p");
-      p.textContent = field;
-      missingFieldsContainer.appendChild(p);
-    });
-    missingFieldsDiv.style.display = "block"; // Show missing fields section
-  } else {
-    missingFieldsDiv.style.display = "none"; // Hide missing fields section
-  }
-
-  // Populate invalid fields
-  if (invalidFields && invalidFields.length > 0) {
-    invalidFields.forEach((field) => {
-      const p = document.createElement("p");
-      p.textContent = field;
-      invalidFieldsContainer.appendChild(p);
-    });
-    invalidFieldsDiv.style.display = "block"; // Show invalid fields section
-  } else {
-    invalidFieldsDiv.style.display = "none"; // Hide invalid fields section
-  }
-
-  const toastCloseIcon = toast.querySelector(".toast-close-icon");
-  if (toastCloseIcon) {
-    toastCloseIcon.addEventListener("click", () => {
-      if (toast) {
-        toast.classList.add("sr-only");
-      }
-    });
-  }
+if (nextButton) {
+  nextButton.addEventListener("click", function () {
+    // Add a check here if you have totalPages defined
+    // if (currentPage < totalPages) {
+    currentPage++;
+    const query = new URLSearchParams(window.location.search).get("sort") || "";
+    updateURL(query, currentPage);
+    // }
+  });
 }
+
+pageButtons.forEach((button) => {
+  button.addEventListener("click", function () {
+    const selectedPage = parseInt(this.textContent, 10);
+    currentPage = selectedPage;
+    const query = new URLSearchParams(window.location.search).get("sort") || "";
+    updateURL(query, currentPage);
+  });
+});
+
+// Calendar
+
+const calendarEl = document.getElementById("calendar-container");
+
+if (calendarEl) {
+  callCalendar(calendarEl);
+}
+
+// Task Events Handling
+
+const appointmentCheckbox = document.getElementById("appointment-check-new");
+const appointmentDetailsContainer = document.getElementById(
+  "appointment-details-container"
+);
+
+function toggleAppointmentDetails() {
+  appointmentDetailsContainer.style.display = appointmentCheckbox.checked
+    ? "block"
+    : "none";
+}
+if (appointmentCheckbox)
+  appointmentCheckbox.addEventListener("change", toggleAppointmentDetails);

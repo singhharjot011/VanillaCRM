@@ -38,7 +38,7 @@ const clientSchema = new mongoose.Schema(
     createdBy: { type: mongoose.Schema.ObjectId, ref: "User" },
     createdAt: {
       type: Date,
-      default: new Date().toISOString(),
+      default: Date.now(),
     },
     isLead: {
       type: Boolean,
