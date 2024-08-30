@@ -1,6 +1,8 @@
 import { callCalendar } from "./handleCalendar.js";
 import { handleCaseForm } from "./handleCaseForm.js";
 import { handleClientForm } from "./handleClientForm.js";
+import { handleTaskForm } from "./handleTaskForm.js";
+import { showEventToast } from "./handleToast.js";
 import { handleSort, updateURL } from "./helpers.js";
 import { login, logout } from "./login.js";
 import { updateSettings } from "./updateSettings.js";
@@ -101,10 +103,16 @@ if (caseForm) handleCaseForm(caseForm);
 const clientForm = document.querySelector("#client-form");
 if (clientForm) handleClientForm(clientForm);
 
+// TASK FORM
+
+const taskForm = document.querySelector("#task-form");
+if (taskForm) handleTaskForm(taskForm);
+
 // SORTING
 
 const sortClientsDropdown = document.querySelector("#sort-input-client");
 const sortCasesDropdown = document.querySelector("#sort-input-case");
+const sortTasksDropdown = document.querySelector("#sort-input-task");
 
 // Function to handle sorting and page changes
 
@@ -114,6 +122,10 @@ if (sortClientsDropdown) {
 
 if (sortCasesDropdown) {
   sortCasesDropdown.addEventListener("change", handleSort);
+}
+
+if (sortTasksDropdown) {
+  sortTasksDropdown.addEventListener("change", handleSort);
 }
 
 const prevButton = document.querySelector("#prev-btn");
@@ -131,6 +143,7 @@ if (prevButton) {
       currentPage--;
       const query =
         new URLSearchParams(window.location.search).get("sort") || "";
+
       updateURL(query, currentPage);
     }
   });
@@ -138,10 +151,10 @@ if (prevButton) {
 
 if (nextButton) {
   nextButton.addEventListener("click", function () {
-    // Add a check here if you have totalPages defined
     // if (currentPage < totalPages) {
     currentPage++;
     const query = new URLSearchParams(window.location.search).get("sort") || "";
+
     updateURL(query, currentPage);
     // }
   });
@@ -167,6 +180,7 @@ if (calendarEl) {
 // Task Events Handling
 
 const appointmentCheckbox = document.getElementById("appointment-check-new");
+const dueDateBox = document.getElementById("due-date-box");
 const appointmentDetailsContainer = document.getElementById(
   "appointment-details-container"
 );
@@ -175,6 +189,8 @@ function toggleAppointmentDetails() {
   appointmentDetailsContainer.style.display = appointmentCheckbox.checked
     ? "block"
     : "none";
+
+  dueDateBox.style.display = appointmentCheckbox.checked ? "none" : "flex";
 }
 if (appointmentCheckbox)
   appointmentCheckbox.addEventListener("change", toggleAppointmentDetails);

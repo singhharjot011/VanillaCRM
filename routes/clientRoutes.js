@@ -16,13 +16,13 @@ const clientRouter = express.Router();
 clientRouter
   .route("/")
   .get(getClientByName, getAllClients)
-  .post(protect, getMe, createClient);
+  .post(protect, createClient);
 // clientRouter.route("/").get(getAllClients).post(restrictTo('associate','manager'),createClient);
 
 clientRouter
   .route("/:id")
   .get(getClient)
-  .patch(protect, getMe, updateClient)
+  .patch(protect, updateClient)
   .delete(restrictTo("associate", "manager"), deleteClient);
 
 // clientRouter.route("/tour-stats").get();

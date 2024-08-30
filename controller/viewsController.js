@@ -22,6 +22,9 @@ export const getSignupForm = catchAsync(async (req, res, next) => {
 });
 
 export const getClientsView = catchAsync(async (req, res) => {
+  if (Object.keys(req.query).length === 0) {
+    req.query.limit = "10";
+  }
   const features = new APIFeatures(
     Client.find().populate(["consultant", "cases"]),
     req.query
@@ -76,6 +79,9 @@ export const getClientsView = catchAsync(async (req, res) => {
 });
 
 export const getMyClientsView = catchAsync(async (req, res) => {
+  if (Object.keys(req.query).length === 0) {
+    req.query.limit = "10";
+  }
   const features = new APIFeatures(
     Client.find({ consultant: req.user._id }).populate(["consultant", "cases"]),
     req.query
@@ -88,7 +94,10 @@ export const getMyClientsView = catchAsync(async (req, res) => {
   const clients = await features.query;
 
   // Ensure totalClients is a valid number
-  const totalClients = await Client.countDocuments();
+  const totalClients = await Client.countDocuments({
+    consultant: req.user._id,
+  });
+
   const limit = parseInt(req.query.limit) || 10; // Default to 10 if not provided
   const totalPages = Math.ceil(totalClients / limit);
 
@@ -171,6 +180,7 @@ export const getAddCase = catchAsync(async (req, res) => {
 });
 
 export const getAddTask = catchAsync(async (req, res) => {
+  const user = await User.findOne({ _id: req.user._id });
   // 1) Take form data and create a new client
 
   const consultants = await User.find();
@@ -180,6 +190,7 @@ export const getAddTask = catchAsync(async (req, res) => {
   res.status(200).render("task", {
     title: "New Task",
     consultants,
+    user,
     getDateTimeString,
     clients,
   });
@@ -208,6 +219,9 @@ export const getClient = catchAsync(async (req, res) => {
 });
 
 export const getCasesView = catchAsync(async (req, res) => {
+  if (Object.keys(req.query).length === 0) {
+    req.query.limit = "10";
+  }
   const features = new APIFeatures(
     Case.find().populate(["assignedTo", "client"]),
     req.query
@@ -275,13 +289,13 @@ export const getCaseView = catchAsync(async (req, res) => {
 });
 export const getTaskView = catchAsync(async (req, res) => {
   // 1) Get task data from the collection and populate the consultant and tasks fields
-  const task = await Task.findOne({ taskId: req.params.taskId });
+  const task = await Task.findOne({ id: req.params.taskId });
   const consultants = await User.find();
   const clients = await Client.find();
 
   // 2) Render the template using the case data
-  res.status(200).render("case", {
-    title: "Case",
+  res.status(200).render("task", {
+    title: "Task",
     task,
     consultants,
     clients,
@@ -297,7 +311,9 @@ export const getDashboard = catchAsync(async (req, res) => {
 
 export const getCalendar = catchAsync(async (req, res) => {
   const features = new APIFeatures(
-    Task.find({ consultant: req.user._id }),
+    Task.find({
+      $or: [{ assignedTo: req.user._id }, { requestedBy: req.user._id }],
+    }),
     req.query
   )
     .filter()
@@ -315,6 +331,9 @@ export const getCalendar = catchAsync(async (req, res) => {
 });
 
 export const getTasks = catchAsync(async (req, res) => {
+  if (Object.keys(req.query).length === 0) {
+    req.query.limit = "10";
+  }
   const features = new APIFeatures(Task.find().populate("client"), req.query)
     .filter()
     .sort()
@@ -331,20 +350,20 @@ export const getTasks = catchAsync(async (req, res) => {
 
   // Determine the sort parameters for display purposes
   let sortParams = "";
-  // switch (req.query.sort) {
-  //   case "createdAt":
-  //     sortParams = "Oldest";
-  //     break;
-  //   case "-createdAt":
-  //     sortParams = "Newest";
-  //     break;
-  //   case "caseStatus":
-  //     sortParams = "Status";
-  //     break;
-  //   default:
-  //     sortParams = "";
-  //     break;
-  // }
+  switch (req.query.sort) {
+    case "createdAt":
+      sortParams = "Oldest";
+      break;
+    case "-createdAt":
+      sortParams = "Newest";
+      break;
+    case "completed":
+      sortParams = "Completed";
+      break;
+    default:
+      sortParams = "";
+      break;
+  }
 
   // Render the view with the cases and additional data
   res.status(200).render("tasks", {

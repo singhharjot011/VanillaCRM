@@ -724,28 +724,51 @@ button.btn-small {
     transform: rotate(360deg);
   }
 }
-
 /* Extra Styling Classes for Full Calendar */
 
 .hoverEvent {
   transform: scale(1.05);
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.appointment,
+.task {
+  color: whitesmoke;
+  padding: 0.5em;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .appointment {
-  color: whitesmoke;
-  background-color: var(--color-green-700);
-}
-.appointment:hover {
   background-color: var(--color-green-600);
 }
 
-.completed {
-  color: whitesmoke;
-  background-color: var(--color-red-800);
+.appointment:hover {
+  background-color: var(--color-green-700);
+  box-shadow: 0 4px 12px rgba(0, 128, 0, 0.2);
 }
-.completed:hover {
-  background-color: var(--color-red-700);
+
+.appointment.completed {
+  background-color: var(--color-yellow-700);
+}
+
+.task {
+  background-color: var(--color-brand-500);
+}
+
+.task:hover {
+  background-color: var(--color-brand-600);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2); /* Slight shadow effect on hover */
+}
+
+.task.completed {
+  background-color: var(--color-brand-800);
+}
+
+.task.completed:hover {
+  background-color: var(--color-brand-900);
 }
 
 .modal {
@@ -802,6 +825,12 @@ button.btn-small {
   justify-items: center;
   align-items: center;
   width: 100%;
+}
+
+.event-details-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .notes-history {
@@ -937,7 +966,6 @@ button.btn-small {
   grid-template-columns: 0.5fr 1fr 1fr 1.5fr 1fr 0.8fr 0.5fr 1fr 1fr;
   column-gap: 2.4rem;
   align-items: center;
-  justify-items: baseline;
   background-color: var(--color-grey-50);
   border-bottom: 1px solid var(--color-grey-100);
   text-transform: uppercase;
@@ -1252,4 +1280,19 @@ td > a {
   border-radius: 10px;
   background-color: var(--color-brand-100);
   border: none;
+}
+
+/* Time Picker */
+
+.flatpickr-calendar {
+  z-index: 10;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: var(--color-brand-200);
+}
+
+.flatpickr-time {
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
 }

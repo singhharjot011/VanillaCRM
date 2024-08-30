@@ -13,44 +13,50 @@ block content
                             strong= task.id || ''
                 .form-row-flex
                     label.form-label(for="requested-by") Requested By:
-                    select.form-input#requested-by(name="requested-by")
-                        each consultant in consultants
-                                - const isSelected = task && (task.requestedBy.name === consultant.name) ? 'selected disabled' : ''
-                                | <option #{isSelected}>#{consultant.name}</option>
+                    if task
+                        - const disabled1 = task && task.requestedBy ? true : false
+                        select.form-input#requested-by(name="requested-by" disabled=disabled1)
+                            each consultant in consultants
+                                    - const isSelected1 = task && (task.requestedBy.name === consultant.name) ? true : false 
+                                    option(value=consultant.name selected=isSelected1 disabled=isSelected1) #{consultant.name}
+                    else
+                        input.form-input#requested-by(name="requested-by" value= user && user.name readonly)
+                    
                 .form-row
                     label.form-label(for="assign-to") Assign To
-                    select.form-input#assign-to(name="assign-to")
+                    - const disabled = task && task.assignedTo ? true : false
+                    select.form-input#assign-to(name="assign-to" disabled=disabled)
                         each consultant in consultants
-                                - const isSelected = task && (task.assignedTo.name === consultant.name) ? 'selected disabled' : ''
-                                | <option #{isSelected}>#{consultant.name}</option>
+                            - const isSelected = task && (task.assignedTo.name === consultant.name) ? true : false
+                            option(value=consultant.name selected=isSelected disabled=isSelected) #{consultant.name}
+
+
+
                 .form-row
                     label.form-label(for="objective") Task Objective
-                    - const isDisabled = task && task.description ? true : false
-                    textarea#objective.form-input(name="objective" rows="2" disabled=isDisabled)= task && task.description
+                    - const isReadonly= task && task.description ? true : false
+                    textarea#objective.form-input(name="objective" rows="2" readonly=isReadonly)= task && task.description
 
+ 
 
-
-                .form-row-flex#due-date-box(class= task&& task.isAppointment ? "sr-only" : "")
+                .form-row-flex#due-date-box(class= task && task.isAppointment ? "sr-only" : "")
                     label.form-label(for="due-date") Due Date
                     if task && task.due
-                        input.form-input#due-date(type="date" name="due-date" min="2020-01-01" max="2030-12-31"  value=`${task.due}`)
+                        input.form-input#due-date(type="date" name="due-date" min="2020-01-01" max="2030-12-31" readonly value=`${task.due}`)
                     else 
                         input.form-input#due-date(type="date" name="due-date" min="2020-01-01" max="2030-12-31")
 
 
-                if task && task.description 
-                    .form-row
-                        label.form-label(for="completion-note")
-                            strong Completion Notes
-                        - const isDisabled = task && task.completedAt ? true : false
-                        textarea.form-input#completion-note(name="completion-note" rows="3" placeholder="Briefly tell about the completed task" disabled=isDisabled)= task && task.taskCompletionNotes
-
-                .form-row-flex
+                - const displayDue = task && task.due ? 'none':'flex'
+                .form-row-flex(style=`display:${displayDue}`)
+                    - const disable = task  ? true : false
+                    
                     label(for="appointment-check-new") Appointment?
-                    input#appointment-check-new(type="checkbox" name="appointment-check" checked= task && task.isAppointment)
+                    input#appointment-check-new(type="checkbox" disabled=disable name="appointment-check" checked= task && task.isAppointment )
 
 
-                #appointment-details-container
+                -const display = task && task.isAppointment ? 'flex':'none'
+                #appointment-details-container(style=`display:${display}`)
                     //- if task && task.isAppointment
                     .form-row
                         label.form-label(for="client")
@@ -68,25 +74,52 @@ block content
                                     option(value=client.name data-id=client._id)
 
 
-                        //- input.form-input#client(type="text" name="client" placeholder="Search Name" autocomplete="off" list="clients" value= task && task.client ? task.client.name : '')
                         label.form-label(for="appointment-date") Appointment Date
-                        input.form-input#appointment-date(type="date" name="appointment-date" value=task && task.appointmentDate || '')
+                        input.form-input#appointment-date(type="date" name="appointment-date" readonly= task && task.appointmentDate  value=task && task.appointmentDate || '')
                         label.form-label(for="appointment-start-time") Start Time
-                        input.form-input#appointment-start-time(type="time" name="appointment-start-time" value=task && task.appointmentStartTime || '')
+                        input.form-input#appointment-start-time(type="time" name="appointment-start-time" 
+                        readonly= task && task.appointmentStartTime
+                        value=task && task.appointmentStartTime || '')
                         label.form-label(for="appointment-end-time") End Time
-                        input.form-input#appointment-end-time(type="time" name="appointment-end-time" value=task && task.appointmentEndTime || '')
+                        input.form-input#appointment-end-time(type="time" name="appointment-end-time" 
+                        readonly= task && task.appointmentEndTime
+                        value=task && task.appointmentEndTime || '')
                         label.form-label(for="agenda") Agenda
-                        textarea#agenda(name="agenda" class="form-input" rows="4")= task && task.appointmentAgenda
+                        textarea#agenda(name="agenda" class="form-input" rows="4" readonly= task && task.appointmentAgenda)= task && task.appointmentAgenda
+
+                
+                if task && task.description 
+                    .form-row
+                        label.form-label(for="completion-note")
+                            strong Completion Notes
+                        - const isDisabled = task && task.completedAt ? true : false
+                        textarea.form-input#completion-note(name="completion-note" rows="3" placeholder="Briefly tell about the completed task" disabled=isDisabled)= task && task.taskCompletionNotes
+
 
                 .form-row-flex#button-area
                     if task && task.completed
-                        p#success-message= `Task Completed on ${getDateTimeString(task.completedAt)}`
+                        p#success-message= `Task Completed on ${getDateTimeString(task.completedAt)} by ${task.completedBy && task.completedBy.name}`
                     else
                         button.btn-medium.btn-secondary#task-reset-button(name="task-reset-button" type="reset") Reset
                         if task && !task.completed
-                            button.btn-medium.btn-secondary#task-submit-button(name="task-submit-button" type="submit") Mark Completed
+                            button.btn-medium.btn-primary#task-submit-button(name="task-submit-button" type="submit") Mark Completed
                         else
                             button.btn-medium.btn-primary#task-submit-button(name="task-submit-button" type="submit") Create Task
+                .toast.sr-only
+                    .toast-close-icon
+                        svg(xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5f6368")
+                            path(d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z")
+                    .form-col-flex.missing-fields-div
+                        h3 Missing Fields
+                        h4 Please fill the missing fields
+                        .missing-fields
+                    .form-col-flex.invalid-fields-div
+                        h3 Invalid Fields
+                        h4 Please fill the Invalid Fields
+                        .invalid-fields 
+        script. 
+            window.taskId = !{JSON.stringify((task && task._id) || null)};
+
 
 
 

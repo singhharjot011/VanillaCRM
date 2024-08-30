@@ -90,7 +90,6 @@ export const handleClientForm = (clientForm) => {
           "Create Client";
       }
     } else {
-      console.log(window.currentClientName);
       document.querySelector("#client-submit-button").textContent =
         "Updating...";
 
@@ -124,3 +123,4 @@ export const handleClientForm = (clientForm) => {
     }
   });
 };
+ 

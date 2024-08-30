@@ -13,6 +13,10 @@ const taskSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "User",
   },
+  completedBy: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+  },
   description: {
     type: String,
     trim: true,
@@ -60,6 +64,29 @@ const taskSchema = new mongoose.Schema({
   },
 });
 
+taskSchema.virtual("calendarEvent").get(function () {
+  return {
+    id: this.id,
+    title: this.description,
+    start: this.isAppointment ? this.appointmentStart : this.dueDate,
+    end: this.isAppointment ? this.appointmentEnd : this.dueDate,
+    classNames: [
+      this.isAppointment ? "appointment" : "task",
+      this.completed ? "completed" : "",
+    ],
+    extendedProps: {
+      appointmentAgenda: this.appointmentAgenda,
+      clientName: this.client ? this.client.name : "",
+      assignedToName: this.assignedTo ? this.assignedTo.name : "",
+      requestedByName: this.requestedBy ? this.requestedBy.name : "",
+      isCompleted: this.completed,
+    },
+  };
+});
+
+// Include virtuals in JSON and object conversion
+taskSchema.set("toJSON", { virtuals: true });
+taskSchema.set("toObject", { virtuals: true });
 taskSchema.pre("save", async function (next) {
   if (!this.id) {
     const count = await mongoose.model("Task").countDocuments();
@@ -72,11 +99,10 @@ taskSchema.pre(/^find/, function (next) {
   this.populate({
     path: "client",
     select: "name phone email visaType",
-  }).populate({ path: "requestedBy assignedTo", select: "name" });
+  }).populate({ path: "requestedBy assignedTo completedBy", select: "name" });
   next();
 });
 
 const Task = mongoose.model("Task", taskSchema);
 
 export default Task;
- 

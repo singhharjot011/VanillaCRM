@@ -23,3 +23,31 @@ block content
                 button.btn-primary.btn-medium#next-btn(
                     disabled=currentPage === totalPages
                 ) Next &#129094;
+
+        div
+            label.form-label(for='sort') Sort
+                | &nbsp; &nbsp;
+                select.form-input#sort-input-task(name='sort')
+                    each sortOption in ['','Newest','Oldest', 'Completed']
+                        - const isSelected = sortOption === sortParams ? 'selected' : '';
+                        <option #{isSelected}>#{sortOption}</option> 
+
+
+    table.table.tasks-table
+        tr.table-header
+            td Task ID
+            td Description
+            td Requested By
+            td Completed
+            td Assigned To
+            td Date
+        each task in tasks
+            tr.table-row
+                td
+                    a(href=`/task/${task.id}`)= task.id
+                td= task.description
+                td= task.requestedBy.name
+                -const color= task.completed?'green':'red'
+                td(style=`color:${color}`)= task.completed
+                td= task.assignedTo.name
+                td= task.appointmentDate || task.due

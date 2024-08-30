@@ -7,7 +7,6 @@ import AppError from "./src/utils/appError.js";
 import clientRouter from "./routes/clientRoutes.js";
 import employeeRouter from "./routes/employeeRoutes.js";
 import caseRouter from "./routes/caseRoutes.js";
-import eventRouter from "./routes/eventRoutes.js";
 import taskRouter from "./routes/taskRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import xss from "xss-clean";
@@ -81,7 +80,6 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/clients", clientRouter);
 app.use("/api/v1/employees", employeeRouter);
 app.use("/api/v1/cases", caseRouter);
-app.use("/api/v1/events", eventRouter);
 app.use("/api/v1/tasks", taskRouter);
 
 app.all("*", (req, res, next) => {

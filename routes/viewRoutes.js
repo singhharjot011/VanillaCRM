@@ -18,7 +18,10 @@ import {
   getTasks,
   updateUserData,
   getAddClient,
-  getAddCase,getSignupForm,getAddTask
+  getAddCase,
+  getSignupForm,
+  getAddTask,
+  getTaskView,
 } from "../controller/viewsController.js";
 
 const viewRouter = express.Router();
@@ -34,7 +37,7 @@ viewRouter.get("/", redirectBasedOnAuth);
 viewRouter.get("/dashboard", protect, getDashboard);
 viewRouter.get("/me", protect, getMe);
 
-viewRouter.get("/clients", protect, getClientsView); 
+viewRouter.get("/clients", protect, getClientsView);
 viewRouter.get("/add-client", protect, getAddClient);
 viewRouter.get("/my-clients", protect, getMyClientsView);
 viewRouter.get("/client/:slug", protect, getClient);
@@ -47,9 +50,9 @@ viewRouter.get("/calendar", protect, getCalendar);
 
 viewRouter.get("/tasks", protect, getTasks);
 viewRouter.get("/add-task", protect, getAddTask);
+viewRouter.get("/task/:taskId", protect, getTaskView);
 
 viewRouter.get("/knowledge-base", protect, getKnowledgeBase);
 viewRouter.post("/submit-user-data", protect, updateUserData);
-
 
 export default viewRouter;

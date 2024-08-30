@@ -1,4 +1,7 @@
+import { showEventToast } from "./handleToast.js";
+
 export const callCalendar = (calendarEl) => {
+  const eventToast = document.querySelector(".toast");
   const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
     dayMaxEventRows: true,
@@ -24,30 +27,63 @@ export const callCalendar = (calendarEl) => {
       e.el.classList.remove("hoverEvent");
     },
     eventClick: function (info) {
-      const ev = new CustomEvent("custom:eventClicked", {
-        bubbles: true,
-        detail: info.event,
-      });
-      info.jsEvent.target.dispatchEvent(ev);
-    },
-    events: window.calendarTasks.map((task) => ({
-      title: task.title,
-      start: task.startDate, // Adjust field names as per your task model
-      end: task.endDate, // Adjust field names as per your task model
-      // Add any other relevant fields
-      extendedProps: {
-        taskId: task._id,
-        // Add any other task properties you want to access later
-      },
-    })),
+      // Convert the event's extendedProps and start/end times into a Map
+      const fieldsMap = new Map([
+        ...Object.entries(info.event.extendedProps),
+        ["start", info.event.start.toISOString()],
+        ["end", info.event.end ? info.event.end.toISOString() : "N/A"],
+      ]);
 
-    // [
-    //   {
-    //     id: "a",
-    //     title: "my event",
-    //     start: "2024-08-27",
-    //   },
-    // ],
+      showEventToast(eventToast, fieldsMap);
+    },
+
+    events: window.calendarTasks.map((task) => {
+      // Default to today's date if appointmentDate or due date is not provided
+      const start = task.appointmentDate
+        ? `${task.appointmentDate}T${task.appointmentStartTime || "00:00"}`
+        : task.due;
+
+      const end = task.appointmentDate
+        ? `${task.appointmentDate}T${task.appointmentEndTime || "23:59"}`
+        : task.due;
+
+      return {
+        title:
+          task.calendarEvent.extendedProps.appointmentAgenda ||
+          task.description,
+        start: start,
+        end: end,
+        extendedProps: {
+          ...task.calendarEvent.extendedProps,
+          taskId: task.id,
+        },
+        classNames: task.calendarEvent.classNames || [],
+      };
+    }),
+
+    events: window.calendarTasks.map((task) => {
+      // Default to today's date if appointmentDate or due date is not provided
+      const start = task.appointmentDate
+        ? `${task.appointmentDate}T${task.appointmentStartTime || "00:00"}`
+        : task.due;
+
+      const end = task.appointmentDate
+        ? `${task.appointmentDate}T${task.appointmentEndTime || "23:59"}`
+        : task.due;
+
+      return {
+        title:
+          task.calendarEvent.extendedProps.appointmentAgenda ||
+          task.description,
+        start: start,
+        end: end,
+        extendedProps: {
+          ...task.calendarEvent.extendedProps,
+          taskId: task.id,
+        },
+        classNames: task.calendarEvent.classNames || [],
+      };
+    }),
   });
   // Render the calendar
   setTimeout(() => {

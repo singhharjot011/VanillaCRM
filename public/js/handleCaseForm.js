@@ -1,6 +1,6 @@
 import { showAlert } from "./alerts.js";
 import { showToast } from "./handleToast.js";
-
+ 
 export const handleCaseForm = (caseForm) => {
   const clientInput = document.querySelector("[data-client-input]");
   const emailLabel = document.querySelector("[data-email-label]");

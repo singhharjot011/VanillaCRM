@@ -1,4 +1,5 @@
 import express from "express";
+import { protect } from "../controller/authController.js";
 import {
   getAllTasks,
   createTask,
@@ -9,8 +10,12 @@ import {
 
 const taskRouter = express.Router();
 
-taskRouter.route("/").get(getAllTasks).post(createTask);
+taskRouter.route("/").get(getAllTasks).post(protect, createTask);
 
-taskRouter.route("/:id").get(getTask).patch(updateTask).delete(deleteTask);
+taskRouter
+  .route("/:id") 
+  .get(getTask)
+  .patch(protect, updateTask)
+  .delete(deleteTask);
 
 export default taskRouter;
