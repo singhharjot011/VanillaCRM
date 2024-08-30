@@ -1,19 +1,28 @@
 import Case from "../model/caseModel.js";
 import Client from "../model/clientModel.js";
-import { handleClientObject } from "../model/model.js";
 import Task from "../model/taskModel.js";
 import User from "../model/userModel.js";
 import APIFeatures from "../src/utils/apiFeatures.js";
 import AppError from "../src/utils/appError.js";
 import catchAsync from "../src/utils/catchAsync.js";
 import { getDateTimeString, getColor } from "../src/utils/helpers.js";
-import { getAll } from "./handlerFactory.js";
 
 export const getLoginForm = catchAsync(async (req, res, next) => {
   res.status(200).render("login", {
     title: "Login",
   });
 });
+
+export const getPasswordReset = catchAsync(async (req, res, next) => {
+  res.status(200).render("forgotPassword", {
+    title: "Password Reset",
+  });
+});
+// export const getSetNewPasswordForm = catchAsync(async (req, res, next) => {
+//   res.status(200).render("setNewPassword", {
+//     title: "Set New password",
+//   });
+// });
 
 export const getSignupForm = catchAsync(async (req, res, next) => {
   res.status(200).render("signup", {
@@ -287,6 +296,7 @@ export const getCaseView = catchAsync(async (req, res) => {
     getDateTimeString,
   });
 });
+
 export const getTaskView = catchAsync(async (req, res) => {
   // 1) Get task data from the collection and populate the consultant and tasks fields
   const task = await Task.findOne({ id: req.params.taskId });
@@ -334,7 +344,12 @@ export const getTasks = catchAsync(async (req, res) => {
   if (Object.keys(req.query).length === 0) {
     req.query.limit = "10";
   }
-  const features = new APIFeatures(Task.find().populate("client"), req.query)
+  const features = new APIFeatures(
+    Task.find({
+      $or: [({ requestedBy: req.user._id }, { assignedTo: req.user._id })],
+    }).populate("client"),
+    req.query
+  )
     .filter()
     .sort()
     .limitFields()
@@ -344,7 +359,9 @@ export const getTasks = catchAsync(async (req, res) => {
   const tasks = await features.query;
 
   // Ensure totalTasks is a valid number
-  const totalTasks = await Task.countDocuments();
+  const totalTasks = await Task.countDocuments({
+    $or: [({ requestedBy: req.user._id }, { assignedTo: req.user._id })],
+  });
   const limit = parseInt(req.query.limit) || 10;
   const totalPages = Math.ceil(totalTasks / limit);
 

@@ -1,32 +1,76 @@
 import nodemailer from "nodemailer";
+import { convert } from "html-to-text";
+import pug from "pug";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const sendEmail = async (options) => {
-  // 1) Create a transporter
-  const transporter = nodemailer.createTransport({
-    host: `sandbox.smtp.mailtrap.io`,
-    port: 2525,
-    auth: {
-      user: `222d310d4e0b61`,
-      pass: `63ce7a8f238d30`,
-    },
-  });
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-  //   EMAIL_USERNAME=222d310d4e0b61
-  // EMAIL_PASSWORD=63ce7a8f238d30
-  // EMAIL_HOST=sandbox.smtp.mailtrap.io
-  // EMAIL_PORT=2525
+export class Email {
+  constructor(user, url) {
+    this.to = user.email;
+    this.firstName = user.name.split(" ")[0];
+    this.url = url;
+    this.from = `Urban Web Pixels <${process.env.EMAIL_FROM}>`;
+  }
 
-  // 2) Define the email options
-  const mailOptions = {
-    from: "Jonas Schmedtmann <hello@jonas.io>",
-    to: options.email,
-    subject: options.subject,
-    text: options.message,
-    // html:
-  };
+  newTransport() {
+    if (process.env.NODE_ENV === "production") {
+      // Sendgrid
+      return nodemailer.createTransport({
+        service: "SendGrid",
+        auth: {
+          user: process.env.SENDGRID_USERNAME,
+          pass: process.env.SENDGRID_PASSWORD,
+        },
+      });
+    }
+    return nodemailer.createTransport({
+      host: `sandbox.smtp.mailtrap.io`,
+      port: 2525,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+  }
 
-  // 3) Actually send the email
-  await transporter.sendMail(mailOptions);
-};
+  async send(template, subject) {
+    //  Send the actual email
 
-export { sendEmail };
+    // 1) Render HTML based on a pug template
+    const html = pug.renderFile(
+      `${__dirname}/../../views/email/${template}.pug`,
+      {
+        firstName: this.firstName,
+        url: this.url,
+        subject,
+      }
+    );
+
+    // 2) Define email options
+    const mailOptions = {
+      from: this.from,
+      to: this.to,
+      subject,
+      html,
+      text: convert(html),
+      // html:
+    };
+
+    // 3) Create transport and send email
+    await this.newTransport().sendMail(mailOptions);
+  }
+
+  async sendWelcome() {
+    await this.send("welcome", "Get Started with Your New CRM Account");
+  }
+
+  async sendPasswordReset() {
+    await this.send(
+      "passwordReset",
+      "Your Password Reset Token, Valid for 10 Minutes"
+    ); 
+  }
+}

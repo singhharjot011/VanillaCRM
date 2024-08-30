@@ -149,6 +149,8 @@ danger: css`
 }; */
 
 .signup-page,
+.forgotPassword-page,
+.setNewPassword-page,
 .signin-page {
   display: flex;
   height: 100vh;
@@ -161,6 +163,8 @@ danger: css`
 }
 .signup-page > *,
 .signin-page > *,
+.forgotPassword-page > *,
+.setNewPassword-page > *,
 .error-page > * {
   z-index: 1;
 }
@@ -176,6 +180,8 @@ danger: css`
 
 .signup-page::before,
 .signin-page::before,
+.forgotPassword-page::before,
+.setNewPassword-page::before,
 .error-page::before {
   content: "";
   position: absolute;
@@ -189,6 +195,8 @@ danger: css`
 }
 
 .signup-prompt,
+.forgotPassword-prompt,
+.setNewPassword-prompt,
 .signin-prompt {
   display: flex;
   flex-direction: column;
@@ -203,12 +211,16 @@ danger: css`
 }
 
 .signup-prompt img,
+.forgotPassword-prompt img,
+.setNewPassword-prompt img,
 .signin-prompt img {
   height: 70px;
   align-self: center;
 }
 
 .signup-form,
+.forgotPassword-form,
+.setNewPassword-form,
 .signin-form {
   display: flex;
   flex-direction: column;
@@ -216,6 +228,8 @@ danger: css`
 }
 
 .signup-form-button,
+.forgotPassword-form-button,
+.setNewPassword-form-button,
 .signin-form-button {
   align-self: center;
 }
@@ -1282,17 +1296,7 @@ td > a {
   border: none;
 }
 
-/* Time Picker */
-
-.flatpickr-calendar {
-  z-index: 10;
-  padding: 1rem;
-  border-radius: 10px;
-  background-color: var(--color-brand-200);
-}
-
-.flatpickr-time {
-  z-index: 10;
-  display: flex;
-  flex-direction: row;
+#calendar-container {
+  width: 100%;
+  height: 100%;
 }

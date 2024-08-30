@@ -1,4 +1,4 @@
-import { API_URL, NEWS_API_KEY } from "../src/utils/config.js";
+import { API_URL } from "../src/utils/config.js";
 
 export const state = {
   clients: {},

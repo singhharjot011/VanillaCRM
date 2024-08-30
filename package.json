@@ -11,6 +11,7 @@
     "express-rate-limit": "^7.4.0",
     "helmet": "^7.1.0",
     "hpp": "^0.2.3",
+    "html-to-text": "^9.0.5",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.1",
     "mongoose-validator": "^2.1.0",
@@ -28,7 +29,7 @@
   },
   "scripts": {
     "start": "nodemon server.js",
-    "build": "webpack --mode production"
+    "start:prod": "NODE_ENV=production nodemon server.js"
   },
   "name": "crm",
   "description": "This CRM is designed to help you manage your clients and tasks efficiently. ",

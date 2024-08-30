@@ -1,11 +1,11 @@
 import fs from "fs";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import Client from "./../src/model/clientModel.js";
-import Employee from "./../src/model/employeeModel.js";
-import Case from "../src/model/caseModel.js";
-import Task from "../src/model/taskModel.js";
-import Event from "../src/model/eventModel.js";
+import Client from "./../model/clientModel.js";
+import Employee from "./../model/employeeModel.js";
+import Case from "../model/caseModel.js";
+import Task from "../model/taskModel.js";
+import Event from "../model/eventModel.js";
 
 // dotenv.config({ path: "./../config.env" });
 
@@ -85,7 +85,7 @@ const importEmployeesData = async () => {
 // Delete All Data from DB
 const deleteEmployeesData = async () => {
   try {
-    await Employee.deleteMany();
+    await User.deleteMany();
     console.log("Employee Data Successfully Deleted");
     process.exit();
   } catch (err) {

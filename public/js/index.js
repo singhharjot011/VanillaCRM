@@ -17,6 +17,7 @@ const addNewClient = document.querySelector("#create-client-btn");
 const addNewCase = document.querySelector("#create-case-btn");
 const addNewTask = document.querySelector("#create-task-btn");
 const closeButton = document.getElementById("closeButton");
+const closeButtonAccount = document.getElementById("closeButtonAccount");
 
 const fileInput = document.querySelector("#photo");
 const fileNameDisplay = document.querySelector("#file-name");
@@ -90,6 +91,10 @@ if (userPasswordForm)
 
 if (closeButton)
   closeButton.addEventListener("click", function () {
+    history.back();
+  });
+if (closeButtonAccount)
+  closeButtonAccount.addEventListener("click", function () {
     history.back();
   });
 
