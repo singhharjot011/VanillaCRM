@@ -1,0 +1,42 @@
+extends base
+block login
+    .completeSignup-page
+        .completeSignup-prompt
+            img.completeSignup-logo(src="/assets/img/logo/logo.png" alt="Logo")
+            h2 Complete Sign Up
+
+            form.completeSignup-form
+                .form-row-flex
+                    label.form-label(for="name") Full Name
+                    .mt-2
+                        input.form-input(id="name" name="name" type="name" autocomplete="name" required)
+
+
+
+                .form-row-flex
+                    label.form-label(for="email") Email Address
+                    .mt-2
+                        input.form-input(id="email" name="email" type="email" autocomplete="email" required)
+                
+                .form-row-flex
+                    label.form-label(for="token") Token
+                    .mt-2
+                        input.form-input(id="token" name="token" type="token" autocomplete="token" required)
+
+                .form-row-flex
+                    label.form-label(for="password") Password
+                    .mt-2
+                        input.form-input(id="password" name="password" type="password" required)
+
+                .form-row-flex
+                    label.form-label(for="passwordConfirm") Confirm Password
+                    .mt-2 
+                        input.form-input(id="passwordConfirm" name="passwordConfirm" type="password" autocomplete="password" required)
+                div(style="display:flex; gap:5px; font-size:smaller; justify-content:center;")
+                    p Already have an account?
+                        a(href="/login") Login
+                .completeSignup-form-button
+                    button.btn-medium.btn-primary#completeSignup-submit-button(name="completeSignup-submit-button") Complete Sign Up
+                div(style="display:flex; gap:5px; font-size:smaller; justify-content:center;")
+                    p Don't have a token?
+                        a(href="/signup") Sign Up

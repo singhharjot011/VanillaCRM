@@ -3,9 +3,20 @@ import catchAsync from "../src/utils/catchAsync.js";
 import User from "../model/userModel.js";
 import { deleteOne, getAll, getOne, getOneByName } from "./handlerFactory.js";
 
-const getAllClients = getAll(Client, ["cases", "consultant", "lastUpdatedBy"]);
+const getAllClients = getAll(Client, [
+  "cases",
+  "consultant",
+  "lastUpdatedBy",
+  "tasks",
+]);
 
-const getClient = getOne(Client, ["cases", "consultant", "lastUpdatedBy"]);
+
+const getClient = getOne(Client, [
+  "cases",
+  "consultant",
+  "lastUpdatedBy",
+  "tasks",
+]);
 
 const getClientByName = getOneByName(Client);
 
@@ -19,10 +30,10 @@ const createClient = catchAsync(async (req, res) => {
     clientNote: req.body.clientNote,
     visaType: req.body.visaType,
     city: req.body.city,
+    createdAt: req.body.createdAt,
     province: req.body.province,
     postalCode: req.body.postalCode,
     createdBy: req.user._id,
-    createdAt: req.body.createdAt,
   });
 
   res.status(201).json({
@@ -48,7 +59,7 @@ const updateClient = catchAsync(async (req, res, next) => {
     lastUpdatedBy: req.user._id,
     consultant: consultant._id,
   };
- 
+
   // Add other fields if they exist in req.body
   const fields = [
     "name",
@@ -68,7 +79,7 @@ const updateClient = catchAsync(async (req, res, next) => {
 
   // Update the client
   const updatedClient = await Client.findOneAndUpdate(
-    { name: req.body.name },
+    { _id: req.body._id },
     updateData,
     {
       new: true,
@@ -91,35 +102,11 @@ const updateClient = catchAsync(async (req, res, next) => {
 
 const deleteClient = deleteOne(Client);
 
-const getDataForLastDays = catchAsync(async (req, res) => {
-  const days = parseInt(req.params.days);
-
-  if (![7, 30, 90].includes(days)) {
-    return res.status(400).json({
-      status: "fail",
-      message: "Invalid number of days. Must be 7, 30, or 90.",
-    });
-  }
-
-  const date = new Date();
-  date.setDate(date.getDate() - days);
-
-  const data = await Client.find({
-    createdAt: { $gte: date },
-  });
-
-  res.status(200).json({
-    status: "success",
-    results: data.length,
-    data: { data },
-  });
-});
 
 export {
   getAllClients,
   createClient,
   getClient,
-  getDataForLastDays,
   updateClient,
   deleteClient,
   getClientByName,

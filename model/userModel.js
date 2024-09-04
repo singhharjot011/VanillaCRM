@@ -49,7 +49,8 @@ const userSchema = new mongoose.Schema({
 userSchema.pre("save", async function (next) {
   if (!this.employeeId) {
     const count = await mongoose.model("User").countDocuments();
-    this.employeeId = `E${200 + count + 1}`;
+    const uniquePart = Date.now().toString().slice(-4);
+    this.employeeId = `E${200 + count + 1}${uniquePart}`;
   }
   next();
 });

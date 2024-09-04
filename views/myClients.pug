@@ -45,7 +45,7 @@ block content
         tbody
             each client in clients
                 tr.table-row
-                    td
+                    td(style="white-space: nowrap;")
                         a(href=`/client/${client.slug}`)= client.id
                     td(style=client.isLead ? "color: var(--color-green-600); font-weight: bolder;" : "")= client.name
                     td(style="white-space: nowrap;")= client.phone
@@ -57,7 +57,31 @@ block content
                             a(href=`/case/${client.cases[client.cases.length - 1].caseId}`) #{client.cases[client.cases.length - 1].caseId}
                         else
                             | N/A
-                    td N/A
+                    td(style="white-space: nowrap; display:flex;")
+                        - const lastTask = client.tasks && client.tasks.length > 0 ? client.tasks[client.tasks.length - 1] : null;
+                        - const taskDateTime = lastTask ? new Date(`${lastTask.appointmentDate}T${lastTask.appointmentStartTime}:00`) : null;
+                        
+                        - const formatAppointmentDate = (date) => {
+                        -   const today = new Date();
+                        -   const tomorrow = new Date(today);
+                        -   tomorrow.setDate(today.getDate() + 1);
+
+                        -   const dateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+                        -   if (dateOnly.getTime() === today.setHours(0, 0, 0, 0)) {
+                        -     return 'Today';
+                        -   } else if (dateOnly.getTime() === tomorrow.setHours(0, 0, 0, 0)) {
+                        -     return 'Tomorrow';
+                        -   } else {
+                        -     return date.toLocaleDateString();
+                        -   }
+                        - };
+
+                        if lastTask && taskDateTime && taskDateTime > new Date()
+                            a(href=`/task/${lastTask.id}`) #{lastTask.id}
+                            p &nbsp; #{formatAppointmentDate(taskDateTime)}
+                        else
+                            | N/A
                     td(style="white-space: nowrap;")= client.consultant.name
     .table-row-horizontal
         .legend

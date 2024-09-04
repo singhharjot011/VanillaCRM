@@ -68,7 +68,8 @@ export const showEventToast = function (toast, fieldsMap) {
 function renderTaskInfo(fieldsMap) {
   const clientName = fieldsMap.get("clientName");
   const taskId = fieldsMap.get("taskId");
-  const appointmentAgenda = fieldsMap.get("appointmentAgenda");
+  const taskDescription = fieldsMap.get("taskDescription");
+
   const assignedToName = fieldsMap.get("assignedToName");
   const requestedByName = fieldsMap.get("requestedByName");
   const isCompleted = fieldsMap.get("isCompleted");
@@ -80,14 +81,16 @@ function renderTaskInfo(fieldsMap) {
   if (clientName) {
     // It's a meeting
     output += `<h3>Meeting with ${clientName}</h3>`;
-    output += `<p><strong>Agenda:</strong> ${appointmentAgenda || "N/A"}</p>`;
+    output += `<p><strong>Description:</strong> ${
+      taskDescription || "N/A"
+    }</p>`;
     output += `<p><strong>Start:</strong> ${
       formatDateTime(start) || "N/A"
     }</p>`;
     output += `<p><strong>End:</strong> ${formatDateTime(end) || "N/A"}</p>`;
   } else {
     // It's a task
-    output += `<h3>Task Objective</h3>`;
+    output += `<h3>${taskDescription}</h3>`;
     output += `<p><strong>Assigned to:</strong> ${assignedToName || "N/A"}</p>`;
     output += `<p><strong>Requested by:</strong> ${
       requestedByName || "N/A"

@@ -41,6 +41,7 @@ block content
             td Completed
             td Assigned To
             td Date
+            td Priority
         each task in tasks
             tr.table-row
                 td
@@ -51,3 +52,8 @@ block content
                 td(style=`color:${color}`)= task.completed
                 td= task.assignedTo.name
                 td= task.appointmentDate || task.due
+                td(style=`${task.taskPriority === 'P3' ? 'background-color: red; border-radius: 10px; color: whitesmoke; text-align: center;' : ''}`)= task.taskPriority && task.taskPriority || 'P1'
+    .table-row-horizontal
+        .priority-legend
+            .priority-legend-span
+            p High Priority

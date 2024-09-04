@@ -41,6 +41,7 @@ block content
             td Status
             td Created
             td Assigned To
+            td Priority
 
         each c in cases
             tr.table-row
@@ -51,4 +52,9 @@ block content
                 td= c.caseType
                 td(style=`white-space: nowrap; background-color:${getColor(c.caseStatus)}; color:white; padding: 0 1rem; border-radius: 5px;`) #{c.caseStatus}
                 td=getDateTimeString(c.createdAt)
-                td=c.assignedTo.name
+                td= c.assignedTo && c.assignedTo.name
+                td(style=`${c.casePriority === 'P3' ? 'background-color: red; border-radius: 10px; color: whitesmoke; text-align: center;' : ''}`)= c.casePriority || 'P1'
+    .table-row-horizontal
+        .priority-legend
+            .priority-legend-span
+            p High Priority

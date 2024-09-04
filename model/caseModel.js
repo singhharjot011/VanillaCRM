@@ -30,6 +30,11 @@ const caseSchema = new mongoose.Schema({
     type: String,
     required: [true, "Case Status is required"],
   },
+  casePriority: {
+    type: String,
+    enum: ["P1", "P2", "P3"],
+    default: "P1",
+  },
   assignedTo: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
@@ -43,14 +48,15 @@ const caseSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: new Date().toISOString(),
+    default: new Date(),
   },
 });
 
 caseSchema.pre("save", async function (next) {
   if (!this.caseId) {
     const count = await mongoose.model("Case").countDocuments();
-    this.caseId = `C${1000 + count + 1}`;
+    const uniquePart = Date.now().toString().slice(-4);
+    this.caseId = `C${100 + count + 1}${uniquePart}`;
   }
   next();
 });

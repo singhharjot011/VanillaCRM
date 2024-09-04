@@ -4,7 +4,7 @@ import { handleClientForm } from "./handleClientForm.js";
 import { handleTaskForm } from "./handleTaskForm.js";
 import { showEventToast } from "./handleToast.js";
 import { handleSort, updateURL } from "./helpers.js";
-import { login, logout } from "./login.js";
+import { forgotPassword, login, logout, setNewPassword } from "./login.js";
 import { updateSettings } from "./updateSettings.js";
 
 // DOM Elements
@@ -13,6 +13,10 @@ const logOutBtn = document.querySelector("#signout-btn");
 const myAccountBtn = document.querySelector("#my_account-btn");
 const userDataForm = document.querySelector(".form-user-data");
 const userPasswordForm = document.querySelector(".form-user-password");
+const forgotPasswordForm = document.querySelector(".forgotPassword-form");
+const setNewPasswordForm = document.querySelector(".setNewPassword-form");
+const signupForm = document.querySelector(".signup-form");
+const completeSignupForm = document.querySelector(".completeSignup-form");
 const addNewClient = document.querySelector("#create-client-btn");
 const addNewCase = document.querySelector("#create-case-btn");
 const addNewTask = document.querySelector("#create-task-btn");
@@ -21,6 +25,7 @@ const closeButtonAccount = document.getElementById("closeButtonAccount");
 
 const fileInput = document.querySelector("#photo");
 const fileNameDisplay = document.querySelector("#file-name");
+
 if (fileInput)
   fileInput.addEventListener("change", () => {
     const file = fileInput.files[0];
@@ -39,7 +44,50 @@ if (loginForm)
     login(email, password);
   });
 
+if (forgotPasswordForm) {
+  const resetPwBtn = forgotPasswordForm.querySelector(
+    "#forgotPassword-submit-button"
+  );
+  forgotPasswordForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    resetPwBtn.textContent = "Sending token...";
+    const email = document.getElementById("email").value;
+
+    await forgotPassword(email);
+    resetPwBtn.textContent = "Reset Password";
+
+    location.assign("/");
+  });
+}
+
+if (setNewPasswordForm) {
+  setNewPasswordForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = window.location.pathname.split("/").at(-1);
+    const password = document.getElementById("password").value;
+    const passwordConfirm = document.getElementById("passwordConfirm").value;
+    await setNewPassword(password, passwordConfirm, token);
+    location.assign("/");
+  });
+}
+
+if (signupForm) {
+  signupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("Sign Up Form");
+  });
+}
+
+if (completeSignupForm) {
+  completeSignupForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    console.log("Complete Sign Up");
+  });
+}
+
 if (logOutBtn) logOutBtn.addEventListener("click", logout);
+
 if (myAccountBtn) {
   myAccountBtn.addEventListener("click", () => {
     location.assign("/me");
@@ -199,3 +247,27 @@ function toggleAppointmentDetails() {
 }
 if (appointmentCheckbox)
   appointmentCheckbox.addEventListener("change", toggleAppointmentDetails);
+
+// Handle Menu
+
+const menu = document.querySelector("#sidebar");
+if (menu) {
+  const urlPath = window.location.pathname;
+  const currentMenuItem = urlPath.split("/")[1];
+  const menuItems = menu.querySelectorAll("a");
+
+  menuItems.forEach((item) => {
+    item.classList.remove("active");
+
+    const itemText = item.textContent.toString().toLowerCase().trim();
+
+    if (!currentMenuItem && itemText.startsWith("dashboard")) {
+      item.classList.add("active");
+    } else if (
+      currentMenuItem &&
+      itemText.startsWith(currentMenuItem.toLowerCase().trim())
+    ) {
+      item.classList.add("active");
+    }
+  });
+}

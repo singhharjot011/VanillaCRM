@@ -5,6 +5,11 @@ import {
   protect,
 } from "../controller/authController.js";
 import {
+  aliasLast30Days,
+  aliasLast7Days,
+  aliasLast90Days,
+} from "../controller/dashboardController.js";
+import {
   getCalendar,
   getCasesView,
   getCaseView,
@@ -22,12 +27,18 @@ import {
   getSignupForm,
   getAddTask,
   getTaskView,
+  getForgotPasswordForm,
+  getSetNewPasswordForm,
+  getCompleteSignupForm,
 } from "../controller/viewsController.js";
 
 const viewRouter = express.Router();
 
 viewRouter.get("/login", getLoginForm);
 viewRouter.get("/signup", getSignupForm);
+viewRouter.get("/forgotPassword", getForgotPasswordForm);
+viewRouter.get("/resetPassword/:token", getSetNewPasswordForm);
+viewRouter.get("/completeSignup", getCompleteSignupForm);
 viewRouter.use(isLoggedIn);
 // viewRouter.use(auth);
 // viewRouter.use(protect);
@@ -35,6 +46,15 @@ viewRouter.use(isLoggedIn);
 // Protected routes
 viewRouter.get("/", redirectBasedOnAuth);
 viewRouter.get("/dashboard", protect, getDashboard);
+viewRouter
+  .route("/dashboard/last7Days")
+  .get(protect, aliasLast7Days, getDashboard);
+viewRouter
+  .route("/dashboard/last30Days")
+  .get(protect, aliasLast30Days, getDashboard);
+viewRouter
+  .route("/dashboard/last90Days")
+  .get(protect, aliasLast90Days, getDashboard);
 viewRouter.get("/me", protect, getMe);
 
 viewRouter.get("/clients", protect, getClientsView);

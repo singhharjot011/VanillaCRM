@@ -2,7 +2,6 @@
 import { showAlert } from "./alerts.js";
 
 export const login = async (email, password) => {
-  console.log(email);
   try {
     const res = await axios({
       method: "POST",
@@ -36,19 +35,46 @@ export const logout = async () => {
 
 export const forgotPassword = async (email) => {
   try {
-    const res = await axios({
+    const response = await fetch("/api/v1/users/forgotPassword", {
       method: "POST",
-      url: "http://127.0.0.1:5000/api/v1/users/forgotPassword",
-      data: { email },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
     });
 
-    if (res.data.status === "success") {
-      showAlert("success", "Email sent with reset token");
-      window.setTimeout(() => {
-        location.assign("/");
-      }, 1500);
+    const result = await response.json();
+
+    if (result.status === "success") {
+      showAlert("success", "Password reset token sent to your email!");
+    } else {
+      showAlert("error", "There was an error. Please try again.");
     }
   } catch (err) {
-    showAlert("error", err.response.data.message);
+    console.error("Error:", err);
+    showAlert("error", "Something went wrong. Please try again.");
+  }
+};
+
+export const setNewPassword = async (password, passwordConfirm, token) => {
+  try {
+    const response = await fetch(`/api/v1/users/resetPassword/${token}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ password, passwordConfirm }),
+    });
+
+    const result = await response.json();
+
+    if (result.status === "success") {
+      showAlert("success", "Password has been reset");
+    } else {
+      showAlert("error", "There was an error. Please try again.");
+    }
+  } catch (err) {
+    console.error("Error:", err);
+    showAlert("error", "Something went wrong. Please try again.");
   }
 };

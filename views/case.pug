@@ -72,8 +72,16 @@ block content
                             strong Consultant
                         select.form-input#case-consultant(name='case-consultant')
                             each consultant in consultants
-                                - const isSelected = c && (c.assignedTo.name === consultant.name) ? 'selected' : ''
+                                - const isSelected = c && (c.assignedTo?.name === consultant.name) ? 'selected' : ''
                                 | <option value="#{consultant.name}" #{isSelected}>#{consultant.name}</option>
+
+                    .form-col-flex
+                        label.form-label(for='case-priority')
+                            strong Priority
+                        select.form-input#case-priority(name='case-priority')
+                            each priority in ['P1','P2','P3']
+                                - const isSelected = c && (c.casePriority === priority) ? 'selected' : ''
+                                | <option value="#{priority}" #{isSelected}>#{priority}</option>
                                 
                 .form-row               
                     label.form-label(for='case-note')

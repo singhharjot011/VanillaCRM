@@ -27,9 +27,14 @@ const taskSchema = new mongoose.Schema({
   taskCompletionNotes: {
     type: String,
   },
+  taskPriority: {
+    type: String,
+    enum: ["P1", "P2", "P3"],
+    default: "P1",
+  },
   createdAt: {
     type: Date,
-    default: new Date().toISOString(),
+    default: new Date(),
   },
   completed: {
     type: Boolean,
@@ -76,6 +81,7 @@ taskSchema.virtual("calendarEvent").get(function () {
     ],
     extendedProps: {
       appointmentAgenda: this.appointmentAgenda,
+      taskDescription: this.description,
       clientName: this.client ? this.client.name : "",
       assignedToName: this.assignedTo ? this.assignedTo.name : "",
       requestedByName: this.requestedBy ? this.requestedBy.name : "",
@@ -90,7 +96,8 @@ taskSchema.set("toObject", { virtuals: true });
 taskSchema.pre("save", async function (next) {
   if (!this.id) {
     const count = await mongoose.model("Task").countDocuments();
-    this.id = `T${100 + count + 1}`;
+    const uniquePart = Date.now().toString().slice(-4);
+    this.id = `T${10 + count + 1}${uniquePart}`;
   }
   next();
 });

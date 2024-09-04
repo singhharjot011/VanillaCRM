@@ -14,6 +14,7 @@ export const handleTaskForm = (taskForm) => {
       assignedToName: formMap.get("assign-to"),
       requestedByName: formMap.get("requested-by"),
       description: formMap.get("objective"),
+      createdAt: Date.now(),
       isAppointment,
       ...(isAppointment
         ? {

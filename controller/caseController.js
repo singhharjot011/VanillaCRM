@@ -51,6 +51,7 @@ const getDataForLastDays = async (req, res) => {
 };
 
 const updateCase = catchAsync(async (req, res, next) => {
+  // Find the consultant and client if their names are provided
   const consultant = req.body.consultantName
     ? await User.findOne({ name: req.body.consultantName })
     : undefined;
@@ -58,34 +59,47 @@ const updateCase = catchAsync(async (req, res, next) => {
     ? await Client.findOne({ name: req.body.clientName })
     : undefined;
 
+  // Find the existing case by ID
   const existingCase = await Case.findById(req.originalId);
 
   if (!existingCase) {
     return res.status(404).json({ status: "fail", message: "Case not found" });
   }
 
-  const newNote = {
-    note: req.body.note,
-    writtenBy: req.user._id,
+  // Create the new note object only if the note field is not empty
+  const newNote =
+    req.body.note && req.body.note.trim() !== ""
+      ? {
+          note: req.body.note.trim(),
+          writtenBy: req.user._id,
+        }
+      : null;
+
+  // Construct the update object
+  const updateFields = {
+    caseType: req.body.caseType,
+    caseDescription: req.body.caseDescription,
+    caseStatus: req.body.caseStatus,
+    assignedTo: consultant?._id,
+    client: client?._id,
+    createdBy: req.user._id,
   };
 
+  // Only add the notes field if newNote is not null
+  if (newNote) {
+    updateFields.notes = [...existingCase.notes, newNote];
+  }
+
+  // Perform the update
   const caseEntity = await Case.findByIdAndUpdate(
     req.originalId,
-    {
-      caseType: req.body.caseType,
-      caseDescription: req.body.caseDescription,
-      caseStatus: req.body.caseStatus,
-      assignedTo: consultant?._id,
-      client: client?._id,
-      notes: newNote ? [...existingCase.notes, newNote] : existingCase.notes,
-      createdAt: req.body.createdAt,
-      createdBy: req.user._id,
-    },
+    updateFields,
     {
       new: true,
       runValidators: true,
     }
   );
+
   res.status(200).json({ status: "success", data: { caseEntity } });
   next();
 });

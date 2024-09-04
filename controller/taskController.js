@@ -21,6 +21,7 @@ const createTask = catchAsync(async (req, res) => {
     description: req.body.description,
     isAppointment: req.body.isAppointment,
     createdBy: req.user._id,
+    createdAt: req.body.createdAt,
   };
 
   if (req.body.isAppointment) {
@@ -54,8 +55,6 @@ const getTask = getOne(Task);
 
 const updateTask = catchAsync(async (req, res) => {
   try {
-
-
     // Check if taskCompletionNotes is present in the request body
     if (req.body.taskCompletionNotes) {
       // If taskCompletionNotes is present, add these additional fields

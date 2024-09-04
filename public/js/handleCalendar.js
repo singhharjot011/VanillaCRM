@@ -4,7 +4,7 @@ export const callCalendar = (calendarEl) => {
   const eventToast = document.querySelector(".toast");
   const calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
-    dayMaxEventRows: true,
+    // dayMaxEventRows: true,
     views: {
       timeGrid: {
         dayMaxEventRows: 4,

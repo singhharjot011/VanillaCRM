@@ -6,10 +6,8 @@ import {
   getAllClients,
   getClient,
   getClientByName,
-  getDataForLastDays,
   updateClient,
 } from "../controller/clientController.js";
-import { getMe } from "../controller/userController.js";
 
 const clientRouter = express.Router();
 
@@ -25,8 +23,5 @@ clientRouter
   .patch(protect, updateClient)
   .delete(restrictTo("associate", "manager"), deleteClient);
 
-// clientRouter.route("/tour-stats").get();
-
-clientRouter.route("/data/:days").get(getDataForLastDays);
 
 export default clientRouter;

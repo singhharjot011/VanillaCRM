@@ -21,7 +21,6 @@ const clientSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Client Number is required"],
     },
-    // cases: { type: mongoose.Schema.ObjectId, ref: "Case" },
     consultant: { type: mongoose.Schema.ObjectId, ref: "User" },
     clientNote: {
       type: String,
@@ -60,19 +59,38 @@ clientSchema.virtual("cases", {
   localField: "_id",
 });
 
+clientSchema.virtual("tasks", {
+  ref: "Task",
+  foreignField: "client",
+  localField: "_id",
+});
+
 clientSchema.index({ createdAt: -1 });
 clientSchema.index({ slug: 1 });
 
 clientSchema.pre("save", async function (next) {
   if (!this.id) {
     const count = await mongoose.model("Client").countDocuments();
-    this.id = `I${100 + count + 1}`;
+    const uniquePart = Date.now().toString().slice(-4);
+    this.id = `I${10 + count + 1}${uniquePart}`;
   }
   next();
 });
 
 clientSchema.pre("save", function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+clientSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate();
+
+  // Check if the name field is being modified
+  if (update.name) {
+    // Generate a new slug
+    update.slug = slugify(update.name, { lower: true });
+  }
+
   next();
 });
 

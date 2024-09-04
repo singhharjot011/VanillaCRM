@@ -38,7 +38,7 @@ export const handleSort = function (e) {
       query = "completed";
       break;
     default:
-      query = ""; // or handle any unexpected value
+      query = "-createdAt"; // or handle any unexpected value
       break;
   }
 

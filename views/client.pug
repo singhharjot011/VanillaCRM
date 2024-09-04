@@ -11,7 +11,7 @@ block content
                     div
                         label(for='client' class='form-label' style='color:red;')
                             strong= client.id
-                .form-row-flex
+                .form-row-flex 
                     .form-col-flex
                         label.form-label(for='first-name') First Name
                         input.form-input#first-name(name='first-name', type='text', value=client && client.name ? client.name.split(' ')[0] : '')
@@ -90,4 +90,5 @@ block content
         script. 
             window.clientsNames = !{JSON.stringify(clientsNames)};
             window.currentClientName = !{JSON.stringify((client && client.name) || null)};
+            window.currentClientId = !{JSON.stringify((client && client._id) || null)};
 

@@ -1,6 +1,6 @@
 import { showAlert } from "./alerts.js";
 import { showToast } from "./handleToast.js";
- 
+
 export const handleCaseForm = (caseForm) => {
   const clientInput = document.querySelector("[data-client-input]");
   const emailLabel = document.querySelector("[data-email-label]");
@@ -36,6 +36,7 @@ export const handleCaseForm = (caseForm) => {
       caseType: formMap.get("case-type"),
       caseStatus: formMap.get("case-status"),
       caseDescription: formMap.get("case-description"),
+      createdAt: Date.now(),
       consultantName: formMap.get("case-consultant"),
       clientName: formMap.get("client"),
       note: formMap.get("case-note"),
@@ -52,13 +53,16 @@ export const handleCaseForm = (caseForm) => {
       phoneLabel.textContent === "" &&
       missingFields.push("Client Name");
 
+    const urlPath = window.location.href.split("/").at(-1);
+
+    if (urlPath === "add-case")
+      !newCaseObj.note.trim() && missingFields.push("Notes");
+
     if (missingFields.length > 0 || invalidFields.length > 0) {
       toast.classList.remove("sr-only");
       showToast(toast, missingFields, invalidFields);
       return;
     }
-
-    const urlPath = window.location.href.split("/").at(-1);
 
     if (urlPath === "add-case") {
       document.querySelector("#case-submit-button").textContent = "Creating...";
@@ -109,14 +113,15 @@ export const handleCaseForm = (caseForm) => {
           newCaseObj[key] !== originalCase[key] &&
           key !== "consultantName" &&
           key !== "note" &&
-          key !== "clientName"
+          key !== "clientName" &&
+          key !== "createdAt"
         ) {
           updatedCaseObj[key] = newCaseObj[key];
         }
       });
 
       // Check if there's a change in consultantName or note and add them to updatedCaseObj if changed
-      if (originalCase.assignedTo.name !== newCaseObj.consultantName) {
+      if (originalCase.assignedTo?.name !== newCaseObj.consultantName) {
         updatedCaseObj.consultantName = newCaseObj.consultantName;
       }
       if (newCaseObj.note.trim() !== "") {
@@ -128,10 +133,10 @@ export const handleCaseForm = (caseForm) => {
         showAlert("error", "No changes detected");
         return;
       }
+      const { createdAt, ...filteredCaseObj } = newCaseObj;
+      Object.assign(newCaseObj, filteredCaseObj);
 
       document.querySelector("#case-submit-button").textContent = "Updating...";
-
-      console.log(updatedCaseObj);
 
       // Send only the updated fields in the PATCH request
       const response = await fetch(`/api/v1/cases/${originalCase._id}`, {

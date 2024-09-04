@@ -18,6 +18,7 @@ export const handleClientForm = (clientForm) => {
       email: formMap.get("email"),
       phone: formMap.get("phone"),
       consultantName: formMap.get("client-consultant"),
+      createdAt: Date.now(),
       clientNote: formMap.get("client-note").trim(),
       visaType: formMap.get("visa-type"),
       city: formMap.get("city"),
@@ -90,37 +91,86 @@ export const handleClientForm = (clientForm) => {
           "Create Client";
       }
     } else {
+      newClientObj._id = window.currentClientId;
+
+      // Fetch the original client data
+      const originalClientResponse = await fetch(
+        `/api/v1/clients/${window.currentClientId}`
+      );
+
+      const res = await originalClientResponse.json();
+      const originalClient = res.data.doc;
+
+      // Initialize an empty object to hold only the updated fields
+      const updatedClientObj = {};
+
+      // Compare the new data with the original data and add only updated fields to updatedClientObj
+      Object.keys(newClientObj).forEach((key) => {
+        if (
+          newClientObj[key] !== originalClient[key] &&
+          key !== "consultantName" &&
+          key !== "createdAt" &&
+          key !== "clientNote" &&
+          key !== "phone"
+        ) {
+          updatedClientObj[key] = newClientObj[key];
+        }
+      });
+
+      // Check if there's a change in consultantName and add it to updatedClientObj if changed
+      if (originalClient.consultant.name !== newClientObj.consultantName) {
+        updatedClientObj.consultantName = newClientObj.consultantName;
+      }
+      if (originalClient.clientNote.trim() !== "") {
+        updatedClientObj.clientNote = newClientObj.clientNote.trim();
+      }
+      if (originalClient.phone.toString() !== newClientObj.phone.toString()) {
+        updatedClientObj.phone = newClientObj.phone.toString();
+      }
+
+      // If no changes were detected, show an alert and exit the function
+      if (Object.keys(updatedClientObj).length === 0) {
+        showAlert("error", "No changes detected");
+        return;
+      }
+
+      const { createdAt, ...filteredClientObj } = newClientObj;
+      Object.assign(newClientObj, filteredClientObj);
+
+
       document.querySelector("#client-submit-button").textContent =
         "Updating...";
 
-      const response = await fetch(
-        `/api/v1/clients/${newClientObj.name
-          .toLowerCase()
-          .split(" ")
-          .join("-")}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newClientObj),
+      try {
+        const response = await fetch(
+          `/api/v1/clients/${window.currentClientId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(filteredClientObj),
+          }
+        );
+
+        if (!response.ok) {
+          showAlert("error", "Failed to update client");
+          throw new Error("Failed to update client");
         }
-      );
 
-      if (!response.ok) {
-        showAlert("error", "Failed to update client");
-        throw new Error("Failed to update client");
+        const result = await response.json();
+
+        showAlert("success", "Client Updated Successfully");
+
+        document.querySelector("#client-submit-button").textContent =
+          "Update Client";
+
+        window.location.assign("/clients");
+      } catch (error) {
+        console.error("Error updating client:", error);
+        document.querySelector("#client-submit-button").textContent =
+          "Update Client";
       }
-
-      const result = await response.json();
-
-      showAlert("success", "Client Updated Successfully");
-
-      document.querySelector("#client-submit-button").textContent =
-        "Update Client";
-
-      window.location.assign("/clients");
     }
   });
 };
- 

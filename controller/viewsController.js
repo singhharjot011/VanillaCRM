@@ -13,16 +13,22 @@ export const getLoginForm = catchAsync(async (req, res, next) => {
   });
 });
 
-export const getPasswordReset = catchAsync(async (req, res, next) => {
+export const getForgotPasswordForm = catchAsync(async (req, res, next) => {
   res.status(200).render("forgotPassword", {
     title: "Password Reset",
   });
 });
-// export const getSetNewPasswordForm = catchAsync(async (req, res, next) => {
-//   res.status(200).render("setNewPassword", {
-//     title: "Set New password",
-//   });
-// });
+
+export const getSetNewPasswordForm = catchAsync(async (req, res, next) => {
+  res.status(200).render("setNewPassword", {
+    title: "Set New password",
+  });
+});
+export const getCompleteSignupForm = catchAsync(async (req, res, next) => {
+  res.status(200).render("completeSignup", {
+    title: "Complete Sign Up",
+  });
+});
 
 export const getSignupForm = catchAsync(async (req, res, next) => {
   res.status(200).render("signup", {
@@ -33,9 +39,10 @@ export const getSignupForm = catchAsync(async (req, res, next) => {
 export const getClientsView = catchAsync(async (req, res) => {
   if (Object.keys(req.query).length === 0) {
     req.query.limit = "10";
+    req.query.sort = "-createdAt";
   }
   const features = new APIFeatures(
-    Client.find().populate(["consultant", "cases"]),
+    Client.find().populate(["consultant", "cases", "tasks"]),
     req.query
   )
     .filter()
@@ -90,9 +97,10 @@ export const getClientsView = catchAsync(async (req, res) => {
 export const getMyClientsView = catchAsync(async (req, res) => {
   if (Object.keys(req.query).length === 0) {
     req.query.limit = "10";
+    req.query.sort = "-createdAt";
   }
   const features = new APIFeatures(
-    Client.find({ consultant: req.user._id }).populate(["consultant", "cases"]),
+    Client.find().populate(["consultant", "cases", "tasks"]),
     req.query
   )
     .filter()
@@ -230,6 +238,7 @@ export const getClient = catchAsync(async (req, res) => {
 export const getCasesView = catchAsync(async (req, res) => {
   if (Object.keys(req.query).length === 0) {
     req.query.limit = "10";
+    req.query.sort = "-createdAt";
   }
   const features = new APIFeatures(
     Case.find().populate(["assignedTo", "client"]),
@@ -314,8 +323,85 @@ export const getTaskView = catchAsync(async (req, res) => {
 });
 
 export const getDashboard = catchAsync(async (req, res) => {
+  let { clientsCount, leadsCount, closedCases, activeCases, numberOfDays } =
+    req;
+
+  // If these values are not already set, fetch the data for the last 7 days
+  if (
+    clientsCount === undefined ||
+    leadsCount === undefined ||
+    closedCases === undefined ||
+    activeCases === undefined
+  ) {
+    clientsCount = await Client.countDocuments({
+      isLead: false,
+    });
+
+    leadsCount = await Client.countDocuments({
+      isLead: true,
+    });
+
+    closedCases = await Case.countDocuments({
+      caseStatus: { $in: ["Cancelled", "Closed-Win", "Closed-Lost"] },
+    });
+
+    activeCases = await Case.countDocuments({
+      caseStatus: { $nin: ["Cancelled", "Closed-Win", "Closed-Lost"] },
+    });
+  }
+
+  const date = new Date();
+
+  // Get today's date in the desired format
+  let day = date.getDate().toString().padStart(2, "0");
+  let month = (date.getMonth() + 1).toString().padStart(2, "0");
+  let year = date.getFullYear();
+
+  let currentDate = `${year}-${month}-${day}`;
+
+  // Calculate tomorrow's date
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  let tomorrowDay = tomorrow.getDate().toString().padStart(2, "0");
+  let tomorrowMonth = (tomorrow.getMonth() + 1).toString().padStart(2, "0");
+  let tomorrowYear = tomorrow.getFullYear();
+
+  let tomorrowDate = `${tomorrowYear}-${tomorrowMonth}-${tomorrowDay}`;
+
+  // Fetch today's tasks
+  const todayTasks = await Task.find({
+    $or: [{ appointmentDate: currentDate }, { due: currentDate }],
+  }).select([
+    "client",
+    "appointmentStartTime",
+    "id",
+    "description",
+    "completed",
+    "assignedTo",
+  ]);
+
+  // Fetch tomorrow's tasks
+  const tomorrowTasks = await Task.find({
+    $or: [{ appointmentDate: tomorrowDate }, { due: tomorrowDate }],
+  }).select([
+    "client",
+    "appointmentStartTime",
+    "id",
+    "description",
+    "completed",
+    "assignedTo",
+  ]);
+
   res.status(200).render("dashboard", {
     title: "Dashboard",
+    clientsCount,
+    leadsCount,
+    closedCases,
+    activeCases,
+    numberOfDays,
+    todayTasks,
+    tomorrowTasks,
   });
 });
 
@@ -343,6 +429,7 @@ export const getCalendar = catchAsync(async (req, res) => {
 export const getTasks = catchAsync(async (req, res) => {
   if (Object.keys(req.query).length === 0) {
     req.query.limit = "10";
+    req.query.sort = "-createdAt";
   }
   const features = new APIFeatures(
     Task.find({
