@@ -20,6 +20,7 @@ const createTask = catchAsync(async (req, res) => {
     requestedBy: requestedByData._id,
     description: req.body.description,
     isAppointment: req.body.isAppointment,
+    taskPriority: req.body.taskPriority,
     createdBy: req.user._id,
     createdAt: req.body.createdAt,
   };

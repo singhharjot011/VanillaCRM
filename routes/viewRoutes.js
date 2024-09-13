@@ -40,11 +40,10 @@ viewRouter.get("/forgotPassword", getForgotPasswordForm);
 viewRouter.get("/resetPassword/:token", getSetNewPasswordForm);
 viewRouter.get("/completeSignup", getCompleteSignupForm);
 viewRouter.use(isLoggedIn);
-// viewRouter.use(auth);
-// viewRouter.use(protect);
+
 
 // Protected routes
-viewRouter.get("/", redirectBasedOnAuth);
+viewRouter.get("/", protect, redirectBasedOnAuth);
 viewRouter.get("/dashboard", protect, getDashboard);
 viewRouter
   .route("/dashboard/last7Days")

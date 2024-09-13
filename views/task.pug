@@ -38,11 +38,11 @@ block content
                     textarea#objective.form-input(name="objective" rows="2" readonly=isReadonly)= task && task.description
 
                 .form-row
-                        label.form-label(for='task-priority') Priority
-                        select.form-input#task-priority(name='task-priority')
-                            each priority in ['P1','P2','P3']
-                                - const isSelected = task && (task.taskPriority === priority) ? 'selected' : ''
-                                | <option value="#{priority}" #{isSelected}>#{priority}</option>
+                    label.form-label(for='task-priority') Priority
+                    select.form-input#task-priority(name='task-priority' disabled=task && task.taskPriority)
+                        each priority in ['P1', 'P2', 'P3']
+                            option(value=priority selected=task && task.taskPriority === priority) #{priority}
+
 
                 .form-row-flex#due-date-box(class= task && task.isAppointment ? "sr-only" : "")
                     label.form-label(for="due-date") Due Date

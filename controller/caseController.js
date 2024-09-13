@@ -83,6 +83,7 @@ const updateCase = catchAsync(async (req, res, next) => {
     assignedTo: consultant?._id,
     client: client?._id,
     createdBy: req.user._id,
+    casePriority: req.body.casePriority,
   };
 
   // Only add the notes field if newNote is not null
@@ -127,6 +128,7 @@ const createCase = catchAsync(async (req, res) => {
     notes: [newNote],
     createdAt: req.body.createdAt,
     createdBy: req.user._id,
+    casePriority: req.body.casePriority,
   });
 
   // Update the client's isLead field to false

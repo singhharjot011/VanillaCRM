@@ -1,6 +1,7 @@
 import APIFeatures from "../src/utils/apiFeatures.js";
 import AppError from "../src/utils/appError.js";
 import catchAsync from "../src/utils/catchAsync.js";
+import { getSignedImageUrl } from "./cloudinary.js";
 
 export const deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -36,10 +37,30 @@ export const createOne = (Model) =>
     });
   });
 
+// export const getOne = (Model, popOptions) =>
+//   catchAsync(async (req, res, next) => {
+//     let query = Model.findById(req.params.id);
+//     console.log(req.params.id);
+//     if (popOptions) query = query.populate(popOptions);
+//     const doc = await query;
+
+//     if (doc.photo) {
+//       doc.photo = getSignedImageUrl(doc.photo);
+//     }
+
+//     if (!doc) {
+//       return next(new AppError("No Document found with that ID", 404));
+//     }
+
+//     res.status(200).json({ status: "success", data: { doc } });
+//   });
+
+// ***** FOR CLOUDINARY
+
 export const getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
+    // Return catchAsync directly
     let query = Model.findById(req.params.id);
-    console.log(req.params.id);
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
 
@@ -47,7 +68,22 @@ export const getOne = (Model, popOptions) =>
       return next(new AppError("No Document found with that ID", 404));
     }
 
-    res.status(200).json({ status: "success", data: { doc } });
+    // Convert the Mongoose document to a plain JS object
+    const plainDoc = doc.toObject();
+    console.log(plainDoc);
+
+    if (plainDoc.photo) {
+      // Extract the public_id from the Cloudinary URL
+      const publicId = plainDoc.photo.split("/").pop().split(".")[0];
+
+      // Generate and log the signed URL for testing
+      const signedUrl = getSignedImageUrl(publicId);
+      console.log(signedUrl); // Log the signed URL and test it in the browser
+
+      plainDoc.photo = signedUrl;
+    }
+
+    res.status(200).json({ status: "success", data: { doc: plainDoc } });
   });
 
 export const getOneByName = (Model, popOptions) =>

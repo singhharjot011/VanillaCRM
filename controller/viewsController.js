@@ -350,6 +350,27 @@ export const getDashboard = catchAsync(async (req, res) => {
     });
   }
 
+  const inProgressCases = await Case.countDocuments({
+    caseStatus: "In Progress",
+  });
+  const underReviewCases = await Case.countDocuments({
+    caseStatus: "Under Review",
+  });
+  const referredCases = await Case.countDocuments({
+    caseStatus: "Referred",
+  });
+  const pendingCases = await Case.countDocuments({
+    caseStatus: "Pending",
+  });
+
+  const myHighPriorityCases = await Case.find({
+    $and: [
+      { casePriority: "P3" },
+      { assignedTo: req.user._id },
+      { caseStatus: { $nin: ["Cancelled", "Closed-Win", "Closed-Lost"] } },
+    ],
+  });
+
   const date = new Date();
 
   // Get today's date in the desired format
@@ -402,6 +423,12 @@ export const getDashboard = catchAsync(async (req, res) => {
     numberOfDays,
     todayTasks,
     tomorrowTasks,
+    inProgressCases,
+    underReviewCases,
+    referredCases,
+    pendingCases,
+    getColor,
+    myHighPriorityCases,
   });
 });
 

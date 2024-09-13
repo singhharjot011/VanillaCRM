@@ -40,6 +40,7 @@ export const handleCaseForm = (caseForm) => {
       consultantName: formMap.get("case-consultant"),
       clientName: formMap.get("client"),
       note: formMap.get("case-note"),
+      casePriority: formMap.get("case-priority"),
     };
 
     const missingFields = [];

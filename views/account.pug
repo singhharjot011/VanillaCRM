@@ -6,7 +6,11 @@ block myAccount
                 svg(xmlns='http://www.w3.org/2000/svg', height='24px', viewBox='0 -960 960 960', width='24px', fill='#5f6368')
                     path(d='m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z')
     .left
-        img.user-img(src=`/img/users/${user.photo || 'placeholder.png'}` alt='Avatar')
+        //- img.user-img(src=`/img/users/${user.photo || 'placeholder.png'}` alt='Avatar')
+        
+
+        img.user-img(src=`${user.photo}` alt='Avatar')
+        //- img.user-img(src=`/users/${user._id}/photo` alt='Avatar')
         h1= user.name
         h3= user.role.toString().toUpperCase()
     .right

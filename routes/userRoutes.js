@@ -23,7 +23,7 @@ import {
   logout,
 } from "../controller/authController.js";
 
-const userRouter = express.Router(); 
+const userRouter = express.Router();
 
 userRouter.post("/login", login);
 userRouter.post("/signup", signup);
@@ -35,6 +35,7 @@ userRouter.patch("/resetPassword/:token", resetPassword);
 // userRouter.use(protect);
 
 userRouter.patch("/updateMyPassword", protect, updatePassword);
+
 
 userRouter.get("/me", protect, getMe, getUser);
 userRouter.patch(
