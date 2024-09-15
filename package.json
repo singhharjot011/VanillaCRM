@@ -50,5 +50,8 @@
   "main": "server.js",
   "type": "module",
   "author": "Harjot S",
-  "license": "ISC"
+  "license": "ISC",
+  "engines": {
+    "node": ">=10.0.0"
+  }
 }
