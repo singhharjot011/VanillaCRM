@@ -42,7 +42,8 @@ viewRouter.get("/completeSignup", getCompleteSignupForm);
 viewRouter.use(isLoggedIn);
 
 // Protected routes
-viewRouter.get("/", protect, redirectBasedOnAuth);
+// viewRouter.get("/", protect, redirectBasedOnAuth);
+viewRouter.get("/", redirectBasedOnAuth);
 viewRouter.get("/dashboard", protect, getDashboard);
 viewRouter
   .route("/dashboard/last7Days")

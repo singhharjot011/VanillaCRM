@@ -14,17 +14,16 @@ const signToken = (id) => {
   });
 };
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
-  const cookieOptions = {
+
+  res.cookie("jwt", token, {
     expires: new Date(
       Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-  };
-  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
-
-  res.cookie("jwt", token, cookieOptions);
+    secure: req.secure || req.headers["x-forwarded-proto"] === "https",
+  });
 
   // Remove password from output
   user.password = undefined;
@@ -49,7 +48,7 @@ const signup = catchAsync(async (req, res, next) => {
   //   passwordConfirm: req.body.passwordConfirm,
   // });
 
-  createSendToken(newUser, 201, res);
+  createSendToken(newUser, 201, req, res);
 });
 
 const login = catchAsync(async (req, res, next) => {
@@ -68,7 +67,7 @@ const login = catchAsync(async (req, res, next) => {
   }
 
   // 3) If everything ok, send token to client
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 const isLoggedIn = async (req, res, next) => {
@@ -158,13 +157,53 @@ const protect = catchAsync(async (req, res, next) => {
   }
 });
 
-const redirectBasedOnAuth = (req, res, next) => {
-  if (res.locals.user) {
+// const redirectBasedOnAuth = (req, res, next) => {
+//   if (res.locals.user) {
+//     // User is logged in, render the dashboard
+//     return getDashboard(req, res, next); // Render the dashboard directly
+//   } else {
+//     // User is not logged in, render the login form
+//     return getLoginForm(req, res, next); // Render the login form directly
+//   }
+// };
+
+const redirectBasedOnAuth = async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+
+  if (!token) {
+    console.log("No token found");
+    return getLoginForm(req, res, next); // Render the login form directly
+  }
+
+  try {
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+    const freshUser = await User.findById(decoded.id);
+    if (!freshUser) {
+      console.log("User not found");
+      return getLoginForm(req, res, next); // Render the login form directly
+    }
+
+    if (freshUser.changedPasswordAfter(decoded.iat)) {
+      console.log("Password changed");
+      return getLoginForm(req, res, next); // Render the login form directly
+    }
+
+    req.user = freshUser;
+
     // User is logged in, render the dashboard
     return getDashboard(req, res, next); // Render the dashboard directly
-  } else {
-    // User is not logged in, render the login form
-    return getLoginForm(req, res, next); // Render the login form directly
+  } catch (err) {
+    return next(err); // Handle errors and redirect to login
   }
 };
 
@@ -251,7 +290,7 @@ const resetPassword = catchAsync(async (req, res, next) => {
 
   // 4) Log the user in, send JWT
 
-  createSendToken(user, 201, res);
+  createSendToken(user, 201, req, res);
 });
 
 const updatePassword = catchAsync(async (req, res, next) => {
@@ -273,7 +312,7 @@ const updatePassword = catchAsync(async (req, res, next) => {
 
   // 4) Log user in, send JWT
 
-  createSendToken(user, 200, res);
+  createSendToken(user, 200, req, res);
 });
 
 export {

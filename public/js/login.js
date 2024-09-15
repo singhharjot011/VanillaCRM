@@ -50,7 +50,7 @@ export const forgotPassword = async (email) => {
     if (result.status === "success") {
       showAlert("success", "Password reset token sent to your email!");
     } else {
-      showAlert("error", "There was an error. Please try again.");
+      showAlert("error", "Email Doesn't exist in the system.");
     }
   } catch (err) {
     console.error("Error:", err);

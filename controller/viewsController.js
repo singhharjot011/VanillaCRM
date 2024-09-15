@@ -521,7 +521,7 @@ export const getTasks = catchAsync(async (req, res) => {
   });
 });
 
-export const getKnowledgeBase = catchAsync((req, res) => {
+export const getKnowledgeBase = catchAsync(async (req, res) => {
   res.status(200).render("knowledgeBase", {
     title: "Knowledge Base",
   });

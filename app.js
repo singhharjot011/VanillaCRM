@@ -22,6 +22,8 @@ import compression from "compression";
 
 const app = express();
 
+app.enable("trust proxy");
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
