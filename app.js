@@ -18,6 +18,7 @@ import morgan from "morgan";
 import ExpressMongoSanitize from "express-mongo-sanitize";
 import viewRouter from "./routes/viewRoutes.js";
 import cookieParser from "cookie-parser";
+import compression from "compression";
 
 const app = express();
 
@@ -66,6 +67,8 @@ app.use(
     ],
   })
 );
+
+app.use(compression());
 
 // Test Middleware
 app.use((req, res, next) => {

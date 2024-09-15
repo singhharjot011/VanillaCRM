@@ -70,7 +70,7 @@ export const getOne = (Model, popOptions) =>
 
     // Convert the Mongoose document to a plain JS object
     const plainDoc = doc.toObject();
-    console.log(plainDoc);
+
 
     if (plainDoc.photo) {
       // Extract the public_id from the Cloudinary URL
@@ -78,7 +78,7 @@ export const getOne = (Model, popOptions) =>
 
       // Generate and log the signed URL for testing
       const signedUrl = getSignedImageUrl(publicId);
-      console.log(signedUrl); // Log the signed URL and test it in the browser
+  
 
       plainDoc.photo = signedUrl;
     }
