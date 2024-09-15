@@ -43,9 +43,9 @@ export const resizeUserPhoto = catchAsync(async (req, res, next) => {
             type: "authenticated", // Add this line
             access_mode: "authenticated", // Add this line
             upload_preset: "secure_user_photos",
-            access_control: [
-              { access_type: "token" }, // Token-based access
-            ],
+            // access_control: [
+            //   { access_type: "token" }, // Token-based access
+            // ],
           },
           (error, result) => {
             if (error) {
@@ -202,7 +202,7 @@ const createUser = (req, res) => {
   });
 };
 
-const getUser = getOne(User); 
+const getUser = getOne(User);
 
 const updateUser = (req, res) => {
   res.status(500).json({

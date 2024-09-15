@@ -115,7 +115,8 @@ export const handleCaseForm = (caseForm) => {
           key !== "consultantName" &&
           key !== "note" &&
           key !== "clientName" &&
-          key !== "createdAt"
+          key !== "createdAt" &&
+          key !== "lastUpdatedAt"
         ) {
           updatedCaseObj[key] = newCaseObj[key];
         }
@@ -128,7 +129,7 @@ export const handleCaseForm = (caseForm) => {
       if (newCaseObj.note.trim() !== "") {
         updatedCaseObj.note = newCaseObj.note.trim();
       }
-
+      updatedCaseObj.lastUpdatedAt = new Date();
       // If no changes were detected, show an alert and exit the function
       if (Object.keys(updatedCaseObj).length === 0) {
         showAlert("error", "No changes detected");

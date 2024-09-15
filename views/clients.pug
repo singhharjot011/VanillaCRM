@@ -30,9 +30,9 @@ block content
                 | &nbsp; &nbsp;
 
                 select.form-input#sort-input-client(name='sort')
-                    each sortOption in ['','Name - (A-Z)','Name - (Z-A)', 'Newest', 'Oldest','Visa Type - (A-Z)']
+                    each sortOption in ['','Name - (A-Z)','Name - (Z-A)','Last Updated', 'Newest', 'Oldest','Visa Type - (A-Z)']
                         - const isSelected = sortOption === sortParams ? 'selected' : '';
-                        <option #{isSelected}>#{sortOption}</option> 
+                        <option #{isSelected}>#{sortOption}</option>
  
     table.table.clients-table
         tr.table-header

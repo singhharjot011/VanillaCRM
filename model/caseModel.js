@@ -50,6 +50,7 @@ const caseSchema = new mongoose.Schema({
     type: Date,
     default: new Date(),
   },
+  lastUpdatedAt: Date,
 });
 
 caseSchema.pre("save", async function (next) {

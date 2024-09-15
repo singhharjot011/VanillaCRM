@@ -53,11 +53,8 @@ if (forgotPasswordForm) {
 
     resetPwBtn.textContent = "Sending token...";
     const email = document.getElementById("email").value;
-
     await forgotPassword(email);
     resetPwBtn.textContent = "Reset Password";
-
-    location.assign("/");
   });
 }
 
@@ -68,7 +65,8 @@ if (setNewPasswordForm) {
     const password = document.getElementById("password").value;
     const passwordConfirm = document.getElementById("passwordConfirm").value;
     await setNewPassword(password, passwordConfirm, token);
-    location.assign("/");
+
+    location.assign("/dashboard");
   });
 }
 
@@ -259,7 +257,12 @@ if (menu) {
   menuItems.forEach((item) => {
     item.classList.remove("active");
 
-    const itemText = item.textContent.toString().toLowerCase().trim();
+    const itemText = item.textContent
+      .split(" ")
+      .join("")
+      .toString()
+      .toLowerCase()
+      .trim();
 
     if (!currentMenuItem && itemText.startsWith("dashboard")) {
       item.classList.add("active");

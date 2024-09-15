@@ -28,7 +28,7 @@ block content
             label.form-label(for='sort') Sort
                 | &nbsp; &nbsp;
                 select.form-input#sort-input-case(name='sort')
-                    each sortOption in ['','Newest','Oldest', 'Status']
+                    each sortOption in ['','Newest','Oldest','Last Updated', 'Status']
                         - const isSelected = sortOption === sortParams ? 'selected' : '';
                         <option #{isSelected}>#{sortOption}</option> 
 

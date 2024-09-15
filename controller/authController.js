@@ -126,6 +126,7 @@ const protect = catchAsync(async (req, res, next) => {
 
   if (!token) {
     console.log("No token found");
+    location.assign("/login");
     return next(
       new AppError("You are not logged in! Please log in to get access", 401)
     );

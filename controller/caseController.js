@@ -84,6 +84,7 @@ const updateCase = catchAsync(async (req, res, next) => {
     client: client?._id,
     createdBy: req.user._id,
     casePriority: req.body.casePriority,
+    lastUpdatedAt: req.body.lastUpdatedAt,
   };
 
   // Only add the notes field if newNote is not null

@@ -72,11 +72,14 @@ export const getClientsView = catchAsync(async (req, res) => {
       sortParams = "Oldest";
       break;
     case "-createdAt":
-      sortParams = "Latest";
+      sortParams = "Newest";
       break;
 
     case "visaType":
       sortParams = "Visa Type - (A-Z)";
+      break;
+    case "-lastUpdatedAt":
+      sortParams = "Last Updated";
       break;
 
     default:
@@ -133,11 +136,15 @@ export const getMyClientsView = catchAsync(async (req, res) => {
       sortParams = "Oldest";
       break;
     case "-createdAt":
-      sortParams = "Latest";
+      sortParams = "Newest";
       break;
 
     case "visaType":
       sortParams = "Visa Type - (A-Z)";
+      break;
+
+    case "-lastUpdatedAt":
+      sortParams = "Last Updated";
       break;
 
     default:
@@ -265,6 +272,9 @@ export const getCasesView = catchAsync(async (req, res) => {
       break;
     case "-createdAt":
       sortParams = "Newest";
+      break;
+    case "-lastUpdated":
+      sortParams = "Last Updated";
       break;
     case "caseStatus":
       sortParams = "Status";
@@ -487,6 +497,9 @@ export const getTasks = catchAsync(async (req, res) => {
       break;
     case "-createdAt":
       sortParams = "Newest";
+      break;
+    case "-lastUpdated":
+      sortParams = "Last Updated";
       break;
     case "completed":
       sortParams = "Completed";

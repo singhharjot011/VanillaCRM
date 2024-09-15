@@ -41,7 +41,6 @@ viewRouter.get("/resetPassword/:token", getSetNewPasswordForm);
 viewRouter.get("/completeSignup", getCompleteSignupForm);
 viewRouter.use(isLoggedIn);
 
-
 // Protected routes
 viewRouter.get("/", protect, redirectBasedOnAuth);
 viewRouter.get("/dashboard", protect, getDashboard);
@@ -58,7 +57,7 @@ viewRouter.get("/me", protect, getMe);
 
 viewRouter.get("/clients", protect, getClientsView);
 viewRouter.get("/add-client", protect, getAddClient);
-viewRouter.get("/my-clients", protect, getMyClientsView);
+viewRouter.get("/myClients", protect, getMyClientsView);
 viewRouter.get("/client/:slug", protect, getClient);
 
 viewRouter.get("/cases", protect, getCasesView);
@@ -71,7 +70,7 @@ viewRouter.get("/tasks", protect, getTasks);
 viewRouter.get("/add-task", protect, getAddTask);
 viewRouter.get("/task/:taskId", protect, getTaskView);
 
-viewRouter.get("/knowledge-base", protect, getKnowledgeBase);
+viewRouter.get("/knowledgeBase", protect, getKnowledgeBase);
 viewRouter.post("/submit-user-data", protect, updateUserData);
 
 export default viewRouter;

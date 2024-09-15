@@ -25,6 +25,9 @@ export const handleSort = function (e) {
     case "Newest":
       query = "-createdAt";
       break;
+    case "Last Updated":
+      query = "-lastUpdatedAt";
+      break;
     case "Oldest":
       query = "createdAt";
       break;

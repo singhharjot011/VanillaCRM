@@ -44,7 +44,7 @@ const clientSchema = new mongoose.Schema(
       default: true,
     },
     lastUpdatedBy: { type: mongoose.Schema.ObjectId, ref: "User" },
-    lastUpdatedAt: Date,
+    lastUpdatedAt: Date, 
   },
   {
     toJSON: { virtuals: true },
