@@ -168,6 +168,7 @@ const sortTasksDropdown = document.querySelector("#sort-input-task");
 // Function to handle sorting and page changes
 
 if (sortClientsDropdown) {
+  console.log("this hjere");
   sortClientsDropdown.addEventListener("change", handleSort);
 }
 

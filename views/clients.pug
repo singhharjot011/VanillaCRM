@@ -28,7 +28,7 @@ block content
         div
             label.form-label(for='sort') Sort
                 | &nbsp; &nbsp;
-
+ 
                 select.form-input#sort-input-client(name='sort')
                     each sortOption in ['','Name - (A-Z)','Name - (Z-A)','Last Updated', 'Newest', 'Oldest','Visa Type - (A-Z)']
                         - const isSelected = sortOption === sortParams ? 'selected' : '';

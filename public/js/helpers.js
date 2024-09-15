@@ -1,8 +1,8 @@
 export const updateURL = (query, page, limit = 10) => {
   if (window.location.href.includes("/clients")) {
     window.location.href = `/clients?sort=${query}&page=${page}&limit=${limit}`;
-  } else if (window.location.href.includes("/my-clients")) {
-    window.location.href = `/my-clients?sort=${query}&page=${page}&limit=${limit}`;
+  } else if (window.location.href.includes("/myClients")) {
+    window.location.href = `/myClients?sort=${query}&page=${page}&limit=${limit}`;
   } else if (window.location.href.includes("/cases")) {
     window.location.href = `/cases?sort=${query}&page=${page}&limit=${limit}`;
   } else if (window.location.href.includes("/tasks")) {
